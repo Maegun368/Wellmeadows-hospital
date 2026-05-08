@@ -1,47 +1,132 @@
 <x-guest-layout>
-    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+    <style>
+        body {
+            background: #e8d5d8 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #1a3a5c;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hospital-name {
+            font-family: Georgia, serif;
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .hospital-sub {
+            font-size: 13px;
+            font-weight: 500;
+            color: #7ab8f5;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.75rem;
+        }
+        .wm-input {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        .wm-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            border: none;
+            background: #7ab8f5;
+            color: #0c2d4a;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .btn-forgot {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+        }
+        .error-msg {
+            color: #f7c1c1;
+            font-size: 12px;
+            margin-bottom: 0.75rem;
+        }
+    </style>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <div class="card">
+        <div style="width:60px;height:60px;border-radius:50%;background:rgba(122,184,245,0.18);display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;font-size:28px">
+            🏥
         </div>
+        <p class="hospital-name">Wellmeadows</p>
+        <p class="hospital-sub">HOSPITAL</p>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        @if($errors->any())
+            <p class="error-msg">{{ $errors->first() }}</p>
+        @endif
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <form method="POST" action="{{ route('login') }}" style="width:100%">
+            @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value="{{ old('email') }}"
+                class="wm-input"
+                required
+                autofocus
+                autocomplete="username"
+            >
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                class="wm-input"
+                required
+                autocomplete="current-password"
+            >
 
-        <div class="flex items-center justify-end mt-4">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">
+                <input type="checkbox" id="remember_me" name="remember" style="accent-color:#7ab8f5">
+                <label for="remember_me" style="font-size:12px;color:rgba(255,255,255,0.6)">
+                    Remember me
+                </label>
+            </div>
+
+            <button type="submit" class="btn-login">Log in</button>
+
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a href="{{ route('password.request') }}" class="btn-forgot">
+                    Forgot password?
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+        </form>
+    </div>
+
 </x-guest-layout>
