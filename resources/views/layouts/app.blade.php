@@ -44,8 +44,6 @@
     <div class="sidebar">
         <div class="sidebar-logo"><span>🏥 Wellmeadows</span></div>
         <a href="{{ route('appointments.index') }}" class="nav-item {{ request()->routeIs('appointments*') ? 'active' : '' }}">📅 Appointments</a>
-        <a href="{{ route('patient-medications.index') }}" class="nav-item {{ request()->routeIs('patient-medications*') ? 'active' : '' }}">💊 Medications</a>
-        <a href="{{ route('pharmaceuticals.index') }}" class="nav-item {{ request()->routeIs('pharmaceuticals*') ? 'active' : '' }}">🧪 Pharmaceuticals</a>
         <div class="sidebar-bottom">Module 4 – Quitoriano</div>
     </div>
     <div class="main">

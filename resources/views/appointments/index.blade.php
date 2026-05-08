@@ -4,6 +4,26 @@
     <a href="{{ route('appointments.create') }}" class="btn btn-primary">+ New appointment</a>
 @endsection
 @section('content')
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+    <a href="{{ route('patient-medications.index') }}" style="text-decoration:none">
+        <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:28px">💊</span>
+            <div>
+                <div style="font-weight:600;color:#1a3a5c">Patient Medications</div>
+                <div style="font-size:12px;color:#718096">View & manage prescriptions</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ route('pharmaceuticals.index') }}" style="text-decoration:none">
+        <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer">
+            <span style="font-size:28px">🧪</span>
+            <div>
+                <div style="font-weight:600;color:#1a3a5c">Pharmaceuticals</div>
+                <div style="font-size:12px;color:#718096">View & manage drug inventory</div>
+            </div>
+        </div>
+    </a>
+</div>
 <div class="card">
     <div style="display:flex;gap:8px;margin-bottom:1rem">
         <input type="text" placeholder="Search patient..." style="padding:8px 12px;border-radius:8px;border:1px solid #cbd5e0;font-size:13px;flex:1">

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Patient Medications')
 @section('topbar-actions')
+    @section('topbar-actions')
+    <a href="{{ route('appointments.index') }}" class="btn">← Back to Appointments</a>
     <a href="{{ route('patient-medications.create') }}" class="btn btn-primary">+ Prescribe medication</a>
 @endsection
 @section('content')
