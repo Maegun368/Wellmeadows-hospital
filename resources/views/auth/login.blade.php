@@ -12,7 +12,7 @@
         .card {
             background: #1a3a5c;
             border-radius: 20px;
-            padding: 2rem;
+            padding: 4rem;
             width: 100%;
             max-width: 300px;
             display: flex;

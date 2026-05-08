@@ -7,7 +7,7 @@ use App\Http\Controllers\PatientMedicationController;
 use App\Http\Controllers\PharmaceuticalController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
