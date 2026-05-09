@@ -283,40 +283,14 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-<<<<<<< HEAD
         <div class="sidebar-logo"><span>Wellmeadows</span></div>
         <a href="{{ route('patients.index') }}" class="nav-item {{ request()->routeIs('patients*') ? 'active' : '' }}">Patients</a>
         <a href="{{ route('appointments.index') }}" class="nav-item {{ request()->routeIs('appointments*') ? 'active' : '' }}">Appointments</a>
         <a href="{{ route('staff.index') }}" class="nav-item {{ request()->routeIs('staff*') ? 'active' : '' }}">Staff</a>
+        <a href="{{ route('wards.index') }}" class="nav-item {{ request()->routeIs('wards*') ? 'active' : '' }}">Ward & Bed Management</a>
+s    </div>
         <div class="sidebar-bottom">Module 4 – Quitoriano</div>
-=======
 
-        <div class="sidebar-logo">
-            <span>🏥 Wellmeadows</span>
-        </div>
-
-        <!-- Appointments -->
-        <a href="{{ route('appointments.index') }}"
-           class="nav-item {{ request()->routeIs('appointments*') ? 'active' : '' }}">
-
-           📅 Appointments
-
-        </a>
-
-        <!-- Ward & Bed Management -->
-        <a href="{{ route('wards.index') }}"
-           class="nav-item {{ request()->routeIs('wards*') ? 'active' : '' }}">
-
-           🏥 Ward & Bed Management
-
-        </a>
-
-        <div class="sidebar-bottom">
-            Module 4 – Quitoriano
-        </div>
-
->>>>>>> 012687b7157f6f9e807383d79f77d1d6ebfea94f
-    </div>
 
     <!-- Main Content -->
     <div class="main">
