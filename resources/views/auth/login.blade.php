@@ -70,6 +70,42 @@
             text-align: center;
             display: block;
         }
+        .divider {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+        .divider span {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            white-space: nowrap;
+        }
+        .btn-register {
+            width: 100%;
+            padding: 9px;
+            border-radius: 8px;
+            border: 1px solid #7ab8f5;
+            background: transparent;
+            color: #7ab8f5;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        .btn-register:hover {
+            background: rgba(122,184,245,0.1);
+        }
         .error-msg {
             color: #f7c1c1;
             font-size: 12px;
@@ -127,6 +163,15 @@
             @endif
 
         </form>
+
+        {{-- Register section --}}
+        @if (Route::has('register'))
+            <div class="divider"><span>or</span></div>
+            <a href="{{ route('register') }}" class="btn-register">
+                Create an account
+            </a>
+        @endif
+
     </div>
 
 </x-guest-layout>

@@ -13,8 +13,8 @@ use App\Http\Controllers\BedAllocationController;
 use App\Http\Controllers\WardRequisitionController;
 
 Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+    return redirect()->route('login');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
