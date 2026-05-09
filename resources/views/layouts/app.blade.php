@@ -45,6 +45,7 @@
         <div class="sidebar-logo"><span>Wellmeadows</span></div>
         <a href="{{ route('patients.index') }}" class="nav-item {{ request()->routeIs('patients*') ? 'active' : '' }}">Patients</a>
         <a href="{{ route('appointments.index') }}" class="nav-item {{ request()->routeIs('appointments*') ? 'active' : '' }}">Appointments</a>
+        <a href="{{ route('staff.index') }}" class="nav-item {{ request()->routeIs('staff*') ? 'active' : '' }}">Staff</a>
         <div class="sidebar-bottom">Module 4 – Quitoriano</div>
     </div>
     <div class="main">
