@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Add Staff')
+@section('title', 'New Patient')
 
 @section('content')
 
@@ -8,7 +8,6 @@
     --blue-dark:   #1a5276;
     --blue-mid:    #2e86c1;
     --blue-light:  #5dade2;
-    --blue-accent: #2980b9;
     --blue-pale:   #d6eaf8;
     --blue-bg:     #e8f4fd;
     --white:       #ffffff;
@@ -17,7 +16,7 @@
 .create-wrapper {
     min-height: calc(100vh - 60px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 2rem;
     background: var(--blue-bg);
@@ -28,7 +27,7 @@
     border: 2px solid var(--blue-mid);
     border-radius: 12px;
     width: 100%;
-    max-width: 700px;
+    max-width: 750px;
     overflow: hidden;
 }
 
@@ -45,6 +44,7 @@
     width: 38px; height: 38px;
     display: flex; align-items: center; justify-content: center;
     font-size: 20px;
+    flex-shrink: 0;
 }
 .card-title {
     font-size: 15px;
@@ -69,6 +69,7 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     margin-bottom: 12px;
+    margin-top: 4px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--blue-pale);
 }
@@ -96,8 +97,8 @@
     font-size: 13px;
     color: #2d3748;
     background: #f0f8ff;
-    transition: border-color .15s, box-shadow .15s;
     font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
 }
 .form-group input:focus,
 .form-group select:focus,
@@ -107,10 +108,11 @@
     background: var(--white);
     box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
 }
+.form-group textarea { resize: vertical; min-height: 70px; }
 
 .field-error { color: #e74c3c; font-size: 11px; margin-top: 4px; display: block; }
 
-.spacer { height: 8px; }
+.spacer { height: 4px; }
 
 .form-actions {
     display: flex;
@@ -156,18 +158,20 @@
     <div class="create-card">
 
         <div class="create-card-header">
+            <div class="card-icon">🏥</div>
             <div>
-                <div class="card-title">Add Staff Member</div>
-                <div class="card-sub">Fill in the details to register a new staff member</div>
+                <div class="card-title">Register New Patient</div>
+                <div class="card-sub">Fill in the details to add a patient record</div>
             </div>
         </div>
 
         <div class="create-card-body">
-            <form method="POST" action="{{ route('staff.store') }}">
+            <form method="POST" action="{{ route('patients.store') }}">
                 @csrf
 
-                {{-- Personal Info --}}
+                {{-- Personal Information --}}
                 <div class="section-label">Personal Information</div>
+
                 <div class="form-grid-3">
                     <div class="form-group">
                         <label>First Name</label>
@@ -181,84 +185,105 @@
                     </div>
                     <div class="form-group">
                         <label>Date of Birth</label>
-                        <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}">
+                        <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" required>
                         @error('date_of_birth')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                 </div>
 
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label>Gender</label>
-                        <select name="gender">
+                        <label>Sex</label>
+                        <select name="sex" required>
                             <option value="">— Select —</option>
-                            <option value="Male"   {{ old('gender') === 'Male'   ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender') === 'Female' ? 'selected' : '' }}>Female</option>
-                            <option value="Other"  {{ old('gender') === 'Other'  ? 'selected' : '' }}>Other</option>
+                            <option value="Male"   {{ old('sex') === 'Male'   ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ old('sex') === 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="Other"  {{ old('sex') === 'Other'  ? 'selected' : '' }}>Other</option>
                         </select>
-                        @error('gender')<span class="field-error">{{ $message }}</span>@enderror
+                        @error('sex')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
-                        <label>Contact Number</label>
-                        <input type="text" name="telephone_number" value="{{ old('telephone_number') }}" placeholder="+63 9XX XXX XXXX">
-                        @error('telephone_number')<span class="field-error">{{ $message }}</span>@enderror
+                        <label>Marital Status</label>
+                        <select name="marital_status">
+                            <option value="">— Select —</option>
+                            <option value="Single"   {{ old('marital_status') === 'Single'   ? 'selected' : '' }}>Single</option>
+                            <option value="Married"  {{ old('marital_status') === 'Married'  ? 'selected' : '' }}>Married</option>
+                            <option value="Widowed"  {{ old('marital_status') === 'Widowed'  ? 'selected' : '' }}>Widowed</option>
+                            <option value="Divorced" {{ old('marital_status') === 'Divorced' ? 'selected' : '' }}>Divorced</option>
+                        </select>
+                        @error('marital_status')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Address</label>
-                    <input type="text" name="address" value="{{ old('address') }}" placeholder="Street, City">
+                    <input type="text" name="address" value="{{ old('address') }}" placeholder="Street, City, Province">
                     @error('address')<span class="field-error">{{ $message }}</span>@enderror
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" value="{{ old('phone') }}" placeholder="+63 9XX XXX XXXX">
+                        @error('phone')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Registration</label>
+                        <input type="date" name="date_of_registration"
+                               value="{{ old('date_of_registration', now()->format('Y-m-d')) }}">
+                        @error('date_of_registration')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
                 </div>
 
                 <div class="spacer"></div>
 
-                {{-- Professional Info --}}
-                <div class="section-label">Professional Details</div>
-                <div class="form-grid-2">
-                    <div class="form-group">
-                        <label>Position / Role</label>
-                        <select name="position" required>
-                            <option value="">— Select —</option>
-                            <option value="Doctor"      {{ old('position') === 'Doctor'      ? 'selected' : '' }}>Doctor</option>
-                            <option value="Consultant"  {{ old('position') === 'Consultant'  ? 'selected' : '' }}>Consultant</option>
-                            <option value="Nurse"       {{ old('position') === 'Nurse'       ? 'selected' : '' }}>Nurse</option>
-                            <option value="Head Nurse"  {{ old('position') === 'Head Nurse'  ? 'selected' : '' }}>Head Nurse</option>
-                            <option value="Admin"       {{ old('position') === 'Admin'       ? 'selected' : '' }}>Admin</option>
-                            <option value="Pharmacist"  {{ old('position') === 'Pharmacist'  ? 'selected' : '' }}>Pharmacist</option>
-                            <option value="Technician"  {{ old('position') === 'Technician'  ? 'selected' : '' }}>Technician</option>
-                        </select>
-                        @error('position')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
-                    <div class="form-group">
-                        <label>Ward Assignment</label>
-                        <select name="ward_id">
-                            <option value="">— No ward —</option>
-                            @foreach($wards as $ward)
-                            <option value="{{ $ward->ward_id }}" {{ old('ward_id') == $ward->ward_id ? 'selected' : '' }}>
-                                {{ $ward->ward_name }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('ward_id')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
-                </div>
+                {{-- Medical Information --}}
+                <div class="section-label">Medical Information</div>
 
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label>Salary (₱)</label>
-                        <input type="number" name="salary" value="{{ old('salary') }}" placeholder="e.g. 35000" step="0.01">
-                        @error('salary')<span class="field-error">{{ $message }}</span>@enderror
+                        <label>Ward / Department</label>
+                        <input type="text" name="ward" value="{{ old('ward') }}" placeholder="e.g. ICU, General">
+                        @error('ward')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
-                        <label>Date Joined</label>
-                        <input type="date" name="date_joined" value="{{ old('date_joined', now()->format('Y-m-d')) }}">
-                        @error('date_joined')<span class="field-error">{{ $message }}</span>@enderror
+                        <label>Admission Date</label>
+                        <input type="date" name="admission_date" value="{{ old('admission_date') }}">
+                        @error('admission_date')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Doctor / Consultant</label>
+                    <input type="text" name="doctor" value="{{ old('doctor') }}" placeholder="e.g. Dr. Santos">
+                    @error('doctor')<span class="field-error">{{ $message }}</span>@enderror
+                </div>
+
+                <div class="spacer"></div>
+
+                {{-- Next of Kin --}}
+                <div class="section-label">Next of Kin</div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="kin_name" value="{{ old('kin_name') }}" placeholder="Full name">
+                        @error('kin_name')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Relationship</label>
+                        <input type="text" name="kin_relationship" value="{{ old('kin_relationship') }}" placeholder="e.g. Spouse">
+                        @error('kin_relationship')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" name="kin_phone" value="{{ old('kin_phone') }}" placeholder="+63 9XX XXX XXXX">
+                        @error('kin_phone')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">Save Staff Member</button>
-                    <a href="{{ route('staff.index') }}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-save">Register Patient</button>
+                    <a href="{{ route('patients.index') }}" class="btn-cancel">Cancel</a>
                 </div>
 
             </form>
