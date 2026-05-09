@@ -62,6 +62,7 @@ class BedAllocationController extends Controller
             'date_expected_leave' => $request->date_expected_leave,
 
             'actual_leave_date' => null,
+            'date_placed' => now(),
 
         ]);
 

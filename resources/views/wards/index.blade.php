@@ -19,7 +19,36 @@ body{
 .dashboard-wrapper{
     padding:0;
 }
+/* REMOVE SIDE SPACE */
 
+.content-area{
+    width:100%;
+    padding:0;
+    margin:0;
+}
+
+/* FULL WIDTH CONTENT */
+
+.dashboard-wrapper{
+    width:100%;
+    margin:0;
+    padding:0;
+}
+
+/* MAKE PANELS FIT */
+
+.main-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    width:100%;
+}
+
+/* FULL PAGE */
+
+body{
+    overflow-x:hidden;
+}
 /* TOPBAR */
 
 .topbar{
@@ -365,6 +394,7 @@ body{
 </style>
 
 <div class="dashboard-wrapper">
+    <div class="content-area">
 
     <!-- TOPBAR -->
 
@@ -750,6 +780,8 @@ body{
         </div>
 
     </div>
+
+</div>
 
 </div>
 

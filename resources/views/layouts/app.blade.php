@@ -21,7 +21,7 @@
         }
 
         .sidebar {
-            width: 230px;
+            width: 380px;
             background: #1a3a5c;
             display: flex;
             flex-direction: column;
@@ -93,8 +93,9 @@
             color: #1a3a5c;
         }
 
-        .content {
-            padding: 1.5rem;
+       .content{
+            padding:0;
+            width:100%;
         }
 
         .btn {
@@ -288,7 +289,7 @@
         <a href="{{ route('appointments.index') }}" class="nav-item {{ request()->routeIs('appointments*') ? 'active' : '' }}">Appointments</a>
         <a href="{{ route('staff.index') }}" class="nav-item {{ request()->routeIs('staff*') ? 'active' : '' }}">Staff</a>
         <a href="{{ route('wards.index') }}" class="nav-item {{ request()->routeIs('wards*') ? 'active' : '' }}">Ward & Bed Management</a>
-s    </div>
+   </div>
         <div class="sidebar-bottom">Module 4 – Quitoriano</div>
 
 

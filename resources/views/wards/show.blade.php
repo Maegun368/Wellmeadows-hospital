@@ -281,10 +281,14 @@
 
                     <p>
 
-                        Date Placed:
-                        {{ $allocation->date_placed }}
+                    Date Placed:
 
-                    </p>
+                    {{ $allocation->date_placed
+                        ? \Carbon\Carbon::parse($allocation->date_placed)->format('F d, Y')
+                        : 'No Date'
+                    }}
+
+                </p>
 
                     <span class="badge badge-green">
 
