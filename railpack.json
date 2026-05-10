@@ -1,0 +1,9 @@
+{
+  "build": {
+    "commands": [
+      "npm ci",
+      "npm run build",
+      "composer install --optimize-autoloader --no-scripts --no-interaction"
+    ]
+  }
+}
