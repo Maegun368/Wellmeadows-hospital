@@ -13,7 +13,7 @@
 
         <a href="{{ route('patients.index') }}" style="text-decoration:none;">
             <div class="card" style="display:flex; align-items:center; gap:1rem; cursor:pointer;">
-                <span style="font-size:2rem;">🏥</span>
+                
                 <div>
                     <div style="font-weight:600; color:#1a3a5c; font-size:14px;">Patient Medical Records</div>
                     <div style="font-size:12px; color:#718096;">View & manage records</div>
@@ -23,7 +23,6 @@
 
         <a href="/wards-bed" style="text-decoration:none;">
             <div class="card" style="display:flex; align-items:center; gap:1rem; cursor:pointer;">
-                <span style="font-size:2rem;">🛏️</span>
                 <div>
                     <div style="font-weight:600; color:#1a3a5c; font-size:14px;">Wards & Bed Assignment</div>
                     <div style="font-size:12px; color:#718096;">Assign patients to wards</div>
@@ -33,7 +32,6 @@
 
         <a href="/billing" style="text-decoration:none;">
             <div class="card" style="display:flex; align-items:center; gap:1rem; cursor:pointer;">
-                <span style="font-size:2rem;">💳</span>
                 <div>
                     <div style="font-weight:600; color:#1a3a5c; font-size:14px;">Billing Details</div>
                     <div style="font-size:12px; color:#718096;">View billing information</div>
@@ -82,8 +80,8 @@
                     <td>{{ $patient->ward ?? '—' }}</td>
                     <td>{{ $patient->admission_date ?? '—' }}</td>
                     <td style="display:flex; gap:6px;">
-                        <a href="{{ route('patients.show', $patient->id) }}" class="btn">👁 View</a>
-                        <a href="{{ route('patients.edit', $patient->id) }}" class="btn">✏️ Edit</a>
+                        <a href="{{ route('patients.show', $patient->id) }}" class="btn">View</a>
+                        <a href="{{ route('patients.edit', $patient->id) }}" class="btn">Edit</a>
                         <form action="{{ route('patients.destroy', $patient->id) }}" method="POST"
                               onsubmit="return confirm('Delete this patient?')">
                             @csrf

@@ -158,7 +158,7 @@
     <div class="create-card">
 
         <div class="create-card-header">
-            <div class="card-icon">🏥</div>
+    
             <div>
                 <div class="card-title">Register New Patient</div>
                 <div class="card-sub">Fill in the details to add a patient record</div>
