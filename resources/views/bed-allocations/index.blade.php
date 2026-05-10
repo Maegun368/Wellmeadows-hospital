@@ -1,170 +1,119 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Bed Allocations
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
+@section('content')
+<div style="padding: 2rem;">
+    <div class="card">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="bg-white shadow sm:rounded-lg p-6">
-
-                @if(session('success'))
-                    <div class="mb-4 text-green-600 font-semibold">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="mb-4 text-red-600 font-semibold">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <div class="flex justify-between mb-4">
-
-                    <form method="GET" class="flex gap-2">
-
-                        <input type="text"
-                               name="search"
-                               value="{{ $search ?? '' }}"
-                               placeholder="Search patient..."
-                               class="border rounded px-3 py-2 text-sm">
-
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm">
-                            Search
-                        </button>
-
-                    </form>
-
-                    <a href="{{ route('bed-allocations.create') }}"
-                       class="bg-green-600 text-white px-4 py-2 rounded text-sm">
-
-                        + Assign Bed
-
-                    </a>
-
-                </div>
-
-                <table class="w-full border text-sm">
-
-                    <thead class="bg-gray-100">
-
-                        <tr>
-                            <th class="p-3 border">#</th>
-                            <th class="p-3 border">Patient</th>
-                            <th class="p-3 border">Ward</th>
-                            <th class="p-3 border">Bed Number</th>
-                            <th class="p-3 border">Status</th>
-                            <th class="p-3 border">Expected Leave</th>
-                            <th class="p-3 border">Actions</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        @forelse($allocations as $allocation)
-
-                        <tr class="hover:bg-gray-50">
-
-                            <td class="p-3 border">
-                                {{ $loop->iteration }}
-                            </td>
-
-                            <td class="p-3 border">
-                                @if($allocation->patient)
-                                    <span class="font-medium text-gray-900">
-                                        {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
-                                    </span>
-                                    <span class="block text-xs text-gray-500">ID {{ $allocation->patient_id }}</span>
-                                @else
-                                    ID {{ $allocation->patient_id }}
-                                @endif
-                            </td>
-
-                            <td class="p-3 border">
-                                {{ $allocation->ward->ward_name }}
-                            </td>
-
-                            <td class="p-3 border">
-                                Bed {{ $allocation->bed_number }}
-                            </td>
-
-                            <td class="p-3 border">
-
-                                @if($allocation->actual_leave_date)
-
-                                    <span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
-                                        Discharged
-                                    </span>
-
-                                @else
-
-                                    <span class="bg-green-500 text-white px-2 py-1 rounded text-xs">
-                                        Occupied
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-                            <td class="p-3 border">
-                                {{ $allocation->date_expected_leave?->format('Y-m-d') ?? 'N/A' }}
-                            </td>
-
-                            <td class="p-3 border space-x-2 whitespace-nowrap">
-
-                                <a href="{{ route('bed-allocations.edit', $allocation) }}"
-                                   class="bg-yellow-400 text-white px-3 py-1 rounded inline-block">
-
-                                    Edit
-
-                                </a>
-
-                                @if(!$allocation->actual_leave_date)
-                                    <form action="{{ route('bed-allocations.discharge', $allocation) }}" method="POST" class="inline"
-                                          onsubmit="return confirm('Discharge this patient?');">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="bg-amber-500 text-white px-3 py-1 rounded text-xs">
-                                            Discharge
-                                        </button>
-                                    </form>
-                                @endif
-
-                            </td>
-
-                        </tr>
-
-                        @empty
-
-                        <tr>
-
-                            <td colspan="7"
-                                class="text-center p-4 text-gray-500">
-
-                                No bed allocations found.
-
-                            </td>
-
-                        </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-                <div class="mt-4">
-                    {{ $allocations->links() }}
-                </div>
-
+        <!-- HIGHLIGHTED HEADER -->
+        <div style="
+            background: linear-gradient(135deg, #145DA0, #2D7DD2);
+            margin: -0px -0px 1.5rem -0px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <div>
+                <h2 style="
+                    margin: 0;
+                    color: white;
+                    font-size: 22px;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                ">🛏️ Bed Allocations</h2>
+                <p style="
+                    margin: 4px 0 0 0;
+                    color: #DBEAFE;
+                    font-size: 12px;
+                ">{{ now()->format('F d, Y | h:i A') }}</p>
             </div>
-
+            <a href="{{ route('bed-allocations.create') }}" style="
+                background: white;
+                color: #145DA0;
+                padding: 10px 18px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: 700;
+                font-size: 14px;
+                border: none;
+            ">+ Assign Bed</a>
         </div>
 
+        <!-- SEARCH -->
+        <form method="GET" style="display:flex; gap:8px; margin-bottom:1rem;">
+            <input type="text" name="search" value="{{ $search ?? '' }}"
+                   placeholder="Search patient..."
+                   style="padding:8px 12px; border-radius:8px; border:1px solid #cbd5e0; font-size:13px; width:250px;">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        @if(session('error'))
+            <div class="alert alert-error">{{ session('error') }}</div>
+        @endif
+
+        <!-- TABLE -->
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Ward</th>
+                    <th>Bed Number</th>
+                    <th>Status</th>
+                    <th>Expected Leave</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($allocations as $allocation)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>
+                        @if($allocation->patient)
+                            <span style="font-weight:500;">{{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}</span>
+                            <span style="display:block; font-size:11px; color:#718096;">ID {{ $allocation->patient_id }}</span>
+                        @else
+                            ID {{ $allocation->patient_id }}
+                        @endif
+                    </td>
+                    <td>{{ $allocation->ward->ward_name ?? 'N/A' }}</td>
+                    <td>Bed {{ $allocation->bed_number }}</td>
+                    <td>
+                        @if($allocation->actual_leave_date)
+                            <span class="badge badge-amber">Discharged</span>
+                        @else
+                            <span class="badge badge-green">Occupied</span>
+                        @endif
+                    </td>
+                    <td>{{ $allocation->date_expected_leave?->format('Y-m-d') ?? 'N/A' }}</td>
+                    <td style="white-space:nowrap; display:flex; gap:6px;">
+                        <a href="{{ route('bed-allocations.edit', $allocation) }}"
+                           class="btn"
+                           style="font-size:12px; padding:5px 12px;">Edit</a>
+                        @if(!$allocation->actual_leave_date)
+                            <form action="{{ route('bed-allocations.discharge', $allocation) }}" method="POST"
+                                  onsubmit="return confirm('Discharge this patient?');">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-danger"
+                                        style="font-size:12px; padding:5px 12px;">Discharge</button>
+                            </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" style="text-align:center; color:#718096; padding:2rem;">
+                        No bed allocations found.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div style="margin-top:1rem;">{{ $allocations->links() }}</div>
+
     </div>
-</x-app-layout>
+</div>
+@endsection
