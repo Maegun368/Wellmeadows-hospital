@@ -697,6 +697,7 @@ body{
                         <tr>
 
                             <th>Patient ID</th>
+                            <th>Patient Name</th>
                             <th>Ward</th>
                             <th>Bed</th>
                             <th>Status</th>
@@ -719,13 +720,13 @@ body{
 
                                 <td>
 
-                                    {{ $allocation->ward->ward_name }}
+                                    {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
 
                                 </td>
 
                                 <td>
 
-                                    Bed {{ $allocation->bed_number }}
+                                    {{ $allocation->ward->ward_name  }}
 
                                 </td>
 

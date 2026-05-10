@@ -8,6 +8,11 @@ class BedAllocation extends Model
 {
     protected $primaryKey = 'allocation_id';
 
+    public function getRouteKeyName(): string
+    {
+        return 'allocation_id';
+    }
+
     protected $fillable = [
         'ward_id',
         'patient_id',
@@ -35,6 +40,11 @@ class BedAllocation extends Model
     public function ward()
     {
         return $this->belongsTo(Ward::class, 'ward_id');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id');
     }
 
     /*

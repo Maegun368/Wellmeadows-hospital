@@ -325,7 +325,7 @@
                 <a href="{{ route('patients.create') }}" class="qa-btn">
                      Register patient
                 </a>
-                <a href="{{ route('patients.index') }}" class="qa-btn">
+                <a href="{{ route('patients.list') }}" class="qa-btn">
                      Transfer patient
                 </a>
                 <a href="{{ route('appointments.create') }}" class="qa-btn">

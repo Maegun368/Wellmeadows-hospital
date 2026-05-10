@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Doctor extends Model
 {
     protected $fillable = [
+        'clinic_no',
+        'full_name',
+        'address',
         'first_name',
         'last_name',
         'specialization',
@@ -14,8 +17,8 @@ class Doctor extends Model
         'email',
     ];
 
-    public function outPatients()
+    public function patients()
     {
-        return $this->hasMany(OutPatient::class, 'doctor_id');
+        return $this->hasMany(Patient::class, 'doctor_id');
     }
 }

@@ -267,10 +267,23 @@
 
                     <h4>
 
-                        Patient ID:
-                        {{ $allocation->patient_id }}
+                        @if($allocation->patient)
+                            {{ $allocation->patient->first_name }}
+                            {{ $allocation->patient->last_name }}
+                            <span style="font-size:14px;font-weight:500;color:#64748B;">
+                                (ID {{ $allocation->patient_id }})
+                            </span>
+                        @else
+                            Patient ID: {{ $allocation->patient_id }}
+                        @endif
 
                     </h4>
+
+                    @if($allocation->patient?->phone)
+                        <p>
+                            Phone: {{ $allocation->patient->phone }}
+                        </p>
+                    @endif
 
                     <p>
 
@@ -281,14 +294,14 @@
 
                     <p>
 
-                    Date Placed:
+                        Date Placed:
 
-                    {{ $allocation->date_placed
-                        ? \Carbon\Carbon::parse($allocation->date_placed)->format('F d, Y')
-                        : 'No Date'
-                    }}
+                        {{ $allocation->date_placed
+                            ? \Carbon\Carbon::parse($allocation->date_placed)->format('F d, Y')
+                            : 'No Date'
+                        }}
 
-                </p>
+                    </p>
 
                     <span class="badge badge-green">
 
@@ -328,6 +341,13 @@
 
                         Bed {{ $bedNumber }}
 
+                        @if($allocation?->patient)
+                            <div style="font-size:11px;margin-top:8px;font-weight:600;line-height:1.2;">
+                                {{ $allocation->patient->first_name }}
+                                {{ \Illuminate\Support\Str::substr($allocation->patient->last_name, 0, 1) }}.
+                            </div>
+                        @endif
+
                     </div>
 
                 @endforeach
@@ -353,6 +373,46 @@
         </div>
 
     </div>
+
+    @if($waitingList->isNotEmpty())
+
+        <div class="panel" style="margin-top:25px;">
+
+            <div class="panel-title">
+
+                Waiting list
+
+            </div>
+
+            @foreach($waitingList as $allocation)
+
+                <div class="patient-card">
+
+                    <h4>
+                        @if($allocation->patient)
+                            {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
+                            <span style="font-size:14px;font-weight:500;color:#64748B;">
+                                (ID {{ $allocation->patient_id }})
+                            </span>
+                        @else
+                            Patient ID: {{ $allocation->patient_id }}
+                        @endif
+                    </h4>
+
+                    <p>
+                        Waiting since:
+                        {{ $allocation->date_placed_waiting
+                            ? $allocation->date_placed_waiting->format('F d, Y')
+                            : '—' }}
+                    </p>
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+    @endif
 
     <!-- BACK -->
 

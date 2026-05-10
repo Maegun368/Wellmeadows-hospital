@@ -1,176 +1,108 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Edit bed allocation
+        </h2>
+    </x-slot>
 
-@section('title', 'Create Ward')
+    <div class="py-12">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow sm:rounded-lg p-6">
 
-@section('content')
+                @if(session('error'))
+                    <div class="mb-4 text-red-600 font-semibold text-sm">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-<style>
+                @if ($errors->any())
+                    <div class="mb-4 text-red-600 text-sm">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-    .form-container{
-        max-width:700px;
-        margin:auto;
-    }
+                <p class="text-sm text-gray-600 mb-4">
+                    Patient:
+                    <strong>
+                        @if($bedAllocation->patient)
+                            {{ $bedAllocation->patient->first_name }} {{ $bedAllocation->patient->last_name }}
+                            (ID {{ $bedAllocation->patient_id }})
+                        @else
+                            ID {{ $bedAllocation->patient_id }}
+                        @endif
+                    </strong>
+                </p>
 
-    .panel{
-        background:white;
-        border-radius:16px;
-        padding:24px;
-        border:1px solid #dbe7f3;
-        box-shadow:0 2px 8px rgba(0,0,0,0.05);
-    }
+                <form method="POST" action="{{ route('bed-allocations.update', $bedAllocation) }}" class="space-y-4">
+                    @csrf
+                    @method('PUT')
 
-    .panel-title{
-        font-size:24px;
-        font-weight:700;
-        color:#1e3a5f;
-        margin-bottom:20px;
-    }
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ward</label>
+                        <select name="ward_id" required
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            @foreach($wards as $ward)
+                                <option value="{{ $ward->ward_id }}" @selected(old('ward_id', $bedAllocation->ward_id) == $ward->ward_id)>
+                                    {{ $ward->ward_name }} — {{ $ward->location }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    .form-group{
-        margin-bottom:18px;
-    }
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bed number</label>
+                        <input type="number" name="bed_number" min="1"
+                               value="{{ old('bed_number', $bedAllocation->bed_number) }}" required
+                               class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
 
-    .form-group label{
-        display:block;
-        margin-bottom:6px;
-        font-size:14px;
-        font-weight:600;
-        color:#1e3a5f;
-    }
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Expected leave (optional)</label>
+                        <input type="date" name="date_expected_leave"
+                               value="{{ old('date_expected_leave', optional($bedAllocation->date_expected_leave)->format('Y-m-d')) }}"
+                               class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
 
-    .form-group input{
-        width:100%;
-        padding:12px;
-        border-radius:10px;
-        border:1px solid #cbd5e0;
-        font-size:14px;
-    }
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700">
+                            Update
+                        </button>
+                        <a href="{{ route('bed-allocations.index') }}"
+                           class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-300 inline-flex items-center">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
 
-    .btn-main{
-        background:#1e3a5f;
-        color:white;
-        padding:10px 18px;
-        border-radius:10px;
-        text-decoration:none;
-        border:none;
-        cursor:pointer;
-        font-weight:600;
-    }
+                @if(!$bedAllocation->actual_leave_date)
+                    <form method="POST" action="{{ route('bed-allocations.discharge', $bedAllocation) }}"
+                          class="mt-8 pt-6 border-t border-gray-200"
+                          onsubmit="return confirm('Discharge this patient from this bed?');">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="bg-amber-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-amber-600">
+                            Discharge patient
+                        </button>
+                    </form>
+                @endif
 
-    .btn-cancel{
-        background:#e5e7eb;
-        color:#374151;
-        padding:10px 18px;
-        border-radius:10px;
-        text-decoration:none;
-        font-weight:600;
-    }
-
-    .btn-group{
-        display:flex;
-        gap:10px;
-        margin-top:20px;
-    }
-
-</style>
-
-<div class="form-container">
-
-    <div class="panel">
-
-        <div class="panel-title">
-            Create New Ward
+                @if($bedAllocation->actual_leave_date)
+                    <form method="POST" action="{{ route('bed-allocations.destroy', $bedAllocation) }}"
+                          class="mt-6"
+                          onsubmit="return confirm('Delete this allocation record?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 text-sm font-semibold hover:underline">
+                            Delete record
+                        </button>
+                    </form>
+                @endif
+            </div>
         </div>
-
-        @if ($errors->any())
-
-            <div style="background:#fee2e2;color:#991b1b;padding:12px;border-radius:10px;margin-bottom:20px;">
-
-                <ul>
-
-                    @foreach ($errors->all() as $error)
-
-                        <li>{{ $error }}</li>
-
-                    @endforeach
-
-                </ul>
-
-            </div>
-
-        @endif
-
-        <form action="{{ route('wards.store') }}"
-              method="POST">
-
-            @csrf
-
-            <div class="form-group">
-
-                <label>Ward Name</label>
-
-                <input type="text"
-                       name="ward_name"
-                       value="{{ old('ward_name') }}"
-                       required>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Location</label>
-
-                <input type="text"
-                       name="location"
-                       value="{{ old('location') }}"
-                       required>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Total Beds</label>
-
-                <input type="number"
-                       name="total_beds"
-                       value="{{ old('total_beds') }}"
-                       required>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Telephone Extension</label>
-
-                <input type="text"
-                       name="telephone_extension"
-                       value="{{ old('telephone_extension') }}"
-                       required>
-
-            </div>
-
-            <div class="btn-group">
-
-                <button type="submit"
-                        class="btn-main">
-
-                    Save Ward
-
-                </button>
-
-                <a href="{{ route('wards.index') }}"
-                   class="btn-cancel">
-
-                    Cancel
-
-                </a>
-
-            </div>
-
-        </form>
-
     </div>
-
-</div>
-
-@endsection
+</x-app-layout>

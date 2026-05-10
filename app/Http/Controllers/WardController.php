@@ -44,9 +44,10 @@ class WardController extends Controller
 
         $currentPatients = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->with('patient')
             ->orderBy('bed_number')
             ->get();
-
+    
         /*
         |--------------------------------------------------------------------------
         | Bed Map
@@ -72,9 +73,9 @@ class WardController extends Controller
         $waitingList = $ward->bedAllocations()
             ->whereNull('date_placed')
             ->whereNotNull('date_placed_waiting')
+            ->with('patient')
             ->orderBy('date_placed_waiting')
             ->get();
-
         /*
         |--------------------------------------------------------------------------
         | Staff

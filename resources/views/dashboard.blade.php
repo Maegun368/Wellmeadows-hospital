@@ -201,7 +201,7 @@
         </div>
         <div class="pm-topbar-actions">
             <a href="{{ route('patients.create') }}" class="pm-btn pm-btn-white">+ Register</a>
-            <a href="{{ route('patients.index') }}"  class="pm-btn pm-btn-blue">View All</a>
+            <a href="{{ route('patients.list') }}"  class="pm-btn pm-btn-blue">View All</a>
         </div>
     </div>
 
@@ -274,7 +274,7 @@
                 </div>
                 <div class="pm-feat-foot">
                     <span class="pm-feat-count">{{ $totalPatients }} total records</span>
-                    <a href="{{ route('patients.index') }}" class="pm-see-more">See More</a>
+                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
                 </div>
             </div>
 
@@ -346,7 +346,7 @@
                 </div>
                 <div class="pm-feat-foot">
                     <span class="pm-feat-count">All patients</span>
-                    <a href="{{ route('patients.index') }}" class="pm-see-more">See More</a>
+                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
                 </div>
             </div>
 
@@ -388,7 +388,7 @@
                 </div>
                 <div class="pm-feat-foot">
                     <span class="pm-feat-count">Contact records</span>
-                    <a href="{{ route('patients.index') }}" class="pm-see-more">See More</a>
+                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
                 </div>
             </div>
 
@@ -449,7 +449,7 @@
                 </div>
                 <div class="pm-feat-foot">
                     <span class="pm-feat-count">Patient breakdown</span>
-                    <a href="{{ route('patients.index') }}" class="pm-see-more">See More</a>
+                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
                 </div>
             </div>
 

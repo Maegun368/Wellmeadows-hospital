@@ -17,6 +17,12 @@
                     </div>
                 @endif
 
+                @if(session('error'))
+                    <div class="mb-4 text-red-600 font-semibold">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="flex justify-between mb-4">
 
                     <form method="GET" class="flex gap-2">
@@ -48,7 +54,7 @@
 
                         <tr>
                             <th class="p-3 border">#</th>
-                            <th class="p-3 border">Patient ID</th>
+                            <th class="p-3 border">Patient</th>
                             <th class="p-3 border">Ward</th>
                             <th class="p-3 border">Bed Number</th>
                             <th class="p-3 border">Status</th>
@@ -69,7 +75,14 @@
                             </td>
 
                             <td class="p-3 border">
-                                {{ $allocation->patient_id }}
+                                @if($allocation->patient)
+                                    <span class="font-medium text-gray-900">
+                                        {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
+                                    </span>
+                                    <span class="block text-xs text-gray-500">ID {{ $allocation->patient_id }}</span>
+                                @else
+                                    ID {{ $allocation->patient_id }}
+                                @endif
                             </td>
 
                             <td class="p-3 border">
@@ -99,17 +112,28 @@
                             </td>
 
                             <td class="p-3 border">
-                                {{ $allocation->date_expected_leave ?? 'N/A' }}
+                                {{ $allocation->date_expected_leave?->format('Y-m-d') ?? 'N/A' }}
                             </td>
 
-                            <td class="p-3 border space-x-2">
+                            <td class="p-3 border space-x-2 whitespace-nowrap">
 
-                                <a href="{{ route('bed-allocations.edit', $allocation->allocation_id) }}"
-                                   class="bg-yellow-400 text-white px-3 py-1 rounded">
+                                <a href="{{ route('bed-allocations.edit', $allocation) }}"
+                                   class="bg-yellow-400 text-white px-3 py-1 rounded inline-block">
 
                                     Edit
 
                                 </a>
+
+                                @if(!$allocation->actual_leave_date)
+                                    <form action="{{ route('bed-allocations.discharge', $allocation) }}" method="POST" class="inline"
+                                          onsubmit="return confirm('Discharge this patient?');">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="bg-amber-500 text-white px-3 py-1 rounded text-xs">
+                                            Discharge
+                                        </button>
+                                    </form>
+                                @endif
 
                             </td>
 

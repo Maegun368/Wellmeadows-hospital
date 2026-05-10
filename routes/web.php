@@ -36,7 +36,8 @@ Route::middleware(['auth'])->group(function () {
     // Pharmaceuticals
     Route::resource('pharmaceuticals', PharmaceuticalController::class);
 
-    // Patients
+    // Patients (list URL must be registered before {patient} resource routes)
+    Route::get('patients/list', [PatientController::class, 'list'])->name('patients.list');
     Route::resource('patients', PatientController::class);
 
     // Staff
@@ -47,7 +48,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Bed Allocations
     Route::resource('bed-allocations', BedAllocationController::class);
-    Route::post('/bed-allocations', [BedAllocationController::class, 'store'])->name('bed-allocations.store');
     Route::patch('/bed-allocations/{bedAllocation}/discharge', [BedAllocationController::class, 'discharge'])->name('bed-allocations.discharge');
 
     // Ward Requisitions
@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/register-patient', 'patients.register');
     Route::view('/update-patient', 'patients.update');
     Route::view('/medical-records', 'patients.medical-records');
-    Route::view('/wards-bed', 'patients.wards-bed');
+    Route::view('/wards-bed', 'patients.wards-bed')->name('patients.wards-bed');
     Route::view('/billing', 'patients.billing');
     Route::view('/discharge', 'patients.discharge');
     

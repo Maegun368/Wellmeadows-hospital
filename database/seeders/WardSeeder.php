@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB; // ← add this line
+use Illuminate\Support\Facades\DB;
 
 class WardSeeder extends Seeder
 {
@@ -11,11 +11,14 @@ class WardSeeder extends Seeder
     {
         $wards = ['Ward A', 'Ward B', 'Ward C', 'ICU', 'Emergency'];
 
-        foreach ($wards as $ward) {
+        foreach ($wards as $i => $ward) {
             DB::table('wards')->insert([
-                'ward_name'  => $ward,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'ward_name'             => $ward,
+                'location'              => 'Main campus',
+                'total_beds'            => 20,
+                'telephone_extension'   => (string) (200 + $i),
+                'created_at'            => now(),
+                'updated_at'            => now(),
             ]);
         }
     }

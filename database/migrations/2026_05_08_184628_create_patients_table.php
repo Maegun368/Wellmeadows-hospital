@@ -8,31 +8,25 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * ERD PATIENT: patient_id, names, DOB, sex, marital_status, address, phone, date_registered.
+     * doctor_id is added after doctors table exists (see align_database_with_erd migration).
      */
-   public function up(): void
-{
-    Schema::create('patients', function (Blueprint $table) {
-        $table->id();
-        $table->string('first_name');
-        $table->string('last_name');
-        $table->date('date_of_birth')->nullable();           // ← store DOB, compute age on the fly
-        $table->string('sex')->nullable();        // ← renamed from gender
-        $table->string('marital_status')->nullable();
-        $table->string('phone')->nullable();      // ← renamed from contact_number
-        $table->string('address')->nullable();
-        $table->string('blood_type')->nullable();
-        $table->string('ward')->nullable();
-        $table->string('bed_number')->constrained('bed_allocation','bed_number');
-        $table->date('admission_date')->nullable();
-        $table->date('date_of_registration')->nullable();
-        $table->string('doctor')->nullable();
-        $table->string('kin_name')->nullable();
-        $table->string('kin_relationship')->nullable();
-        $table->string('kin_phone')->nullable();
-        $table->text('medical_record')->nullable();
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('patients', function (Blueprint $table) {
+            $table->id();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->date('date_of_birth')->nullable();
+            $table->string('sex');
+            $table->string('marital_status')->nullable();
+            $table->string('phone');
+            $table->string('address');
+            $table->date('date_registered')->nullable();
+            $table->timestamps();
+        });
+    }
+
     /**
      * Reverse the migrations.
      */

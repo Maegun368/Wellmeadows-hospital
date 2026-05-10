@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // ── Stat Cards ────────────────────────────────────────────────
-
         $totalPatients = DB::table('patients')->count();
 
-        // Admitted = has a ward assigned and an admission date
-        $admitted = DB::table('patients')
-            ->whereNotNull('admission_date')
-            ->whereNotNull('ward')
-            ->count();
+        $admitted = DB::table('bed_allocations')
+            ->whereNotNull('date_placed')
+            ->whereNull('actual_leave_date')
+            ->distinct('patient_id')
+            ->count('patient_id');
 
-        // Outpatients = distinct patients in out_patients table
         $outpatients = DB::table('out_patients')
             ->distinct('patient_id')
             ->count('patient_id');
 
-        // Beds available = total beds across all wards minus active bed allocations
         $totalBeds = DB::table('wards')->sum('total_beds');
 
         $occupiedBeds = DB::table('bed_allocations')
@@ -35,38 +30,36 @@ class DashboardController extends Controller
 
         $bedsAvailable = max(0, $totalBeds - $occupiedBeds);
 
-        // Deltas
         $thisWeekPatients = DB::table('patients')
             ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])
             ->count();
 
-        $todayAdmitted = DB::table('patients')
-            ->whereDate('admission_date', Carbon::today())
+        $todayAdmitted = DB::table('bed_allocations')
+            ->whereDate('date_placed', Carbon::today())
+            ->whereNull('actual_leave_date')
             ->count();
 
         $todayOutpatients = DB::table('out_patients')
-            ->whereDate('visit_date', Carbon::today())
+            ->whereDate('appointment_date', Carbon::today())
             ->count();
 
         $stats = [
             'total_patients'    => $totalPatients,
-            'total_delta'       => '+' . $thisWeekPatients . ' this week',
+            'total_delta'       => '+'.$thisWeekPatients.' this week',
             'admitted'          => $admitted,
-            'admitted_delta'    => ($todayAdmitted >= 0 ? '+' : '') . $todayAdmitted . ' today',
+            'admitted_delta'    => ($todayAdmitted >= 0 ? '+' : '').$todayAdmitted.' today',
             'outpatients'       => $outpatients,
-            'outpatients_delta' => ($todayOutpatients >= 0 ? '+' : '') . $todayOutpatients . ' today',
+            'outpatients_delta' => ($todayOutpatients >= 0 ? '+' : '').$todayOutpatients.' today',
             'beds_available'    => $bedsAvailable,
             'beds_status'       => $bedsAvailable <= 15 ? 'Low capacity' : 'Available',
         ];
-
-        // ── 7-Day Admissions Chart ────────────────────────────────────
 
         $admissionsChart = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
 
-            $admittedDay = DB::table('patients')
-                ->whereDate('admission_date', $date)
+            $admittedDay = DB::table('bed_allocations')
+                ->whereDate('date_placed', $date)
                 ->count();
 
             $dischargedDay = DB::table('bed_allocations')
@@ -79,8 +72,6 @@ class DashboardController extends Controller
                 'discharged' => $dischargedDay,
             ];
         }
-
-        // ── Ward Occupancy ────────────────────────────────────────────
 
         $wards = DB::table('wards')->get()->map(function ($ward) {
             $occupied = DB::table('bed_allocations')
@@ -101,15 +92,13 @@ class DashboardController extends Controller
             ];
         })->toArray();
 
-        // ── Today's Appointments ──────────────────────────────────────
-
         $appointments = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
             ->join('doctors', 'appointments.consultant_id', '=', 'doctors.id')
             ->whereDate('appointments.appointment_date', Carbon::today())
             ->select(
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) as patient"),
-                DB::raw("CONCAT('Dr. ', doctors.last_name) as doctor"),
+                DB::raw("COALESCE(NULLIF(doctors.full_name, ''), CONCAT(doctors.first_name, ' ', doctors.last_name)) as doctor"),
                 DB::raw("CASE
                     WHEN appointments.appointment_time < CURRENT_TIME THEN 'Done'
                     ELSE 'Waiting'
@@ -118,8 +107,6 @@ class DashboardController extends Controller
             ->limit(5)
             ->get()
             ->toArray();
-
-        // ── Patient Type Breakdown (Donut) ────────────────────────────
 
         $discharged = DB::table('bed_allocations')
             ->whereNotNull('actual_leave_date')

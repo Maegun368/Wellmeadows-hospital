@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class OutPatient extends Model
 {
+    protected $table = 'out_patients';
+
     protected $fillable = [
         'patient_id',
-        'visit_date',
-        'reason',
-        'doctor_id',
+        'appointment_date',
+        'appointment_time',
+    ];
+
+    protected $casts = [
+        'appointment_date' => 'date',
     ];
 
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patient_id');
-    }
-
-    public function doctor()
-    {
-        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 }
