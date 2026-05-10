@@ -119,7 +119,7 @@ class DashboardController extends Controller
             'discharged' => $discharged,
         ];
 
-        return view('dashboard.index', compact(
+        return view('dashboard', compact(
             'stats',
             'admissionsChart',
             'wards',
