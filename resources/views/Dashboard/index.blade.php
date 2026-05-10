@@ -167,7 +167,7 @@
     </div>
     <div class="dash-header-actions">
         <a href="{{ route('patients.create') }}" class="btn btn-primary">+ Add Patient</a>
-        <a href="{{ route('appointments.create') }}" class="btn">📅 New Appointment</a>
+        <a href="{{ route('appointments.create') }}" class="btn">New Appointment</a>
     </div>
 </div>
 
@@ -176,22 +176,22 @@
     {{-- ── Stat Cards ── --}}
     <div class="stat-row">
         <div class="stat-card">
-            <div class="stat-label">Total patients <span class="stat-icon">🧑‍⚕️</span></div>
+            <div class="stat-label">Total patients</div>
             <div class="stat-value">{{ $stats['total_patients'] }}</div>
             <div class="stat-delta delta-up">↑ {{ $stats['total_delta'] }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Admitted <span class="stat-icon">🏥</span></div>
+            <div class="stat-label">Admitted </div>
             <div class="stat-value">{{ $stats['admitted'] }}</div>
             <div class="stat-delta delta-up">↑ {{ $stats['admitted_delta'] }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Outpatients <span class="stat-icon">🚶</span></div>
+            <div class="stat-label">Outpatients </div>
             <div class="stat-value">{{ $stats['outpatients'] }}</div>
             <div class="stat-delta delta-down">↓ {{ $stats['outpatients_delta'] }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Beds available <span class="stat-icon">⚠️</span></div>
+            <div class="stat-label">Beds available</div>
             <div class="stat-value">{{ $stats['beds_available'] }}</div>
             <div class="stat-delta delta-warn">{{ $stats['beds_status'] }}</div>
         </div>
@@ -323,16 +323,16 @@
             </div>
             <div class="quick-actions">
                 <a href="{{ route('patients.create') }}" class="qa-btn">
-                    <span class="qa-icon">🧑‍⚕️</span> Register patient
+                     Register patient
                 </a>
                 <a href="{{ route('patients.index') }}" class="qa-btn">
-                    <span class="qa-icon">🔄</span> Transfer patient
+                     Transfer patient
                 </a>
                 <a href="{{ route('appointments.create') }}" class="qa-btn">
-                    <span class="qa-icon">📅</span> Schedule appointment
+                     Schedule appointment
                 </a>
                 <a href="{{ route('wards.index') }}" class="qa-btn">
-                    <span class="qa-icon">🛏️</span> Manage beds
+                     Manage beds
                 </a>
             </div>
         </div>
