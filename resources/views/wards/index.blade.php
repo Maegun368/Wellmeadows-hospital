@@ -14,12 +14,9 @@ body{
     padding:0;
 }
 
-/* DASHBOARD */
-
 .dashboard-wrapper{
     padding:0;
 }
-/* REMOVE SIDE SPACE */
 
 .content-area{
     width:100%;
@@ -27,15 +24,11 @@ body{
     margin:0;
 }
 
-/* FULL WIDTH CONTENT */
-
 .dashboard-wrapper{
     width:100%;
     margin:0;
     padding:0;
 }
-
-/* MAKE PANELS FIT */
 
 .main-grid{
     display:grid;
@@ -44,38 +37,26 @@ body{
     width:100%;
 }
 
-/* FULL PAGE */
-
 body{
     overflow-x:hidden;
 }
-/* TOPBAR */
 
 .topbar{
-    background:#145DA0;
+    background:#1a3451;
     padding:18px 30px;
-
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     width:100%;
-
     margin:0;
-
     border-radius:0;
-
     box-shadow:none;
 }
-
-/* LEFT */
 
 .topbar-left{
     display:flex;
     flex-direction:column;
 }
-
-/* TITLE */
 
 .topbar h1{
     font-size:22px;
@@ -84,16 +65,12 @@ body{
     margin:0;
 }
 
-/* DATE */
-
 .topbar p{
     margin-top:4px;
     color:#DBEAFE;
     font-size:12px;
     font-weight:500;
 }
-
-/* SEARCH */
 
 .search-box{
     width:250px;
@@ -104,7 +81,6 @@ body{
     outline:none;
     background:white;
 }
-/* ADD BUTTON */
 
 .add-btn{
     display:inline-block;
@@ -117,8 +93,6 @@ body{
     margin-bottom:20px;
     border:1px solid #D1D5DB;
 }
-
-/* STATS */
 
 .stats-grid{
     display:grid;
@@ -144,16 +118,12 @@ body{
     font-weight:700;
 }
 
-/* MAIN GRID */
-
 .main-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:25px;
     margin-bottom:25px;
 }
-
-/* PANELS */
 
 .panel{
     background:linear-gradient(135deg,#1F6DB7,#2D7DD2);
@@ -172,8 +142,6 @@ body{
     margin-bottom:20px;
 }
 
-/* BUTTONS */
-
 .action-buttons{
     display:flex;
     gap:10px;
@@ -189,8 +157,6 @@ body{
     font-weight:700;
 }
 
-/* SELECTOR */
-
 .selector{
     width:100%;
     padding:14px;
@@ -199,8 +165,6 @@ body{
     margin-bottom:18px;
     font-weight:700;
 }
-
-/* FORM */
 
 .ward-form{
     display:grid;
@@ -216,8 +180,6 @@ body{
     background:white;
 }
 
-/* SAVE */
-
 .save-btn{
     width:100%;
     margin-top:18px;
@@ -228,8 +190,6 @@ body{
     background:#DBEAFE;
     cursor:pointer;
 }
-
-/* TABS */
 
 .tabs{
     display:flex;
@@ -252,8 +212,6 @@ body{
     background:#DBEAFE;
     color:#1E40AF;
 }
-
-/* BEDS */
 
 .bed-grid{
     display:grid;
@@ -288,8 +246,6 @@ body{
     text-align:center;
     font-weight:700;
 }
-
-/* ASSIGN */
 
 .assign-panel{
     background:linear-gradient(135deg,#1F6DB7,#2D7DD2);
@@ -337,8 +293,6 @@ body{
     font-weight:700;
     cursor:pointer;
 }
-
-/* OVERVIEW */
 
 .overview-title{
     margin-top:25px;
@@ -396,445 +350,251 @@ body{
 <div class="dashboard-wrapper">
     <div class="content-area">
 
-    <!-- TOPBAR -->
-
-    <div class="topbar">
-
-        <div class="topbar-left">
-
-            <h1>
-                Ward & Bed Management
-            </h1>
-
-            <p>
-                {{ now()->format('F d, Y | h:i A') }}
-            </p>
-
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>Ward & Bed Management</h1>
+                <p>{{ now()->format('F d, Y | h:i A') }}</p>
+            </div>
+            <input type="text" placeholder="Search..." class="search-box">
         </div>
 
-        <input type="text"
-               placeholder="Search..."
-               class="search-box">
+        <!-- ADD BUTTON -->
+        <a href="{{ route('wards.create') }}" class="add-btn">+ Add Ward</a>
 
-    </div>
+        <!-- STATS -->
+        <div class="stats-grid">
 
-    <!-- ADD BUTTON -->
-
-    <a href="{{ route('wards.create') }}"
-       class="add-btn">
-
-       + Add Ward
-
-    </a>
-
-    <!-- STATS -->
-
-    <div class="stats-grid">
-
-        <div class="stat-card">
-            <h3>TOTAL WARD</h3>
-            <p>{{ $wards->count() }}</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>TOTAL BEDS</h3>
-            <p>{{ $wards->sum('total_beds') }}</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>OCCUPIED BEDS</h3>
-                    <p>
-            {{
-                \App\Models\BedAllocation::whereNull('actual_leave_date')->count()
-            }}
-        </p>
-        </div>
-
-        <div class="stat-card">
-            <h3>VACANT ROOM</h3>
-                    <p>
-            {{
-                $wards->sum('total_beds')
-                -
-                \App\Models\BedAllocation::whereNull('actual_leave_date')->count()
-            }}
-        </p>
-        </div>
-
-    </div>
-
-    <!-- MAIN GRID -->
-
-    <div class="main-grid">
-
-        <!-- LEFT PANEL -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-
-                MAINTAIN WARD INFORMATION
-
+            <div class="stat-card">
+                <h3>TOTAL WARD</h3>
+                <p>{{ $wards->count() }}</p>
             </div>
 
-            <select id="wardSelector"
-                    onchange="changeWard()"
-                    class="selector">
-
-                @foreach($wards as $ward)
-
-                    <option
-                        value="{{ $ward->ward_id }}"
-                        data-name="{{ $ward->ward_name }}"
-                        data-location="{{ $ward->location }}"
-                        data-capacity="{{ $ward->total_beds }}"
-                        data-available="{{ $ward->available_beds }}"
-                        data-view="{{ route('wards.show',$ward->ward_id) }}"
-                        data-edit="{{ route('wards.edit',$ward->ward_id) }}">
-
-                        {{ $ward->ward_name }}
-
-                    </option>
-
-                @endforeach
-
-            </select>
-
-            <div class="action-buttons">
-
-                <a href="#"
-                   id="viewBtn">
-
-                    VIEW
-
-                </a>
-
-                <a href="#"
-                   id="editBtn">
-
-                    EDIT
-
-                </a>
-
+            <div class="stat-card">
+                <h3>TOTAL BEDS</h3>
+                <p>{{ $wards->sum('total_beds') }}</p>
             </div>
 
-            <div class="ward-form">
-
-                <select>
-                    <option id="wardName"></option>
-                </select>
-
-                <select>
-                    <option id="wardLocation"></option>
-                </select>
-
-                <select>
-                    <option id="wardCapacity"></option>
-                </select>
-
-                <select>
-                    <option id="wardAvailable"></option>
-                </select>
-
+            <div class="stat-card">
+                <h3>OCCUPIED BEDS</h3>
+                <p>{{ \App\Models\BedAllocation::whereNull('actual_leave_date')->count() }}</p>
             </div>
 
-
-        </div>
-
-        <!-- RIGHT PANEL -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-
-                TRACK OCCUPIED & VACANT BEDS
-
-            </div>
-
-            <div class="tabs">
-
-                @foreach($wards as $index => $ward)
-
-                    <button
-                        class="tab-btn {{ $index == 0 ? 'active' : '' }}"
-                        onclick="showBeds({{ $ward->ward_id }}, this)">
-
-                        {{ $ward->ward_name }}
-
-                    </button>
-
-                @endforeach
-
-            </div>
-
-            @foreach($wards as $index => $ward)
-
-    @php
-
-        $occupiedBeds =
-            \App\Models\BedAllocation::where('ward_id', $ward->ward_id)
-                ->whereNull('actual_leave_date')
-                ->pluck('bed_number')
-                ->toArray();
-
-    @endphp
-
-    <div
-        class="bed-grid ward-beds"
-        id="beds-{{ $ward->ward_id }}"
-        style="{{ $index != 0 ? 'display:none;' : '' }}">
-
-        @for($i = 1; $i <= $ward->total_beds; $i++)
-
-            <div class="bed
-                {{ in_array($i, $occupiedBeds) ? 'occupied' : 'vacant' }}">
-
-                Bed {{ $i }}
-
-            </div>
-
-        @endfor
-
-    </div>
-
-@endforeach
-            <div class="legend">
-
-                🟥 Occupied &nbsp;&nbsp;&nbsp;
-                🟩 Vacant
-
+            <div class="stat-card">
+                <h3>VACANT ROOM</h3>
+                <p>{{ $wards->sum('total_beds') - \App\Models\BedAllocation::whereNull('actual_leave_date')->count() }}</p>
             </div>
 
         </div>
 
-    </div>
+        <!-- MAIN GRID -->
+        <div class="main-grid">
 
-    <!-- ASSIGN PANEL -->
+            <!-- LEFT PANEL -->
+            <div class="panel">
 
-    <div class="assign-panel">
+                <div class="panel-title">MAINTAIN WARD INFORMATION</div>
 
-        <div class="assign-title">
-
-            ASSIGN BED TO ADMITTED PATIENT
-
-        </div>
-
-        <div class="assign-content">
-
-            <form action="{{ route('bed-allocations.store') }}"
-                  method="POST">
-
-                @csrf
-
-                <div class="assign-form">
-
-                    <input type="number"
-                           name="patient_id"
-                           placeholder="Patient ID"
-                           required>
-
-                    <select name="ward_id" required>
-
-                        <option value="">
-                            Select Ward
+                <select id="wardSelector" onchange="changeWard()" class="selector">
+                    @foreach($wards as $ward)
+                        <option
+                            value="{{ $ward->ward_id }}"
+                            data-name="{{ $ward->ward_name }}"
+                            data-location="{{ $ward->location }}"
+                            data-capacity="{{ $ward->total_beds }}"
+                            data-available="{{ $ward->available_beds }}"
+                            data-view="{{ route('wards.show', $ward->ward_id) }}"
+                            data-edit="{{ route('wards.edit', $ward->ward_id) }}">
+                            {{ $ward->ward_name }}
                         </option>
+                    @endforeach
+                </select>
 
-                        @foreach($wards as $ward)
-
-                            <option value="{{ $ward->ward_id }}">
-
-                                {{ $ward->ward_name }}
-
-                            </option>
-
-                        @endforeach
-
-                    </select>
-
-                    <input type="number"
-                           name="bed_number"
-                           placeholder="Bed Number"
-                           required>
-
-                    <input type="date"
-                           name="date_expected_leave">
-
+                <div class="action-buttons">
+                    <a href="#" id="viewBtn">VIEW</a>
+                    <a href="#" id="editBtn">EDIT</a>
                 </div>
 
-                <button type="submit"
-                        class="assign-btn">
-
-                    ASSIGN BED
-
-                </button>
-
-            </form>
-
-            <!-- RECENT -->
-
-            <div class="overview-title">
-
-                RECENT ASSIGNMENT
+                <div class="ward-form">
+                    <select><option id="wardName"></option></select>
+                    <select><option id="wardLocation"></option></select>
+                    <select><option id="wardCapacity"></option></select>
+                    <select><option id="wardAvailable"></option></select>
+                </div>
 
             </div>
 
-            <div class="overview-box">
+            <!-- RIGHT PANEL -->
+            <div class="panel">
 
-                @php
+                <div class="panel-title">TRACK OCCUPIED & VACANT BEDS</div>
 
-                    $recentAllocations =
-                        \App\Models\BedAllocation::with('ward')
+                <div class="tabs">
+                    @foreach($wards as $index => $ward)
+                        <button
+                            class="tab-btn {{ $index == 0 ? 'active' : '' }}"
+                            onclick="showBeds({{ $ward->ward_id }}, this)">
+                            {{ $ward->ward_name }}
+                        </button>
+                    @endforeach
+                </div>
+
+                @foreach($wards as $index => $ward)
+                    @php
+                        $occupiedBeds = \App\Models\BedAllocation::where('ward_id', $ward->ward_id)
+                            ->whereNull('actual_leave_date')
+                            ->pluck('bed_number')
+                            ->toArray();
+                    @endphp
+
+                    <div
+                        class="bed-grid ward-beds"
+                        id="beds-{{ $ward->ward_id }}"
+                        style="{{ $index != 0 ? 'display:none;' : '' }}">
+
+                        @for($i = 1; $i <= $ward->total_beds; $i++)
+                            <div class="bed {{ in_array($i, $occupiedBeds) ? 'occupied' : 'vacant' }}">
+                                Bed {{ $i }}
+                            </div>
+                        @endfor
+
+                    </div>
+                @endforeach
+
+                <div class="legend">
+                    🟥 Occupied &nbsp;&nbsp;&nbsp; 🟩 Vacant
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ASSIGN PANEL -->
+        <div class="assign-panel">
+
+            <div class="assign-title">ASSIGN BED TO ADMITTED PATIENT</div>
+
+            <div class="assign-content">
+
+                <form action="{{ route('bed-allocations.store') }}" method="POST">
+                    @csrf
+
+                    <div class="assign-form">
+
+                        <input type="number"
+                               name="patient_id"
+                               placeholder="Patient ID"
+                               required>
+
+                        <select name="ward_id" required>
+                            <option value="">Select Ward</option>
+                            @foreach($wards as $ward)
+                                <option value="{{ $ward->ward_id }}">{{ $ward->ward_name }}</option>
+                            @endforeach
+                        </select>
+
+                        <input type="number"
+                               name="bed_number"
+                               placeholder="Bed Number"
+                               required>
+
+                        <input type="date"
+                               name="date_expected_leave">
+
+                    </div>
+
+                    <button type="submit" class="assign-btn">ASSIGN BED</button>
+
+                </form>
+
+                <!-- RECENT ASSIGNMENT -->
+                <div class="overview-title">RECENT ASSIGNMENT</div>
+
+                <div class="overview-box">
+
+                    @php
+                        $recentAllocations = \App\Models\BedAllocation::with(['ward', 'patient'])
                             ->latest()
                             ->take(5)
                             ->get();
+                    @endphp
 
-                @endphp
+                    <table class="overview-table">
 
-                <table class="overview-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Patient ID</th>
-                            <th>Patient Name</th>
-                            <th>Ward</th>
-                            <th>Bed</th>
-                            <th>Status</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        @forelse($recentAllocations as $allocation)
-
+                        <thead>
                             <tr>
-
-                                <td>
-
-                                    {{ $allocation->patient_id }}
-
-                                </td>
-
-                                <td>
-
-                                    {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
-
-                                </td>
-
-                                <td>
-
-                                    {{ $allocation->ward->ward_name  }}
-
-                                </td>
-
-                                <td>
-
-                                    @if($allocation->actual_leave_date)
-
-                                        <span class="badge badge-red">
-
-                                            Discharged
-
-                                        </span>
-
-                                    @else
-
-                                        <span class="badge badge-green">
-
-                                            Occupied
-
-                                        </span>
-
-                                    @endif
-
-                                </td>
-
+                                <th>Patient ID</th>
+                                <th>Patient Name</th>
+                                <th>Ward</th>
+                                <th>Bed</th>
+                                <th>Status</th>
                             </tr>
+                        </thead>
 
-                        @empty
+                        <tbody>
+                            @forelse($recentAllocations as $allocation)
+                                <tr>
+                                    <td>{{ $allocation->patient_id }}</td>
+                                    <td>
+                                        {{ optional($allocation->patient)->first_name }}
+                                        {{ optional($allocation->patient)->last_name }}
+                                    </td>
+                                    <td>{{ optional($allocation->ward)->ward_name }}</td>
+                                    <td>Bed {{ $allocation->bed_number }}</td>
+                                    <td>
+                                        @if($allocation->actual_leave_date)
+                                            <span class="badge badge-red">Discharged</span>
+                                        @else
+                                            <span class="badge badge-green">Occupied</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" style="text-align:center; padding:25px;">
+                                        No recent assignments found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
 
-                            <tr>
+                    </table>
 
-                                <td colspan="4"
-                                    style="
-                                        text-align:center;
-                                        padding:25px;
-                                    ">
-
-                                    No recent assignments found.
-
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </div>
 
     </div>
-
-</div>
-
 </div>
 
 <script>
 
-function changeWard(){
+function changeWard() {
+    let selector = document.getElementById('wardSelector');
+    let selected = selector.options[selector.selectedIndex];
 
-    let selector =
-        document.getElementById('wardSelector');
-
-    let selected =
-        selector.options[selector.selectedIndex];
-
-    document.getElementById('wardName').textContent =
-        selected.dataset.name;
-
-    document.getElementById('wardLocation').textContent =
-        selected.dataset.location;
-
-    document.getElementById('wardCapacity').textContent =
-        'Capacity: ' + selected.dataset.capacity;
-
-    document.getElementById('wardAvailable').textContent =
-        'Available: ' + selected.dataset.available;
-
-    document.getElementById('viewBtn').href =
-        selected.dataset.view;
-
-    document.getElementById('editBtn').href =
-        selected.dataset.edit;
+    document.getElementById('wardName').textContent     = selected.dataset.name;
+    document.getElementById('wardLocation').textContent = selected.dataset.location;
+    document.getElementById('wardCapacity').textContent = 'Capacity: ' + selected.dataset.capacity;
+    document.getElementById('wardAvailable').textContent = 'Available: ' + selected.dataset.available;
+    document.getElementById('viewBtn').href             = selected.dataset.view;
+    document.getElementById('editBtn').href             = selected.dataset.edit;
 }
 
 changeWard();
 
-function showBeds(wardId, btn){
+function showBeds(wardId, btn) {
+    document.querySelectorAll('.ward-beds').forEach(function(el) {
+        el.style.display = 'none';
+    });
 
-    document.querySelectorAll('.ward-beds')
-        .forEach(function(el){
+    document.getElementById('beds-' + wardId).style.display = 'grid';
 
-            el.style.display = 'none';
-
-        });
-
-    document.getElementById('beds-' + wardId)
-        .style.display = 'grid';
-
-    document.querySelectorAll('.tab-btn')
-        .forEach(function(el){
-
-            el.classList.remove('active');
-
-        });
+    document.querySelectorAll('.tab-btn').forEach(function(el) {
+        el.classList.remove('active');
+    });
 
     btn.classList.add('active');
 }
