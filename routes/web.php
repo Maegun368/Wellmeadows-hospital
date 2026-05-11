@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('pharmaceuticals', PharmaceuticalController::class);
     Route::resource('patients', PatientController::class);
     Route::resource('staff', StaffController::class);
+    Route::resource('wards', WardController::class);
 
     // Patient Static Views (protected by auth)
     Route::view('/patient-list', 'patients.patient-list');   // ← keep only one

@@ -11,7 +11,7 @@ class Staff extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'first_name', 'last_name', 'position', 'address',
+        'staff_no','first_name', 'last_name', 'position', 'address',
         'phone', 'date_of_birth', 'sex', 'current_salary',
         'hours_per_week', 'contract_type', 'pay_type', 'NIN', 'salary_scale'
     ];

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Staff;
 use Illuminate\Http\Request;
 
@@ -21,64 +20,56 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        Staff::create($request->validate([
-            'first_name'     => 'required|string',
-            'last_name'      => 'required|string',
-            'position'       => 'required|string',
-            'address'        => 'required|string',
-            'phone'          => 'required|string',
-            'date_of_birth'  => 'required|date',
-            'sex'            => 'required|in:Male,Female,Other',
-            'current_salary' => 'required|numeric',
-            'hours_per_week' => 'required|integer',
-            'contract_type'  => 'required|in:Full-time,Part-time',
-            'pay_type'       => 'required|in:Monthly,Weekly',
-            'NIN'            => 'required|string|unique:staff,NIN',
-            'salary_scale'   => 'required|string',
-        ]));
 
-        return redirect()->route('staff.index')->with('success', 'Staff member added.');
+        $validated = $request->validate([
+            'first_name'     => 'required',
+            'last_name'      => 'required',
+            'position'       => 'required',
+            'address'        => 'required',
+            'phone'          => 'required',
+            'date_of_birth'  => 'required',
+            'sex'            => 'required',
+            'current_salary' => 'required',
+            'hours_per_week' => 'required',
+            'contract_type' => 'required',
+            'pay_type' => 'required',
+            'NIN' => 'required',
+            'salary_scale' => 'required',
+        ]);
+
+        Staff::create($validated);
+
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff member added.');
     }
 
-    public function show(string $id)
+    public function show($id)
     {
-        $staff = Staff::with(['qualifications', 'workExperiences', 'wards'])
-                      ->findOrFail($id);
+        $staff = Staff::findOrFail($id);
         return view('staff.show', compact('staff'));
     }
 
-    public function edit(string $id)
+    public function edit($id)
     {
         $staff = Staff::findOrFail($id);
         return view('staff.edit', compact('staff'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $staff = Staff::findOrFail($id);
 
-        $staff->update($request->validate([
-            'first_name'     => 'required|string',
-            'last_name'      => 'required|string',
-            'position'       => 'required|string',
-            'address'        => 'required|string',
-            'phone'          => 'required|string',
-            'date_of_birth'  => 'required|date',
-            'sex'            => 'required|in:Male,Female,Other',
-            'current_salary' => 'required|numeric',
-            'hours_per_week' => 'required|integer',
-            'contract_type'  => 'required|in:Full-time,Part-time',
-            'pay_type'       => 'required|in:Monthly,Weekly',
-            'NIN'            => 'required|string|unique:staff,NIN,' . $id . ',staff_id',
-            'salary_scale'   => 'required|string',
-        ]));
+        $staff->update($request->all());
 
-        return redirect()->route('staff.show', $id)->with('success', 'Staff member updated.');
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff updated.');
     }
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
         Staff::findOrFail($id)->delete();
-        return redirect()->route('staff.index')->with('success', 'Staff member deleted.');
+
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff deleted.');
     }
 }
