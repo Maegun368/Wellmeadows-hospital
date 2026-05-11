@@ -29,6 +29,7 @@ class DashboardController extends Controller
             ->count();
 
         $bedsAvailable = max(0, $totalBeds - $occupiedBeds);
+        $freeBeds      = $bedsAvailable;
 
         $thisWeekPatients = DB::table('patients')
             ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])
@@ -57,22 +58,14 @@ class DashboardController extends Controller
         $admissionsChart = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-
-            $admittedDay = DB::table('bed_allocations')
-                ->whereDate('date_placed', $date)
-                ->count();
-
-            $dischargedDay = DB::table('bed_allocations')
-                ->whereDate('actual_leave_date', $date)
-                ->count();
-
             $admissionsChart[] = [
                 'day'        => $date->format('D'),
-                'admitted'   => $admittedDay,
-                'discharged' => $dischargedDay,
+                'admitted'   => DB::table('bed_allocations')->whereDate('date_placed', $date)->count(),
+                'discharged' => DB::table('bed_allocations')->whereDate('actual_leave_date', $date)->count(),
             ];
         }
 
+        // Keep as Collection (no toArray) so blade can call ->count(), ->max()
         $wards = DB::table('wards')->get()->map(function ($ward) {
             $occupied = DB::table('bed_allocations')
                 ->where('ward_id', $ward->ward_id)
@@ -84,13 +77,17 @@ class DashboardController extends Controller
                 ? round(($occupied / $ward->total_beds) * 100)
                 : 0;
 
-            return [
-                'name'     => $ward->ward_name,
-                'occupied' => $occupied,
-                'total'    => $ward->total_beds,
-                'pct'      => $pct,
+            return (object) [
+                'name'      => $ward->ward_name,
+                'ward_name' => $ward->ward_name,
+                'count'     => $occupied,
+                'occupied'  => $occupied,
+                'total'     => $ward->total_beds,
+                'pct'       => $pct,
             ];
-        })->toArray();
+        });
+
+        $wardStats = $wards;
 
         $appointments = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
@@ -99,10 +96,7 @@ class DashboardController extends Controller
             ->select(
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) as patient"),
                 DB::raw("COALESCE(NULLIF(doctors.full_name, ''), CONCAT(doctors.first_name, ' ', doctors.last_name)) as doctor"),
-                DB::raw("CASE
-                    WHEN appointments.appointment_time < CURRENT_TIME THEN 'Done'
-                    ELSE 'Waiting'
-                END as status")
+                DB::raw("CASE WHEN appointments.appointment_time < CURRENT_TIME THEN 'Done' ELSE 'Waiting' END as status")
             )
             ->limit(5)
             ->get()
@@ -119,16 +113,53 @@ class DashboardController extends Controller
             'discharged' => $discharged,
         ];
 
+        // Collection so blade can call ->take(4)
+        $recentPatients = DB::table('patients')
+            ->leftJoin('bed_allocations', function ($join) {
+                $join->on('bed_allocations.patient_id', '=', 'patients.id')
+                     ->whereNull('bed_allocations.actual_leave_date')
+                     ->whereNotNull('bed_allocations.date_placed');
+            })
+            ->leftJoin('wards', 'bed_allocations.ward_id', '=', 'wards.ward_id')
+            ->select('patients.*', 'wards.ward_name as ward')
+            ->orderBy('patients.created_at', 'desc')
+            ->limit(5)
+            ->get(); // no toArray()
+
+        $recentKin = DB::table('next_of_kin')
+    ->leftJoin('patients', 'next_of_kin.patient_id', '=', 'patients.id')
+    ->select(
+        'next_of_kin.*',
+        'patients.first_name as patient_first_name',
+        'patients.last_name as patient_last_name',
+    )
+    ->orderBy('next_of_kin.created_at', 'desc')
+    ->limit(5)
+    ->get();
+
+     $avgStay = DB::table('bed_allocations')
+    ->whereNotNull('date_placed')
+    ->whereNotNull('actual_leave_date')
+    ->selectRaw('AVG(actual_leave_date::date - date_placed::date) as avg_days')
+    ->value('avg_days');
+$avgStay = $avgStay ? round($avgStay, 1) : null;
+
         return view('dashboard', compact(
             'stats',
             'totalPatients',
             'admitted',
             'outpatients',
             'bedsAvailable',
+            'freeBeds',
             'admissionsChart',
             'wards',
+            'wardStats',
             'appointments',
-            'patientBreakdown'
+            'discharged',
+            'patientBreakdown',
+            'recentPatients',
+            'recentKin',
+            'avgStay'
         ));
     }
 }

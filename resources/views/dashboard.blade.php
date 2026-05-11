@@ -257,7 +257,7 @@
                             <tr>
                                 <td>{{ $p->first_name }} {{ $p->last_name }}</td>
                                 <td>{{ $p->ward ?: '—' }}</td>
-                                <td>{{ $p->blood_type ?: '—' }}</td>
+                                <td>{{ $p->blood_type ?? 'N/A' }}</td>
                                 <td>
                                     @if($p->ward)
                                         <span class="sp sp-ward">Admitted</span>
@@ -331,16 +331,16 @@
                             <tr><th>ID</th><th>Name</th><th>Age</th><th>Ward</th></tr>
                         </thead>
                         <tbody>
-                            @forelse($recentPatients->take(4) as $p)
-                            <tr>
-                                <td>#{{ str_pad($p->id, 3, '0', STR_PAD_LEFT) }}</td>
-                                <td>{{ Str::limit($p->first_name.' '.$p->last_name, 16) }}</td>
-                                <td>{{ $p->age }}</td>
-                                <td>{{ $p->ward ?: '—' }}</td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="4" class="empty-msg">No patients yet</td></tr>
-                            @endforelse
+                           @forelse($recentPatients->take(4) as $p)
+<tr>
+    <td>#{{ str_pad($p->id, 3, '0', STR_PAD_LEFT) }}</td>
+    <td>{{ Str::limit($p->first_name.' '.$p->last_name, 16) }}</td>
+    <td>{{ $p->date_of_birth ? \Carbon\Carbon::parse($p->date_of_birth)->age : '—' }}</td>
+    <td>{{ $p->ward ?: '—' }}</td>
+</tr>
+@empty
+<tr><td colspan="4" class="empty-msg">No patients yet</td></tr>
+@endforelse
                         </tbody>
                     </table>
                 </div>
@@ -370,8 +370,8 @@
                                 <div class="act-text">
                                     <strong>{{ $kin->name }}</strong>
                                     ({{ $kin->relationship }})
-                                    — for {{ optional($kin->patient)->first_name ?? 'patient' }}
-                                    {{ optional($kin->patient)->last_name ?? '' }}
+                                   — for {{ $kin->patient_first_name ?? 'patient' }}
+{{ $kin->patient_last_name ?? '' }}
                                 </div>
                                 <div class="act-time">
                                     {{ $kin->phone }}
