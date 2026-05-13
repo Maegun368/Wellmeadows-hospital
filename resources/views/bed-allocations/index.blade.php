@@ -4,7 +4,7 @@
 <div style="padding: 2rem;">
     <div class="card">
 
-        <!-- HIGHLIGHTED HEADER -->
+        <!-- HEADER -->
         <div style="
             background: linear-gradient(135deg, #145DA0, #2D7DD2);
             margin: -0px -0px 1.5rem -0px;
@@ -28,7 +28,7 @@
                     font-size: 12px;
                 ">{{ now()->format('F d, Y | h:i A') }}</p>
             </div>
-            <a href="{{ route('bed-allocations.create') }}" style="
+            <a href="{{ route('wards.index') }}" style="
                 background: white;
                 color: #145DA0;
                 padding: 10px 18px;
@@ -37,7 +37,7 @@
                 font-weight: 700;
                 font-size: 14px;
                 border: none;
-            ">+ Assign Bed</a>
+            ">← Back to Ward & Bed Management</a>
         </div>
 
         <!-- SEARCH -->
@@ -52,65 +52,107 @@
             <div class="alert alert-error">{{ session('error') }}</div>
         @endif
 
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
         <!-- TABLE -->
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Patient</th>
-                    <th>Ward</th>
-                    <th>Bed Number</th>
-                    <th>Status</th>
-                    <th>Expected Leave</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($allocations as $allocation)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>
-                        @if($allocation->patient)
-                            <span style="font-weight:500;">{{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}</span>
-                            <span style="display:block; font-size:11px; color:#718096;">ID {{ $allocation->patient_id }}</span>
-                        @else
-                            ID {{ $allocation->patient_id }}
-                        @endif
-                    </td>
-                    <td>{{ $allocation->ward->ward_name ?? 'N/A' }}</td>
-                    <td>Bed {{ $allocation->bed_number }}</td>
-                    <td>
-                        @if($allocation->actual_leave_date)
-                            <span class="badge badge-amber">Discharged</span>
-                        @else
-                            <span class="badge badge-green">Occupied</span>
-                        @endif
-                    </td>
-                    <td>{{ $allocation->date_expected_leave?->format('Y-m-d') ?? 'N/A' }}</td>
-                    <td style="white-space:nowrap; display:flex; gap:6px;">
-                        <a href="{{ route('bed-allocations.edit', $allocation) }}"
-                           class="btn"
-                           style="font-size:12px; padding:5px 12px;">Edit</a>
-                        @if(!$allocation->actual_leave_date)
-                            <form action="{{ route('bed-allocations.discharge', $allocation) }}" method="POST"
-                                  onsubmit="return confirm('Discharge this patient?');">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn btn-danger"
-                                        style="font-size:12px; padding:5px 12px;">Discharge</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" style="text-align:center; color:#718096; padding:2rem;">
-                        No bed allocations found.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table style="min-width: 1000px;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Patient</th>
+                        <th>Ward</th>
+                        <th>Bed No.</th>
+                        <th>Date Placed Waiting</th>
+                        <th>Expected Duration (days)</th>
+                        <th>Date Placed</th>
+                        <th>Expected Leave</th>
+                        <th>Actual Leave Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($allocations as $allocation)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+
+                        <td>
+                            @if($allocation->patient)
+                                <span style="font-weight:500;">
+                                    {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
+                                </span>
+                                <span style="display:block; font-size:11px; color:#718096;">ID {{ $allocation->patient_id }}</span>
+                            @else
+                                ID {{ $allocation->patient_id }}
+                            @endif
+                        </td>
+
+                        <td>{{ $allocation->ward->ward_name ?? 'N/A' }}</td>
+
+                        <td>Bed {{ $allocation->bed_number }}</td>
+
+                        <td>
+                            {{ $allocation->date_placed_waiting?->format('Y-m-d') ?? '—' }}
+                        </td>
+
+                        <td style="text-align:center;">
+                            {{ $allocation->expected_duration_days ?? '—' }}
+                        </td>
+
+                        <td>
+                            {{ $allocation->date_placed?->format('Y-m-d') ?? '—' }}
+                        </td>
+
+                        <td>
+                            {{ $allocation->date_expected_leave?->format('Y-m-d') ?? '—' }}
+                        </td>
+
+                        <td>
+                            @if($allocation->actual_leave_date)
+                                <span style="color:#92400E; font-weight:600;">
+                                    {{ $allocation->actual_leave_date->format('Y-m-d') }}
+                                </span>
+                            @else
+                                <span style="color:#9CA3AF;">—</span>
+                            @endif
+                        </td>
+
+                        <td>
+                            @if($allocation->actual_leave_date)
+                                <span class="badge badge-amber">Discharged</span>
+                            @else
+                                <span class="badge badge-green">Occupied</span>
+                            @endif
+                        </td>
+
+                        <td style="white-space:nowrap; display:flex; gap:6px;">
+                            <a href="{{ route('bed-allocations.edit', $allocation) }}"
+                               class="btn"
+                               style="font-size:12px; padding:5px 12px;">Edit</a>
+                            @if(!$allocation->actual_leave_date)
+                                <form action="{{ route('bed-allocations.discharge', $allocation) }}" method="POST"
+                                      onsubmit="return confirm('Discharge this patient?');">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-danger"
+                                            style="font-size:12px; padding:5px 12px;">Discharge</button>
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="11" style="text-align:center; color:#718096; padding:2rem;">
+                            No bed allocations found.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         <div style="margin-top:1rem;">{{ $allocations->links() }}</div>
 

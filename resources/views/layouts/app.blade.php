@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: 'Times New Roman', sans-serif;
+            font-family: 'Sergio', sans-serif;
             background: #f0f4f8;
             display: flex;
             min-height: 100vh;

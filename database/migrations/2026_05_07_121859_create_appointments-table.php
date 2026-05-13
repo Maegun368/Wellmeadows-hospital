@@ -6,21 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  public function up(): void
-{
-    Schema::create('appointments', function (Blueprint $table) {
-        $table->id('appointment_id');
-        $table->unsignedBigInteger('patient_id');
-        $table->unsignedBigInteger('consultant_id');
-        $table->date('appointment_date');
-        $table->time('appointment_time');
-        $table->string('examination_room');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::dropIfExists('appointments'); // ADD THIS LINE
+        
+        Schema::create('appointments', function (Blueprint $table) {
+            $table->id('appointment_id');
+            $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('consultant_id');
+            $table->date('appointment_date');
+            $table->time('appointment_time');
+            $table->string('examination_room');
+            $table->timestamps();
+        });
+    }
 
-public function down(): void
-{
-    Schema::dropIfExists('appointments');
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('appointments');
+    }
 };
