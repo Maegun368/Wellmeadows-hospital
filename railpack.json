@@ -1,21 +1,8 @@
 {
   "build": {
-    "commands": [
-      "npm ci",
-      "npm run build",
-      "composer install --no-dev --optimize-autoloader --no-scripts --no-interaction"
-    ]
+    "command": "php artisan optimize:clear"
   },
-  "deploy": {
-    "commands": [
-      "php artisan migrate --force",
-      "php artisan config:clear",
-      "php artisan cache:clear",
-      "php artisan route:clear",
-      "php artisan view:clear",
-      "php artisan config:cache",
-      "php artisan route:cache"
-    ],
-    "startCommand": "php artisan serve --host=0.0.0.0 --port=8080"
+  "start": {
+    "command": "php artisan migrate --force && frankenphp run --config /Caddyfile"
   }
-} 
+}
