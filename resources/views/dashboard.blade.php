@@ -3,458 +3,383 @@
 @section('content')
 
 <style>
-    .pm-wrap {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background: #e8f0fb;
-    }
-
-    /* ── TOPBAR ── */
-    .pm-topbar {
-        background: #1a3560;
-        padding: 14px 28px;
+    /* ── Page header ── */
+    .dash-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-shrink: 0;
-    }
-    .pm-topbar h1 {
-        color: #fff;
-        font-size: 20px;
-        font-weight: 500;
-        margin: 0;
-    }
-    .pm-topbar p {
-        color: rgba(255,255,255,0.5);
-        font-size: 11px;
-        margin: 2px 0 0;
-    }
-    .pm-topbar-actions { display: flex; gap: 10px; }
-    .pm-btn {
-        padding: 8px 20px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
-        border: none;
-    }
-    .pm-btn-white { background: #fff; color: #1a3560; }
-    .pm-btn-white:hover { background: #dce8f5; color: #1a3560; }
-    .pm-btn-blue  { background: #1565c0; color: #fff; }
-    .pm-btn-blue:hover  { background: #0d47a1; color: #fff; }
-
-    /* ── CONTENT ── */
-    .pm-content { flex: 1; padding: 20px 28px; }
-
-    .pm-add-btn {
-        padding: 7px 16px;
-        background: #1565c0;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
-        margin-bottom: 16px;
-    }
-    .pm-add-btn:hover { background: #0d47a1; color: #fff; }
-
-    /* ── STATS ── */
-    .pm-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-    .pm-stat { border-radius: 8px; padding: 14px 16px; }
-    .pm-stat-label {
-        font-size: 11px;
-        color: rgba(255,255,255,0.85);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 6px;
-    }
-    .pm-stat-val  { font-size: 28px; font-weight: 500; color: #fff; }
-    .pm-stat-sub  { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
-
-    /* ── GRIDS ── */
-    .pm-grid-top { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .pm-grid-bot { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
-    /* ── FEATURE CARDS ── */
-    .pm-feat {
+        padding: 18px 24px 14px;
         background: #fff;
-        border-radius: 8px;
-        overflow: hidden;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .dash-header-left h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a3a5c;
+    }
+    .dash-header-left p {
+        font-size: 12px;
+        color: #718096;
+        margin-top: 2px;
+    }
+    .dash-header-actions { display: flex; gap: 10px; }
+
+    /* ── Body padding ── */
+    .dash-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── Stat cards row ── */
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
-        border: 0.5px solid #90b8e0;
+        gap: 6px;
     }
-    .pm-feat-head {
-        padding: 10px 14px;
+    .stat-label {
+        font-size: 12px;
+        color: #718096;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: #1565c0;
-        flex-shrink: 0;
     }
-    .pm-feat-title { font-size: 13px; font-weight: 500; color: #fff; }
-    .pm-feat-badge { font-size: 10.5px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
-    .badge-white-pill { background: rgba(255,255,255,0.2); color: #fff; }
-    .badge-green-pill { background: #4caf50; color: #fff; }
+    .stat-icon { font-size: 15px; }
+    .stat-value { font-size: 32px; font-weight: 700; color: #1a3a5c; line-height: 1; }
+    .stat-delta { font-size: 12px; }
+    .delta-up   { color: #22c55e; }
+    .delta-down { color: #ef4444; }
+    .delta-warn { color: #f59e0b; font-weight: 600; }
 
-    .pm-feat-body { flex: 1; padding: 12px 14px; overflow: hidden; }
-    .pm-feat-foot {
-        padding: 9px 14px;
+    /* ── Middle row ── */
+    .mid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── Card shared ── */
+    .dash-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 18px;
+    }
+    .dash-card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-top: 0.5px solid #d0e4f5;
-        background: #f0f7ff;
-        flex-shrink: 0;
+        margin-bottom: 14px;
     }
-    .pm-see-more {
-        padding: 5px 16px;
-        border: 0.5px solid #90b8e0;
+    .dash-card-title { font-size: 14px; font-weight: 600; color: #1a3a5c; }
+    .dash-card-link  { font-size: 12px; color: #3b82f6; text-decoration: none; }
+
+    /* ── Bar chart ── */
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+    .bar-group { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+    .bar-pair  { display: flex; gap: 3px; align-items: flex-end; width: 100%; }
+    .bar {
+        flex: 1;
+        border-radius: 4px 4px 0 0;
+        min-height: 4px;
+        transition: opacity .2s;
+    }
+    .bar:hover { opacity: .75; }
+    .bar-admitted   { background: #3b82f6; }
+    .bar-discharged { background: #bfdbfe; }
+    .bar-label { font-size: 10px; color: #718096; margin-top: 4px; }
+    .bar-legend { display: flex; gap: 14px; margin-top: 10px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .legend-item { font-size: 11px; color: #718096; display: flex; align-items: center; }
+
+    /* ── Ward occupancy ── */
+    .ward-filter { display: flex; gap: 6px; }
+    .ward-filter span {
+        font-size: 11px;
+        padding: 3px 10px;
         border-radius: 20px;
-        font-size: 11.5px;
-        color: #1565c0;
-        background: #fff;
         cursor: pointer;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-block;
+        background: #1a3a5c;
+        color: #fff;
     }
-    .pm-see-more:hover { background: #e8f0fb; color: #1565c0; }
-    .pm-feat-count { font-size: 11px; color: #5b80a0; }
-
-    /* ── MINI TABLE ── */
-    .mini-tbl { width: 100%; border-collapse: collapse; }
-    .mini-tbl th {
-        text-align: left;
-        color: #5b80a0;
-        font-weight: 500;
-        padding: 0 4px 7px;
-        border-bottom: 0.5px solid #d0e4f5;
-        font-size: 11px;
-    }
-    .mini-tbl td {
-        padding: 6px 4px;
-        color: #1a3560;
-        border-bottom: 0.5px solid #eef4fb;
-        font-size: 11.5px;
-    }
-    .mini-tbl tr:last-child td { border-bottom: none; }
-    .sp { display: inline-block; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 500; }
-    .sp-ward     { background: #dbeafe; color: #1e40af; }   /* has ward = admitted */
-    .sp-noward   { background: #f3f4f6; color: #6b7280; }   /* no ward  = discharged */
-    .sp-outpatient { background: #dcfce7; color: #15803d; }
-
-    /* ── BAR CHART ── */
-    .bar-chart-wrap {
+    .ward-row { margin-bottom: 14px; }
+    .ward-row-header {
         display: flex;
-        align-items: flex-end;
-        gap: 8px;
-        height: 100px;
-        padding: 0 2px;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #4a5568;
+        margin-bottom: 4px;
     }
-    .bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 3px; }
-    .bar-fill { width: 100%; border-radius: 4px 4px 0 0; }
-    .bar-lbl  { font-size: 10px; color: #5b80a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 36px; }
-    .bar-num  { font-size: 10px; color: #1a3560; font-weight: 500; }
+    .ward-pct { font-weight: 600; color: #ef4444; }
+    .ward-bar-bg {
+        background: #f0f4f8;
+        border-radius: 4px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .ward-bar-fill { height: 100%; border-radius: 4px; background: #ef4444; }
+    .ward-sub { font-size: 11px; color: #718096; margin-top: 2px; }
 
-    /* ── ACTIVITY FEED ── */
-    .act-list  { display: flex; flex-direction: column; gap: 9px; }
-    .act-item  { display: flex; align-items: flex-start; gap: 9px; }
-    .act-dot   { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
-    .act-text  { font-size: 11.5px; color: #1a3560; line-height: 1.4; }
-    .act-time  { font-size: 10px; color: #90a8c0; margin-top: 1px; }
+    /* ── Bottom row ── */
+    .bot-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
-    /* ── STATUS BARS ── */
-    .st-rows { display: flex; flex-direction: column; gap: 10px; }
-    .st-row  { display: flex; flex-direction: column; gap: 4px; }
-    .st-top  { display: flex; justify-content: space-between; font-size: 11.5px; }
-    .st-name { color: #1a3560; font-weight: 500; }
-    .st-num  { color: #5b80a0; }
-    .st-bg   { height: 7px; background: #e8f0fb; border-radius: 4px; overflow: hidden; }
-    .st-fill { height: 100%; border-radius: 4px; }
+    /* ── Appointments table ── */
+    .appt-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .appt-table th {
+        text-align: left;
+        padding: 6px 8px;
+        color: #718096;
+        font-weight: 500;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .appt-table td { padding: 8px; border-bottom: 1px solid #f0f4f8; color: #2d3748; }
+    .badge-done    { background: #dcfce7; color: #166534; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .badge-waiting { background: #fef9c3; color: #713f12; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
 
-    .empty-msg { font-size: 12px; color: #90a8c0; text-align: center; padding: 14px 0; }
+    /* ── Doughnut chart ── */
+    .donut-wrap { display: flex; align-items: center; gap: 18px; }
+    .donut-legend { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4a5568; }
+    .donut-legend-item { display: flex; align-items: center; gap: 6px; }
+    .donut-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ── Quick actions ── */
+    .quick-actions { display: flex; flex-direction: column; gap: 10px; }
+    .qa-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        font-size: 13px;
+        color: #1a3a5c;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background .15s;
+    }
+    .qa-btn:hover { background: #f0f4f8; }
+    .qa-icon { font-size: 16px; }
 </style>
 
-<div class="pm-wrap">
-
-    {{-- TOPBAR --}}
-    <div class="pm-topbar">
-        <div>
-            <h1>Patient Management</h1>
-            <p>{{ now()->format('M d, Y | h:i A') }} &nbsp;|&nbsp; Module 1</p>
-        </div>
-        <div class="pm-topbar-actions">
-            <a href="{{ route('patients.create') }}" class="pm-btn pm-btn-white">+ Register</a>
-            <a href="{{ route('patients.list') }}"  class="pm-btn pm-btn-blue">View All</a>
-        </div>
+{{-- ── Page Header ── --}}
+<div class="dash-header">
+    <div class="dash-header-left">
+        <h2>Dashboard</h2>
+        <p>{{ \Carbon\Carbon::today()->format('M d, Y') }} &middot; Module Overview</p>
     </div>
-
-    <div class="pm-content">
-
-        <a href="{{ route('patients.create') }}" class="pm-add-btn">+ Add Patient</a>
-
-        {{-- STAT CARDS --}}
-        <div class="pm-stats">
-            <div class="pm-stat" style="background:#5b9bd5;">
-                <div class="pm-stat-label">Total Patients</div>
-                <div class="pm-stat-val">{{ $totalPatients }}</div>
-                <div class="pm-stat-sub">All records</div>
-            </div>
-            <div class="pm-stat" style="background:#4a8ec9;">
-                <div class="pm-stat-label">Admitted</div>
-                <div class="pm-stat-val">{{ $admitted }}</div>
-                <div class="pm-stat-sub">Has ward assigned</div>
-            </div>
-            <div class="pm-stat" style="background:#3d82c4;">
-                <div class="pm-stat-label">Outpatients</div>
-                <div class="pm-stat-val">{{ $outpatients }}</div>
-                <div class="pm-stat-sub">Outpatient visits</div>
-            </div>
-            <div class="pm-stat" style="background:#2e74b5;">
-                <div class="pm-stat-label">No Ward</div>
-                <div class="pm-stat-val">{{ $discharged }}</div>
-                <div class="pm-stat-sub">Not admitted</div>
-            </div>
-        </div>
-
-        {{-- TOP ROW --}}
-        <div class="pm-grid-top">
-
-            {{-- Box 1: Patient Medical Records table --}}
-            <div class="pm-feat">
-                <div class="pm-feat-head">
-                    <span class="pm-feat-title">Patient Medical Records</span>
-                    <span class="pm-feat-badge badge-white-pill">Recent</span>
-                </div>
-                <div class="pm-feat-body">
-                    <table class="mini-tbl">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Ward</th>
-                                <th>Blood</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentPatients as $p)
-                            <tr>
-                                <td>{{ $p->first_name }} {{ $p->last_name }}</td>
-                                <td>{{ $p->ward ?: '—' }}</td>
-                                <td>{{ $p->blood_type ?: '—' }}</td>
-                                <td>
-                                    @if($p->ward)
-                                        <span class="sp sp-ward">Admitted</span>
-                                    @else
-                                        <span class="sp sp-noward">No Ward</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="4" class="empty-msg">No records yet</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pm-feat-foot">
-                    <span class="pm-feat-count">{{ $totalPatients }} total records</span>
-                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
-                </div>
-            </div>
-
-            {{-- Box 2: Ward bar chart --}}
-            <div class="pm-feat">
-                <div class="pm-feat-head">
-                    <span class="pm-feat-title">Assign Patient to Wards and Bed</span>
-                    <span class="pm-feat-badge badge-green-pill">{{ $freeBeds }} free beds</span>
-                </div>
-                <div class="pm-feat-body">
-                    <div style="font-size:11px;color:#5b80a0;margin-bottom:8px;">Patients per ward</div>
-                    @if($wardStats->count())
-                    @php
-                        $colors = ['#5b9bd5','#4a8ec9','#3d82c4','#2e74b5','#1565c0','#0d47a1'];
-                        $maxVal = $wardStats->max('count') ?: 1;
-                    @endphp
-                    <div class="bar-chart-wrap">
-                        @foreach($wardStats as $i => $w)
-                        <div class="bar-col">
-                            <div class="bar-num">{{ $w->count }}</div>
-                            <div class="bar-fill"
-                                 style="height:{{ max(8, round(($w->count / $maxVal) * 90)) }}px;
-                                        background:{{ $colors[$i % count($colors)] }};"></div>
-                            <div class="bar-lbl" title="{{ $w->ward_name }}">
-                                {{ Str::limit($w->ward_name, 5, '') }}
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    @else
-                    <p class="empty-msg">No ward assignments yet</p>
-                    @endif
-                </div>
-                <div class="pm-feat-foot">
-                    <span class="pm-feat-count">{{ $wardStats->count() }} ward(s)</span>
-                    <a href="{{ route('wards.index') }}" class="pm-see-more">See More</a>
-                </div>
-            </div>
-
-        </div>
-
-        {{-- BOTTOM ROW --}}
-        <div class="pm-grid-bot">
-
-            {{-- Box 3: Patient list compact table --}}
-            <div class="pm-feat">
-                <div class="pm-feat-head">
-                    <span class="pm-feat-title">View Patient List</span>
-                    <span class="pm-feat-badge badge-white-pill">{{ $totalPatients }}</span>
-                </div>
-                <div class="pm-feat-body">
-                    <table class="mini-tbl">
-                        <thead>
-                            <tr><th>ID</th><th>Name</th><th>Age</th><th>Ward</th></tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentPatients->take(4) as $p)
-                            <tr>
-                                <td>#{{ str_pad($p->id, 3, '0', STR_PAD_LEFT) }}</td>
-                                <td>{{ Str::limit($p->first_name.' '.$p->last_name, 16) }}</td>
-                                <td>{{ $p->age }}</td>
-                                <td>{{ $p->ward ?: '—' }}</td>
-                            </tr>
-                            @empty
-                            <tr><td colspan="4" class="empty-msg">No patients yet</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pm-feat-foot">
-                    <span class="pm-feat-count">All patients</span>
-                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
-                </div>
-            </div>
-
-            {{-- Box 4: Next of kin activity feed --}}
-            <div class="pm-feat">
-                <div class="pm-feat-head">
-                    <span class="pm-feat-title">Next of Kin</span>
-                    <span class="pm-feat-badge badge-white-pill">Recent</span>
-                </div>
-                <div class="pm-feat-body">
-                    @if($recentKin->count())
-                    <div class="act-list">
-                        @foreach($recentKin as $kin)
-                        @php
-                            $dotColors = ['#5b9bd5','#4caf50','#f59e0b','#2e74b5'];
-                            $ci = $loop->index % 4;
-                        @endphp
-                        <div class="act-item">
-                            <div class="act-dot" style="background:{{ $dotColors[$ci] }};"></div>
-                            <div>
-                                <div class="act-text">
-                                    <strong>{{ $kin->name }}</strong>
-                                    ({{ $kin->relationship }})
-                                    — for {{ optional($kin->patient)->first_name ?? 'patient' }}
-                                    {{ optional($kin->patient)->last_name ?? '' }}
-                                </div>
-                                <div class="act-time">
-                                    {{ $kin->phone }}
-                                    &nbsp;·&nbsp;
-                                    {{ optional($kin->created_at)->diffForHumans() ?? '—' }}
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    @else
-                    <p class="empty-msg">No next of kin records yet</p>
-                    @endif
-                </div>
-                <div class="pm-feat-foot">
-                    <span class="pm-feat-count">Contact records</span>
-                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
-                </div>
-            </div>
-
-            {{-- Box 5: Discharge / status breakdown --}}
-            <div class="pm-feat">
-                <div class="pm-feat-head">
-                    <span class="pm-feat-title">Discharge Details</span>
-                    <span class="pm-feat-badge badge-white-pill">{{ $discharged }} no ward</span>
-                </div>
-                <div class="pm-feat-body">
-                    @php $total = max($totalPatients, 1); @endphp
-                    <div class="st-rows">
-                        <div class="st-row">
-                            <div class="st-top">
-                                <span class="st-name">Admitted (has ward)</span>
-                                <span class="st-num">{{ $admitted }} / {{ $totalPatients }}</span>
-                            </div>
-                            <div class="st-bg">
-                                <div class="st-fill"
-                                     style="width:{{ round(($admitted/$total)*100) }}%;
-                                            background:#5b9bd5;"></div>
-                            </div>
-                        </div>
-                        <div class="st-row">
-                            <div class="st-top">
-                                <span class="st-name">Outpatient visits</span>
-                                <span class="st-num">{{ $outpatients }}</span>
-                            </div>
-                            <div class="st-bg">
-                                <div class="st-fill"
-                                     style="width:{{ $totalPatients ? min(100, round(($outpatients/$total)*100)) : 0 }}%;
-                                            background:#4caf50;"></div>
-                            </div>
-                        </div>
-                        <div class="st-row">
-                            <div class="st-top">
-                                <span class="st-name">No ward assigned</span>
-                                <span class="st-num">{{ $discharged }} / {{ $totalPatients }}</span>
-                            </div>
-                            <div class="st-bg">
-                                <div class="st-fill"
-                                     style="width:{{ round(($discharged/$total)*100) }}%;
-                                            background:#f59e0b;"></div>
-                            </div>
-                        </div>
-                        <div class="st-row">
-                            <div class="st-top">
-                                <span class="st-name">Avg. days admitted</span>
-                                <span class="st-num">{{ $avgStay ?? '—' }} days</span>
-                            </div>
-                            <div class="st-bg">
-                                <div class="st-fill"
-                                     style="width:{{ $avgStay ? min(100, round(($avgStay/30)*100)) : 0 }}%;
-                                            background:#2e74b5;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="pm-feat-foot">
-                    <span class="pm-feat-count">Patient breakdown</span>
-                    <a href="{{ route('patients.list') }}" class="pm-see-more">See More</a>
-                </div>
-            </div>
-
-        </div>
+    <div class="dash-header-actions">
+        <a href="{{ route('patients.create') }}" class="btn btn-primary">+ Add Patient</a>
+        <a href="{{ route('appointments.create') }}" class="btn">New Appointment</a>
     </div>
 </div>
+
+<div class="dash-body">
+
+    {{-- ── Stat Cards ── --}}
+    <div class="stat-row">
+        <div class="stat-card">
+            <div class="stat-label">Total patients</div>
+            <div class="stat-value">{{ $stats['total_patients'] }}</div>
+            <div class="stat-delta delta-up">↑ {{ $stats['total_delta'] }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Admitted </div>
+            <div class="stat-value">{{ $stats['admitted'] }}</div>
+            <div class="stat-delta delta-up">↑ {{ $stats['admitted_delta'] }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Outpatients </div>
+            <div class="stat-value">{{ $stats['outpatients'] }}</div>
+            <div class="stat-delta delta-down">↓ {{ $stats['outpatients_delta'] }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Beds available</div>
+            <div class="stat-value">{{ $stats['beds_available'] }}</div>
+            <div class="stat-delta delta-warn">{{ $stats['beds_status'] }}</div>
+        </div>
+    </div>
+
+    {{-- ── Middle Row: Chart + Ward Occupancy ── --}}
+    <div class="mid-row">
+
+        {{-- Bar Chart --}}
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <span class="dash-card-title">Patient admissions — last 7 days</span>
+                <a href="#" class="dash-card-link">View report</a>
+            </div>
+
+            @php
+                $maxVal = collect($admissionsChart)->map(fn($d) => max($d['admitted'], $d['discharged']))->max();
+            @endphp
+
+            <div class="bar-chart">
+                @foreach($admissionsChart as $day)
+                @php
+                    $aH = $maxVal > 0 ? round(($day['admitted']   / $maxVal) * 100) : 0;
+                    $dH = $maxVal > 0 ? round(($day['discharged'] / $maxVal) * 100) : 0;
+                @endphp
+                <div class="bar-group">
+                    <div class="bar-pair" style="height:100px;">
+                        <div class="bar bar-admitted"   style="height:{{ $aH }}px;" title="Admitted: {{ $day['admitted'] }}"></div>
+                        <div class="bar bar-discharged" style="height:{{ $dH }}px;" title="Discharged: {{ $day['discharged'] }}"></div>
+                    </div>
+                    <div class="bar-label">{{ $day['day'] }}</div>
+                </div>
+                @endforeach
+            </div>
+
+            <div class="bar-legend">
+                <span class="legend-item"><span class="legend-dot" style="background:#3b82f6;"></span> Admitted</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#bfdbfe;"></span> Discharged</span>
+            </div>
+        </div>
+
+        {{-- Ward Occupancy --}}
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <span class="dash-card-title">Ward occupancy</span>
+                <div class="ward-filter"><span>All wards</span></div>
+            </div>
+
+            @foreach($wards as $ward)
+            <div class="ward-row">
+                <div class="ward-row-header">
+                    <span>{{ $ward['name'] }}</span>
+                    <span class="ward-pct">{{ $ward['pct'] }}%</span>
+                </div>
+                <div class="ward-bar-bg">
+                    <div class="ward-bar-fill" style="width:{{ $ward['pct'] }}%;
+                        background: {{ $ward['pct'] >= 90 ? '#ef4444' : ($ward['pct'] >= 75 ? '#f59e0b' : '#3b82f6') }};"></div>
+                </div>
+                <div class="ward-sub">{{ $ward['occupied'] }} / {{ $ward['total'] }} beds</div>
+            </div>
+            @endforeach
+        </div>
+
+    </div>
+
+    {{-- ── Bottom Row: Appointments + Donut + Quick Actions ── --}}
+    <div class="bot-row">
+
+        {{-- Today's Appointments --}}
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <span class="dash-card-title">Today's appointments</span>
+                <a href="{{ route('appointments.index') }}" class="dash-card-link">View all</a>
+            </div>
+            <table class="appt-table">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($appointments as $appt)
+                    <tr>
+                        <td>{{ $appt['patient'] }}</td>
+                        <td>{{ $appt['doctor'] }}</td>
+                        <td>
+                            @if($appt['status'] === 'Done')
+                                <span class="badge-done">Done</span>
+                            @else
+                                <span class="badge-waiting">Waiting</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Patient Type Breakdown (Doughnut) --}}
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <span class="dash-card-title">Patient type breakdown</span>
+            </div>
+            <div class="donut-wrap">
+                <canvas id="donutChart" width="130" height="130"></canvas>
+                <div class="donut-legend">
+                    <div class="donut-legend-item">
+                        <div class="donut-dot" style="background:#3b82f6;"></div>
+                        Admitted &mdash; {{ $patientBreakdown['admitted'] }}
+                    </div>
+                    <div class="donut-legend-item">
+                        <div class="donut-dot" style="background:#22c55e;"></div>
+                        Outpatient &mdash; {{ $patientBreakdown['outpatient'] }}
+                    </div>
+                    <div class="donut-legend-item">
+                        <div class="donut-dot" style="background:#f59e0b;"></div>
+                        Discharged &mdash; {{ $patientBreakdown['discharged'] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Quick Actions --}}
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <span class="dash-card-title">Quick actions</span>
+            </div>
+            <div class="quick-actions">
+                <a href="{{ route('patients.create') }}" class="qa-btn">
+                     Register patient
+                </a>
+                <a href="{{ route('patients.list') }}" class="qa-btn">
+                     Transfer patient
+                </a>
+                <a href="{{ route('appointments.create') }}" class="qa-btn">
+                     Schedule appointment
+                </a>
+                <a href="{{ route('wards.index') }}" class="qa-btn">
+                     Manage beds
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{{-- Donut chart via Canvas --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('donutChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const data   = [{{ $patientBreakdown['admitted'] }}, {{ $patientBreakdown['outpatient'] }}, {{ $patientBreakdown['discharged'] }}];
+    const colors = ['#3b82f6', '#22c55e', '#f59e0b'];
+    const total  = data.reduce((a, b) => a + b, 0);
+
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const outerR = 55, innerR = 34;
+    let startAngle = -Math.PI / 2;
+
+    data.forEach((val, i) => {
+        const sweep = (val / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, startAngle, startAngle + sweep);
+        ctx.closePath();
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+        startAngle += sweep;
+    });
+
+    // Cut inner hole
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // Center label
+    ctx.fillStyle = '#1a3a5c';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(total, cx, cy);
+});
+</script>
 
 @endsection
