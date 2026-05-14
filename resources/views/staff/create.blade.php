@@ -76,6 +76,7 @@
     background: #f0f8ff;
     transition: border-color .15s, box-shadow .15s;
     font-family: inherit;
+    box-sizing: border-box;
 }
 .form-group input:focus,
 .form-group select:focus,
@@ -123,6 +124,48 @@
     align-items: center;
 }
 .btn-cancel:hover { background: #fadbd8; }
+
+/* ── Dynamic section rows ── */
+.dynamic-row {
+    background: #f7fbff;
+    border: 1px solid var(--blue-pale);
+    border-radius: 8px;
+    padding: 14px 14px 4px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.dynamic-row .remove-row-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    cursor: pointer;
+    line-height: 1;
+}
+.dynamic-row .remove-row-btn:hover { background: #fadbd8; }
+.btn-add-row {
+    background: var(--white);
+    border: 1px dashed var(--blue-mid);
+    color: var(--blue-mid);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    width: 100%;
+    margin-top: 4px;
+    transition: background .15s;
+}
+.btn-add-row:hover { background: var(--blue-pale); }
+.section-block { margin-bottom: 1.5rem; }
 </style>
 
 <div class="create-wrapper">
@@ -150,7 +193,7 @@
             <form method="POST" action="{{ route('staff.store') }}">
                 @csrf
 
-                {{-- Personal Info --}}
+                {{-- ── Personal Info ── --}}
                 <div class="section-label">Personal Information</div>
                 <div class="form-grid-3">
                     <div class="form-group">
@@ -172,7 +215,6 @@
 
                 <div class="form-grid-3">
                     <div class="form-group">
-                        {{-- Controller expects 'sex', not 'gender' --}}
                         <label>Sex <span style="color:#e74c3c">*</span></label>
                         <select name="sex" required>
                             <option value="">— Select —</option>
@@ -183,7 +225,6 @@
                         @error('sex')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
-                        {{-- Controller expects 'phone', not 'telephone_number' --}}
                         <label>Phone <span style="color:#e74c3c">*</span></label>
                         <input type="text" name="phone" value="{{ old('phone') }}" placeholder="+63 9XX XXX XXXX" required>
                         @error('phone')<span class="field-error">{{ $message }}</span>@enderror
@@ -203,7 +244,7 @@
 
                 <div class="spacer"></div>
 
-                {{-- Professional Info --}}
+                {{-- ── Professional Info ── --}}
                 <div class="section-label">Professional Details</div>
                 <div class="form-grid-2">
                     <div class="form-group">
@@ -233,7 +274,6 @@
 
                 <div class="form-grid-3">
                     <div class="form-group">
-                        {{-- Controller expects 'current_salary', not 'salary' --}}
                         <label>Salary (₱) <span style="color:#e74c3c">*</span></label>
                         <input type="number" name="current_salary" value="{{ old('current_salary') }}" placeholder="e.g. 35000" step="0.01" required>
                         @error('current_salary')<span class="field-error">{{ $message }}</span>@enderror
@@ -274,6 +314,143 @@
                     </div>
                 </div>
 
+                <div class="spacer"></div>
+
+                {{-- ── Qualifications ── --}}
+                <div class="section-block">
+                    <div class="section-label">Qualifications</div>
+
+                    <div id="qualifications-container">
+                        {{-- Repopulate on validation failure --}}
+                        @if(old('qualifications'))
+                            @foreach(old('qualifications') as $qi => $q)
+                            <div class="dynamic-row">
+                                <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label>Qualification Type</label>
+                                        <input type="text" name="qualifications[{{ $qi }}][type]"
+                                               value="{{ $q['type'] ?? '' }}"
+                                               placeholder="e.g. BSc Nursing Studies">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Date Obtained</label>
+                                        <input type="date" name="qualifications[{{ $qi }}][date_obtained]"
+                                               value="{{ $q['date_obtained'] ?? '' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Institution</label>
+                                        <input type="text" name="qualifications[{{ $qi }}][institution]"
+                                               value="{{ $q['institution'] ?? '' }}"
+                                               placeholder="e.g. Edinburgh Unit">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                        {{-- Default first empty row --}}
+                        <div class="dynamic-row">
+                            <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label>Qualification Type</label>
+                                    <input type="text" name="qualifications[0][type]"
+                                           placeholder="e.g. BSc Nursing Studies">
+                                </div>
+                                <div class="form-group">
+                                    <label>Date Obtained</label>
+                                    <input type="date" name="qualifications[0][date_obtained]">
+                                </div>
+                                <div class="form-group">
+                                    <label>Institution</label>
+                                    <input type="text" name="qualifications[0][institution]"
+                                           placeholder="e.g. Edinburgh Unit">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+                    <button type="button" class="btn-add-row" onclick="addQualification()">
+                        + Add Another Qualification
+                    </button>
+                </div>
+
+                <div class="spacer"></div>
+
+                {{-- ── Work Experience ── --}}
+                <div class="section-block">
+                    <div class="section-label">Work Experience</div>
+
+                    <div id="experience-container">
+                        {{-- Repopulate on validation failure --}}
+                        @if(old('work_experience'))
+                            @foreach(old('work_experience') as $wi => $w)
+                            <div class="dynamic-row">
+                                <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+                                <div class="form-grid-2">
+                                    <div class="form-group">
+                                        <label>Position / Role</label>
+                                        <input type="text" name="work_experience[{{ $wi }}][position]"
+                                               value="{{ $w['position'] ?? '' }}"
+                                               placeholder="e.g. Staff Nurse">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Organization</label>
+                                        <input type="text" name="work_experience[{{ $wi }}][organization]"
+                                               value="{{ $w['organization'] ?? '' }}"
+                                               placeholder="e.g. Western Hospital">
+                                    </div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="date" name="work_experience[{{ $wi }}][start_date]"
+                                               value="{{ $w['start_date'] ?? '' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Finish Date <span style="color:#718096; font-weight:400; text-transform:none;">(leave blank if current)</span></label>
+                                        <input type="date" name="work_experience[{{ $wi }}][finish_date]"
+                                               value="{{ $w['finish_date'] ?? '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                        {{-- Default first empty row --}}
+                        <div class="dynamic-row">
+                            <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Position / Role</label>
+                                    <input type="text" name="work_experience[0][position]"
+                                           placeholder="e.g. Staff Nurse">
+                                </div>
+                                <div class="form-group">
+                                    <label>Organization</label>
+                                    <input type="text" name="work_experience[0][organization]"
+                                           placeholder="e.g. Western Hospital">
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" name="work_experience[0][start_date]">
+                                </div>
+                                <div class="form-group">
+                                    <label>Finish Date <span style="color:#718096; font-weight:400; text-transform:none;">(leave blank if current)</span></label>
+                                    <input type="date" name="work_experience[0][finish_date]">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+                    <button type="button" class="btn-add-row" onclick="addExperience()">
+                        + Add Another Work Experience
+                    </button>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn-save">Save Staff Member</button>
                     <a href="{{ route('staff.index') }}" class="btn-cancel">Cancel</a>
@@ -283,5 +460,84 @@
         </div>
     </div>
 </div>
+
+<script>
+    // ── Qualifications ──
+    let qualIndex = {{ old('qualifications') ? count(old('qualifications')) : 1 }};
+
+    function addQualification() {
+        const container = document.getElementById('qualifications-container');
+        const row = document.createElement('div');
+        row.className = 'dynamic-row';
+        row.innerHTML = `
+            <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label>Qualification Type</label>
+                    <input type="text" name="qualifications[${qualIndex}][type]"
+                           placeholder="e.g. BSc Nursing Studies">
+                </div>
+                <div class="form-group">
+                    <label>Date Obtained</label>
+                    <input type="date" name="qualifications[${qualIndex}][date_obtained]">
+                </div>
+                <div class="form-group">
+                    <label>Institution</label>
+                    <input type="text" name="qualifications[${qualIndex}][institution]"
+                           placeholder="e.g. Edinburgh Unit">
+                </div>
+            </div>`;
+        container.appendChild(row);
+        qualIndex++;
+    }
+
+    // ── Work Experience ──
+    let expIndex = {{ old('work_experience') ? count(old('work_experience')) : 1 }};
+
+    function addExperience() {
+        const container = document.getElementById('experience-container');
+        const row = document.createElement('div');
+        row.className = 'dynamic-row';
+        row.innerHTML = `
+            <button type="button" class="remove-row-btn" onclick="removeRow(this)">✕ Remove</button>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Position / Role</label>
+                    <input type="text" name="work_experience[${expIndex}][position]"
+                           placeholder="e.g. Staff Nurse">
+                </div>
+                <div class="form-group">
+                    <label>Organization</label>
+                    <input type="text" name="work_experience[${expIndex}][organization]"
+                           placeholder="e.g. Western Hospital">
+                </div>
+            </div>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="work_experience[${expIndex}][start_date]">
+                </div>
+                <div class="form-group">
+                    <label style="text-transform:none; letter-spacing:0;">Finish Date <span style="color:#718096; font-weight:400;">(leave blank if current)</span></label>
+                    <input type="date" name="work_experience[${expIndex}][finish_date]">
+                </div>
+            </div>`;
+        container.appendChild(row);
+        expIndex++;
+    }
+
+    // ── Shared remove ──
+    function removeRow(btn) {
+        const row = btn.closest('.dynamic-row');
+        const container = row.parentElement;
+        // Keep at least one row per section
+        if (container.querySelectorAll('.dynamic-row').length > 1) {
+            row.remove();
+        } else {
+            // Clear inputs instead of removing the last row
+            row.querySelectorAll('input').forEach(i => i.value = '');
+        }
+    }
+</script>
 
 @endsection

@@ -6,25 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-       Schema::create('qualifications', function (Blueprint $table) {
-$table->id('qualification_id');
-$table->foreignId('staff_no')->constrained('staff','staff_id');
-$table->string('type');
-$table->date('date_obtained');
-$table->string('institution');
-$table->timestamps();
-});
+        Schema::create('qualifications', function (Blueprint $table) {
+            $table->id('qualification_id');
+            $table->string('staff_no', 10);
+            $table->string('type');
+            $table->date('date_obtained');
+            $table->string('institution');
+            $table->timestamps();
 
+            $table->foreign('staff_no')->references('staff_id')->on('staff');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('qualifications');

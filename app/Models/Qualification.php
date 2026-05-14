@@ -9,12 +9,11 @@ class Qualification extends Model
     protected $primaryKey = 'qualification_id'; // adjust if your PK name differs
 
     protected $fillable = [
-        'staff_no',
-        'qualification_type',
-        'qualification_date',
-        'institution_name',
-    ];
-
+    'staff_no',
+    'type',
+    'date_obtained',
+    'institution',
+];
     /**
      * belongsTo(Related, foreignKey on THIS table, ownerKey on Staff table)
      *

@@ -11,15 +11,14 @@ class WorkExperience extends Model
     protected $primaryKey = 'experience_id';
 
     protected $fillable = [
-        'staff_no',
-        'organisation_name',
-        'position',
-        'start_date',
-        'finish_date',
-    ];
-
+        'staff_number','position','start_date','finish_date','organisation',
+     ];   
+        
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_no', 'staff_id');
+        return $this->belongsTo(Staff::class, 'staff_number', 'staff_id');
     }
-}
+}        
+        
+    
+

@@ -10,14 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {Schema::create('work_experience', function (Blueprint $table) {
-$table->id('experience_id');
-$table->string('staff_number');
-$table->string('position');
-$table->string('start_date');
-$table->text('finish_date');
-$table->string('organizaton');
-});
+    {
+        Schema::create('work_experience', function (Blueprint $table) {
+            $table->id('experience_id');
+            $table->string('staff_number', 10);
+            $table->string('position');
+            $table->string('start_date');
+            $table->string('finish_date')->nullable();
+            $table->string('organisation');
+            $table->timestamps();
+            
+            $table->foreign('staff_number')->references('staff_id')->on('staff');
+        });
     }
 
     /**
@@ -25,6 +29,6 @@ $table->string('organizaton');
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_experiences');
+        Schema::dropIfExists('work_experience');
     }
 };

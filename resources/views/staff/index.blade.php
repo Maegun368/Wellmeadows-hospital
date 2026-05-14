@@ -312,7 +312,7 @@
                 @endphp
                 <tr class="staff-row">
     <td style="font-size:12px; color:#4a5568; font-weight:600;">
-        {{ $member->staff_id ?? $member->id ?? '—' }}
+            {{ $member->staff_id ?? '—' }}
     </td>
     <td>
         <div class="staff-name-cell">
@@ -334,9 +334,9 @@
         {{ $member->ward_name ?? $member->ward ?? '—' }}
     </td>
     <td style="display:flex; gap:6px;">
-        <a href="{{ route('staff.show', $member->staff_id ?? $member->id) }}" class="tbl-btn">View</a>
-        <a href="{{ route('staff.edit', $member->staff_id ?? $member->id) }}" class="tbl-btn">Edit</a>
-        <form method="POST" action="{{ route('staff.destroy', $member->staff_id ?? $member->id) }}" style="margin:0"
+       <a href="{{ route('staff.show', $member->staff_id) }}" class="tbl-btn">View</a>
+<a href="{{ route('staff.edit', $member->staff_id) }}" class="tbl-btn">Edit</a>
+<form method="POST" action="{{ route('staff.destroy', $member->staff_id) }}" style="margin:0"
               onsubmit="return confirm('Remove this staff member?')">
             @csrf @method('DELETE')
             <button type="submit" class="tbl-btn tbl-btn-danger">✕</button>
