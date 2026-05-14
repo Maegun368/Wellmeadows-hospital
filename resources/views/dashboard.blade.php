@@ -101,7 +101,20 @@
     .donut-legend { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4a5568; }
     .donut-legend-item { display: flex; align-items: center; gap: 6px; }
     .donut-dot { width: 10px; height: 10px; border-radius: 50%; }
-    
+
+    /* ── Quick Actions card ── */
+    .qa-btn {
+        display: flex;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        font-size: 13px;
+        color: #1a3a5c;
+        text-decoration: none;
+        transition: background .15s;
+    }
     .qa-btn:hover { background: #f0f4f8; }
 </style>
 
@@ -113,7 +126,7 @@
     </div>
     <div class="dash-header-actions">
         <button class="qa-menu-btn" id="qaMenuBtn" onclick="toggleQaMenu()">
-             Quick Actions
+            Quick Actions
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -159,8 +172,8 @@
 
         <div class="dash-card">
             <div class="dash-card-header">
-                <span class="dash-card-title">Patient admissions — last 7 days</span>
-                <a href="#" class="dash-card-link">View report</a>
+                <span class="dash-card-title">Patient Admissions</span>
+             
             </div>
             @php $maxVal = collect($admissionsChart)->map(fn($d) => max($d['admitted'], $d['discharged']))->max(); @endphp
             <div class="bar-chart">
@@ -187,7 +200,6 @@
         <div class="dash-card">
             <div class="dash-card-header">
                 <span class="dash-card-title">Ward occupancy</span>
-                <div class="ward-filter"><span>All wards</span></div>
             </div>
             @foreach($wards as $ward)
             <div class="ward-row">
@@ -208,6 +220,7 @@
     {{-- ── Bottom Row ── --}}
     <div class="bot-row">
 
+        {{-- Today's Appointments --}}
         <div class="dash-card">
             <div class="dash-card-header">
                 <span class="dash-card-title">Today's appointments</span>
@@ -233,6 +246,7 @@
             </table>
         </div>
 
+        {{-- Patient Type Breakdown --}}
         <div class="dash-card">
             <div class="dash-card-header">
                 <span class="dash-card-title">Patient type breakdown</span>
@@ -246,7 +260,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
 </div>
