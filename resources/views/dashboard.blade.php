@@ -8,17 +8,17 @@
         align-items: center;
         justify-content: space-between;
         padding: 18px 24px 14px;
-        background: #fff;
+        background: #1A5276;
         border-bottom: 1px solid #e2e8f0;
     }
-    .dash-header-left h2 { font-size: 18px; font-weight: 700; color: #1a3a5c; }
+    .dash-header-left h2 { font-size: 18px; font-weight: 700; color: #ffffff; }
     .dash-header-left p  { font-size: 12px; color: #718096; margin-top: 2px; }
     .dash-header-actions { position: relative; }
 
     /* ── Quick Actions dropdown ── */
     .qa-menu-btn {
         display: flex; align-items: center; gap: 8px;
-        padding: 8px 16px; background: #1a3a5c; color: #fff;
+        padding: 8px 16px; background: #ffffff; color: #1a3a5c;
         border: none; border-radius: 8px; font-size: 13px;
         font-weight: 600; cursor: pointer; transition: background .15s;
     }
