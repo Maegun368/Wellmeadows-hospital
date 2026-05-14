@@ -4,7 +4,7 @@
     <a href="{{ route('patient-medications.index') }}" class="btn">← Back</a>
 @endsection
 @section('content')
-<div class="card" style="max-width:640px">
+<div class="card" style="max-width:640px; margin: 2rem auto;">
     <div class="card-title">Update medication #{{ $medication->medication_id }}</div>
     <form method="POST" action="{{ route('patient-medications.update', $medication->medication_id) }}">
         @csrf @method('PUT')

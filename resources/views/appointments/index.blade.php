@@ -1,6 +1,7 @@
+
 @extends('layouts.app')
 @section('title', 'Appointments')
-
+@section('hide-topbar', true)
 @section('content')
 
 <style>
@@ -361,7 +362,6 @@
         <div class="timeline-card">
             <div class="timeline-card-header">
                 <span class="timeline-card-title">Appointment Schedule</span>
-                <a href="{{ route('appointments.create') }}" class="timeline-card-link">+ Add new</a>
             </div>
 
             <div class="timeline" id="timeline-list">

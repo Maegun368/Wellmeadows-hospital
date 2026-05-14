@@ -242,31 +242,6 @@
 .ward-bar { height: 6px; border-radius: 99px; background: var(--blue-mid); }
 .ward-count { font-size: 11px; color: var(--blue-mid); font-weight: 600; white-space: nowrap; }
 
-/* ── Bottom nav buttons ── */
-.bottom-nav {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding: 0 24px 24px;
-    background: var(--blue-bg);
-}
-.bottom-nav-btn {
-    background: var(--white);
-    border: 2px solid var(--blue-mid);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue-dark);
-    text-decoration: none;
-    transition: all .15s;
-}
-.bottom-nav-btn:hover, .bottom-nav-btn.active {
-    background: var(--blue-dark);
-    color: var(--white);
-    border-color: var(--blue-dark);
-}
 </style>
 
 {{-- ── Top bar ── --}}
@@ -278,7 +253,7 @@
     <div class="staff-topbar-right">
         <input type="text" class="topbar-search" id="staffSearch"
                placeholder="Search staff..." oninput="filterStaff(this.value)">
-        <a href="{{ route('staff.create') }}" class="btn-add">+ Admin Staff</a>
+        <a href="{{ route('staff.create') }}" class="btn-add">+ Add Staff</a>
     </div>
 </div>
 
@@ -313,12 +288,12 @@
     <div class="panel">
         <div class="panel-header">
             <span class="panel-title">Staff List</span>
-            <a href="{{ route('staff.create') }}" class="panel-link">+ Add new</a>
         </div>
 
         <table class="staff-table" id="staffTable">
             <thead>
                 <tr>
+                    <th>Staff ID</th>
                     <th>Name</th>
                     <th>Role</th>
                     <th>Ward</th>
@@ -336,38 +311,41 @@
                                : (str_contains($role, 'admin') ? 'role-admin' : 'role-other'));
                 @endphp
                 <tr class="staff-row">
-                    <td>
-                        <div class="staff-name-cell">
-                            <div class="staff-avatar">{{ $initials }}</div>
-                            <div>
-                                <div class="staff-name">
-                                    {{ $member->first_name ?? '' }} {{ $member->last_name ?? $member->name ?? '—' }}
-                                </div>
-                                <div class="staff-email">{{ $member->email ?? '' }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="role-badge {{ $roleClass }}">
-                            {{ $member->position ?? $member->role ?? '—' }}
-                        </span>
-                    </td>
-                    <td style="color:#718096; font-size:12px;">
-                        {{ $member->ward_name ?? $member->ward ?? '—' }}
-                    </td>
-                    <td style="display:flex; gap:6px;">
-                        <a href="{{ route('staff.show', $member->staff_id ?? $member->id) }}" class="tbl-btn">View</a>
-                        <a href="{{ route('staff.edit', $member->staff_id ?? $member->id) }}" class="tbl-btn">Edit</a>
-                        <form method="POST" action="{{ route('staff.destroy', $member->staff_id ?? $member->id) }}" style="margin:0"
-                              onsubmit="return confirm('Remove this staff member?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="tbl-btn tbl-btn-danger">✕</button>
-                        </form>
-                    </td>
-                </tr>
+    <td style="font-size:12px; color:#4a5568; font-weight:600;">
+        {{ $member->staff_id ?? $member->id ?? '—' }}
+    </td>
+    <td>
+        <div class="staff-name-cell">
+            <div class="staff-avatar">{{ $initials }}</div>
+            <div>
+                <div class="staff-name">
+                    {{ $member->first_name ?? '' }} {{ $member->last_name ?? $member->name ?? '—' }}
+                </div>
+                <div class="staff-email">{{ $member->email ?? '' }}</div>
+            </div>
+        </div>
+    </td>
+    <td>
+        <span class="role-badge {{ $roleClass }}">
+            {{ $member->position ?? $member->role ?? '—' }}
+        </span>
+    </td>
+    <td style="color:#718096; font-size:12px;">
+        {{ $member->ward_name ?? $member->ward ?? '—' }}
+    </td>
+    <td style="display:flex; gap:6px;">
+        <a href="{{ route('staff.show', $member->staff_id ?? $member->id) }}" class="tbl-btn">View</a>
+        <a href="{{ route('staff.edit', $member->staff_id ?? $member->id) }}" class="tbl-btn">Edit</a>
+        <form method="POST" action="{{ route('staff.destroy', $member->staff_id ?? $member->id) }}" style="margin:0"
+              onsubmit="return confirm('Remove this staff member?')">
+            @csrf @method('DELETE')
+            <button type="submit" class="tbl-btn tbl-btn-danger">✕</button>
+        </form>
+    </td>
+</tr>
                 @empty
                 <tr>
-                    <td colspan="4" style="text-align:center; color:#5dade2; padding:2rem; font-size:13px;">
+                    <td colspan="5" style="text-align:center; color:#5dade2; padding:2rem; font-size:13px;">
                         No staff records found.
                     </td>
                 </tr>
@@ -438,14 +416,6 @@
 
     </div>
 
-</div>
-
-{{-- ── Bottom navigation ── --}}
-<div class="bottom-nav">
-    <a href="{{ route('patients.index') }}" class="bottom-nav-btn">Patients Screen</a>
-    <a href="{{ route('wards.index') }}" class="bottom-nav-btn">Ward Screen</a>
-    <a href="{{ route('staff.index') }}" class="bottom-nav-btn active">Staff Screen</a>
-    <a href="{{ route('appointments.index') }}" class="bottom-nav-btn">Appointments Screen</a>
 </div>
 
 <script>

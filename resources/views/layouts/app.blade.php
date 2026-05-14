@@ -547,24 +547,26 @@
          MAIN CONTENT
     ════════════════════════════════════ -->
     <div class="main">
-        <div class="content">
 
-            @if(session('success'))
-                <div id="toast-success" class="toast-success">
-                    {{ session('success') }}
-                </div>
-            @endif
 
-            @if(session('error'))
-                <div class="alert alert-error">
-                    {{ session('error') }}
-                </div>
-            @endif
+    <div class="content">
 
-            @yield('content')
+        @if(session('success'))
+            <div id="toast-success" class="toast-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        </div>
+        @if(session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @yield('content')
+
     </div>
+</div>
 
     <script>
 

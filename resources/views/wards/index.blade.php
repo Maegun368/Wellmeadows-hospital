@@ -8,7 +8,7 @@
 
 body{
     background:#F4F7FB;
-    font-family:'Segoe UI',sans-serif;
+    font-family:'Times New Roman',Times,serif;
     color:#1E293B;
     margin:0;
     padding:0;

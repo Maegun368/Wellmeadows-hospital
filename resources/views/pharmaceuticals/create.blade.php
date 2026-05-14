@@ -4,7 +4,7 @@
     <a href="{{ route('pharmaceuticals.index') }}" class="btn">← Back</a>
 @endsection
 @section('content')
-<div class="card" style="max-width:640px">
+<div class="card" style="max-width:640px; margin: 2rem auto;">
     <div class="card-title">Add pharmaceutical</div>
     <form method="POST" action="{{ route('pharmaceuticals.store') }}">
         @csrf
