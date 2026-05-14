@@ -12,72 +12,20 @@ use Illuminate\Support\Facades\DB;
 class PatientController extends Controller
 {
     public function index()
-    {
-        $totalPatients = Patient::count();
+{
+    $patients = Patient::query()
+        ->with([
+            'bedAllocations' => function ($q) {
+                $q->whereNull('actual_leave_date')->with('ward');
+            },
+            'nextOfKins',
+            'assignedDoctor',
+        ])
+        ->latest()
+        ->paginate(15);
 
-        $admitted = Patient::query()
-            ->whereHas('bedAllocations', function ($q) {
-                $q->whereNull('actual_leave_date')->whereNotNull('date_placed');
-            })
-            ->count();
-
-        $outpatients = (int) DB::table('out_patients')->selectRaw('count(distinct patient_id) as c')->value('c');
-
-        $discharged = Patient::query()
-            ->whereDoesntHave('bedAllocations', function ($q) {
-                $q->whereNull('actual_leave_date')->whereNotNull('date_placed');
-            })
-            ->count();
-
-        $recentPatients = Patient::query()
-            ->with([
-                'bedAllocations' => function ($q) {
-                    $q->whereNull('actual_leave_date')->with('ward');
-                },
-                'nextOfKins',
-                'assignedDoctor',
-            ])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $wardStats = DB::table('bed_allocations as ba')
-            ->join('wards as w', 'ba.ward_id', '=', 'w.ward_id')
-            ->whereNull('ba.actual_leave_date')
-            ->whereNotNull('ba.date_placed')
-            ->select('w.ward_name as ward_name', DB::raw('count(*) as count'))
-            ->groupBy('w.ward_id', 'w.ward_name')
-            ->orderByDesc('count')
-            ->take(6)
-            ->get();
-
-        $totalBeds = (int) DB::table('wards')->sum('total_beds');
-        $occupiedBeds = DB::table('bed_allocations')
-            ->whereNull('actual_leave_date')
-            ->whereNotNull('date_placed')
-            ->count();
-        $freeBeds = max(0, $totalBeds - $occupiedBeds);
-
-        $recentKin = NextOfKin::with('patient')->latest()->take(4)->get();
-
-        $avgStay = DB::table('bed_allocations')
-            ->whereNotNull('date_placed')
-            ->whereNull('actual_leave_date')
-            ->selectRaw('ROUND(AVG(CURRENT_DATE - date_placed::date), 1) as avg')
-            ->value('avg');
-
-        return view('dashboard', compact(
-            'totalPatients',
-            'admitted',
-            'outpatients',
-            'discharged',
-            'recentPatients',
-            'wardStats',
-            'freeBeds',
-            'recentKin',
-            'avgStay'
-        ));
-    }
+    return view('patients.index', compact('patients'));
+}
 
     public function list()
     {
