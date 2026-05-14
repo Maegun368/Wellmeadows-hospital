@@ -18,18 +18,18 @@ class Staff extends Model
 
     public function qualifications()
     {
-        return $this->hasMany(Qualification::class, 'staff_id');
+         return $this->hasMany(Qualification::class, 'staff_no', 'staff_id');
     }
 
     public function workExperiences()
     {
-        return $this->hasMany(WorkExperience::class, 'staff_id');
+        return $this->hasMany(WorkExperience::class, 'staff_no', 'staff_id');
     }
 
     public function wards()
     {
         return $this->belongsToMany(
-            Ward::class, 'staff_ward', 'staff_id', 'ward_id'
+            Ward::class, 'staff_ward', 'staff_no', 'ward_id'    
         )->withPivot('week_start_date', 'shift');
     }
 }
