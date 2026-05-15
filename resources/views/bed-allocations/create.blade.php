@@ -52,6 +52,20 @@
                 <input type="number" name="bed_number" min="1" value="{{ old('bed_number') }}" required>
             </div>
 
+            {{-- ✅ ADDED: Date Placed Waiting --}}
+            <div class="form-group">
+                <label>Date Placed Waiting (optional)</label>
+                <input type="date" name="date_placed_waiting" value="{{ old('date_placed_waiting') }}">
+            </div>
+
+            {{-- ✅ ADDED: Expected Duration Days --}}
+            <div class="form-group">
+                <label>Expected Duration (days) (optional)</label>
+                <input type="number" name="expected_duration_days" min="1"
+                       placeholder="e.g. 5"
+                       value="{{ old('expected_duration_days') }}">
+            </div>
+
             <div class="form-group">
                 <label>Expected Leave Date (optional)</label>
                 <input type="date" name="date_expected_leave" value="{{ old('date_expected_leave') }}">

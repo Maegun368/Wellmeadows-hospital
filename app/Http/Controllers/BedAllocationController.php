@@ -43,10 +43,13 @@ class BedAllocationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'patient_id'          => 'required|exists:patients,id',
-            'ward_id'             => 'required|exists:wards,ward_id',
-            'bed_number'          => 'required|integer|min:1',
-            'date_expected_leave' => 'nullable|date',
+            'patient_id'             => 'required|exists:patients,id',
+            'ward_id'                => 'required|exists:wards,ward_id',
+            'bed_number'             => 'required|integer|min:1',
+            'date_placed_waiting'    => 'nullable|date',
+            'expected_duration_days' => 'nullable|integer|min:1',
+            'date_expected_leave'    => 'nullable|date',
+            'date_placed'            => 'nullable|date', // ← ADDED
         ]);
 
         $existingBed = BedAllocation::where('ward_id', $request->ward_id)
@@ -59,12 +62,18 @@ class BedAllocationController extends Controller
         }
 
         BedAllocation::create([
-            'patient_id'          => $request->patient_id,
-            'ward_id'             => $request->ward_id,
-            'bed_number'          => $request->bed_number,
-            'date_expected_leave' => $request->date_expected_leave,
-            'actual_leave_date'   => null,
-            'date_placed'         => now(),
+            'patient_id'             => $request->patient_id,
+            'ward_id'                => $request->ward_id,
+            'bed_number'             => $request->bed_number,
+            'date_placed_waiting'    => $request->date_placed_waiting,
+            'expected_duration_days' => $request->expected_duration_days,
+            'date_expected_leave'    => $request->date_expected_leave,
+            'actual_leave_date'      => null,
+            // ← FIXED: use manual date_placed if given,
+            //   else null if waiting, else now()
+            'date_placed'            => $request->date_placed_waiting
+                                            ? null
+                                            : ($request->date_placed ?? now()),
         ]);
 
         return redirect()
@@ -88,9 +97,12 @@ class BedAllocationController extends Controller
     public function update(Request $request, BedAllocation $bedAllocation)
     {
         $data = $request->validate([
-            'ward_id'             => 'required|exists:wards,ward_id',
-            'bed_number'          => 'required|integer|min:1',
-            'date_expected_leave' => 'nullable|date',
+            'ward_id'                => 'required|exists:wards,ward_id',
+            'bed_number'             => 'required|integer|min:1',
+            'date_placed_waiting'    => 'nullable|date',
+            'expected_duration_days' => 'nullable|integer|min:1',
+            'date_expected_leave'    => 'nullable|date',
+            'date_placed'            => 'nullable|date', // ← ADDED
         ]);
 
         $existingBed = BedAllocation::where('ward_id', $data['ward_id'])
@@ -101,6 +113,13 @@ class BedAllocationController extends Controller
 
         if ($existingBed) {
             return back()->withInput()->with('error', 'Bed is already occupied.');
+        }
+
+        // ← FIXED: recalculate date_placed on update
+        if (empty($data['date_placed'])) {
+            $data['date_placed'] = ($data['date_placed_waiting'] ?? null)
+                ? null
+                : ($bedAllocation->date_placed ?? now());
         }
 
         $bedAllocation->update($data);

@@ -8,14 +8,12 @@ use Illuminate\Http\Request;
 
 class WardController extends Controller
 {
-    /**
-     * Display all wards
-     */
     public function index()
     {
         $wards = Ward::withCount([
             'bedAllocations as occupied_beds' => function ($query) {
-                $query->whereNull('actual_leave_date');
+                $query->whereNull('actual_leave_date')
+                      ->whereNotNull('date_placed'); // ← FIXED
             },
         ])->get()->map(function ($ward) {
 
@@ -28,69 +26,57 @@ class WardController extends Controller
             return $ward;
         });
 
-        return view('wards.index', compact('wards'));
+        $patients = \App\Models\Patient::orderBy('last_name')->orderBy('first_name')->get();
+
+        return view('wards.index', compact('wards', 'patients'));
     }
 
-    /**
-     * Show ward details
-     */
     public function show(Ward $ward)
     {
         /*
-        |--------------------------------------------------------------------------
-        | Current Patients
-        |--------------------------------------------------------------------------
+        |------------------------------------------------------------------
+        | Current Patients — only truly admitted (date_placed is NOT null)
+        |------------------------------------------------------------------
         */
-
         $currentPatients = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed') // ← FIXED
             ->with('patient')
             ->orderBy('bed_number')
             ->get();
-    
-        /*
-        |--------------------------------------------------------------------------
-        | Bed Map
-        |--------------------------------------------------------------------------
-        */
 
+        /*
+        |------------------------------------------------------------------
+        | Bed Map
+        |------------------------------------------------------------------
+        */
         $bedMap = [];
 
         for ($i = 1; $i <= $ward->total_beds; $i++) {
-
-            $bedMap[$i] = $currentPatients->firstWhere(
-                'bed_number',
-                $i
-            );
+            $bedMap[$i] = $currentPatients->firstWhere('bed_number', $i);
         }
 
         /*
-        |--------------------------------------------------------------------------
-        | Waiting List
-        |--------------------------------------------------------------------------
+        |------------------------------------------------------------------
+        | Waiting List — date_placed is null, date_placed_waiting is set
+        |------------------------------------------------------------------
         */
-
         $waitingList = $ward->bedAllocations()
+            ->whereNull('actual_leave_date')
             ->whereNull('date_placed')
             ->whereNotNull('date_placed_waiting')
             ->with('patient')
             ->orderBy('date_placed_waiting')
             ->get();
+
         /*
-        |--------------------------------------------------------------------------
-        | Staff
-        |--------------------------------------------------------------------------
+        |------------------------------------------------------------------
+        | Available Beds
+        |------------------------------------------------------------------
         */
+        $availableBeds = $ward->total_beds - $currentPatients->count();
 
         $staff = [];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Available Beds
-        |--------------------------------------------------------------------------
-        */
-
-        $availableBeds = $ward->availableBeds();
 
         return view('wards.show', compact(
             'ward',
@@ -102,17 +88,11 @@ class WardController extends Controller
         ));
     }
 
-    /**
-     * Create ward form
-     */
     public function create()
     {
         return view('wards.create');
     }
 
-    /**
-     * Store ward
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -126,23 +106,14 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                "Ward '{$ward->ward_name}' created successfully."
-            );
+            ->with('success', "Ward '{$ward->ward_name}' created successfully.");
     }
 
-    /**
-     * Edit ward form
-     */
     public function edit(Ward $ward)
     {
         return view('wards.edit', compact('ward'));
     }
 
-    /**
-     * Update ward
-     */
     public function update(Request $request, Ward $ward)
     {
         $validated = $request->validate([
@@ -154,15 +125,14 @@ class WardController extends Controller
 
         $occupied = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed') // ← FIXED
             ->count();
 
         if ($validated['total_beds'] < $occupied) {
-
             return back()
                 ->withInput()
                 ->withErrors([
-                    'total_beds' =>
-                    "Cannot reduce beds below occupied count ({$occupied})."
+                    'total_beds' => "Cannot reduce beds below occupied count ({$occupied})."
                 ]);
         }
 
@@ -170,26 +140,19 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                'Ward updated successfully.'
-            );
+            ->with('success', 'Ward updated successfully.');
     }
 
-    /**
-     * Delete ward
-     */
     public function destroy(Ward $ward)
     {
         $occupied = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed') // ← FIXED
             ->count();
 
         if ($occupied > 0) {
-
             return back()->withErrors([
-                'ward' =>
-                'Cannot delete ward with active bed allocations.'
+                'ward' => 'Cannot delete ward with active bed allocations.'
             ]);
         }
 
@@ -197,9 +160,6 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                'Ward deleted successfully.'
-            );
+            ->with('success', 'Ward deleted successfully.');
     }
 }
