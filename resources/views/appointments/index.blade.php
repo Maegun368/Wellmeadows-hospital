@@ -339,7 +339,6 @@
     </div>
     <div class="appt-header-actions">
         <a href="{{ route('appointments.create') }}" class="btn-white">+ New Appointment</a>
-        <a href="#" class="btn-outline-white" onclick="window.print()">⬇ Export</a>
     </div>
 </div>
 

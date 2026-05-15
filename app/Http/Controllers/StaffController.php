@@ -51,6 +51,19 @@ class StaffController extends Controller
         return view('staff.create', compact('wards'));
     }
 
+    public function edit(string $id)
+    {
+        $staff = Staff::findOrFail($id);
+        $wards = Ward::orderBy('ward_name')->get();
+        return view('staff.edit', compact('staff', 'wards'));
+    }
+
+    public function show(string $id)
+    {
+        $staff = Staff::findOrFail($id);
+        return view('staff.show', compact('staff'));
+    }
+
    public function store(Request $request)
 {
     // ── Strip empty qualification/experience rows BEFORE validation

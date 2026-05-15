@@ -24,7 +24,25 @@ class PatientController extends Controller
         ->latest()
         ->paginate(15);
 
-    return view('patients.index', compact('patients'));
+    // Calculate statistics
+    $totalPatients = Patient::count();
+    $admitted = Patient::whereHas('bedAllocations', function ($q) { 
+        $q->whereNull('actual_leave_date'); 
+    })->count();
+    $outpatients = OutPatient::count();
+    $noWard = Patient::doesntHave('bedAllocations')->count();
+    
+    // Fetch next of kins
+    $nextOfKins = NextOfKin::with('patient')->latest()->take(5)->get();
+
+    return view('patients.index', compact(
+        'patients', 
+        'totalPatients', 
+        'admitted', 
+        'outpatients', 
+        'noWard',
+        'nextOfKins'
+    ));
 }
 
     public function list()
@@ -40,7 +58,25 @@ class PatientController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('patients.index', compact('patients'));
+        // Calculate statistics
+        $totalPatients = Patient::count();
+        $admitted = Patient::whereHas('bedAllocations', function ($q) { 
+            $q->whereNull('actual_leave_date'); 
+        })->count();
+        $outpatients = OutPatient::count();
+        $noWard = Patient::doesntHave('bedAllocations')->count();
+        
+        // Fetch next of kins
+        $nextOfKins = NextOfKin::with('patient')->latest()->take(5)->get();
+
+        return view('patients.index', compact(
+            'patients', 
+            'totalPatients', 
+            'admitted', 
+            'outpatients', 
+            'noWard',
+            'nextOfKins'
+        ));
     }
 
     public function create()

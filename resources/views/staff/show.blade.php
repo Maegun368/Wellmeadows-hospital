@@ -199,26 +199,103 @@
 
 /* Print styles */
 @media print {
+    * { margin: 0; padding: 0; }
+    body { background: white; }
     .show-actions { display: none; }
-    .show-wrapper { padding: 0; background: white; }
+    .show-wrapper { padding: 20px; background: white; min-height: auto; }
     .staff-form-card { box-shadow: none; border: 1px solid #999; }
+    
+    /* Hide all layout elements except the form */
+    nav { display: none !important; }
+    header { display: none !important; }
+    aside { display: none !important; }
+    .sidebar { display: none !important; }
+    .navbar { display: none !important; }
+    .topbar { display: none !important; }
+    .layout-sidebar { display: none !important; }
+    
+    .print-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding: 20px;
+        border-bottom: 3px solid var(--blue-dark);
+        page-break-after: avoid;
+    }
+    
+    .print-header-logo {
+        width: 80px;
+        height: auto;
+    }
+    
+    .print-header-text {
+        text-align: center;
+    }
+    
+    .print-header-hospital-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--blue-dark);
+        margin: 0;
+    }
+    
+    .print-header-subtitle {
+        font-size: 12px;
+        color: #666;
+        margin: 5px 0 0 0;
+    }
+    
+    .print-document-title {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--blue-dark);
+        margin: 20px 0 10px 0;
+        page-break-after: avoid;
+    }
+    
+    .print-date {
+        text-align: center;
+        font-size: 11px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+}
+
+/* Hide print section on screen */
+.print-header { display: none; }
+
+@media screen {
+    .print-only { display: none !important; }
 }
 </style>
 
 <div class="show-wrapper">
 
+    {{-- ── Print Header ── --}}
+    <div class="print-header print-only">
+        <img src="{{ asset('image/wellmeadows-logo.png') }}" alt="Hospital Logo" class="print-header-logo">
+        <div class="print-header-text">
+            <h1 class="print-header-hospital-name">WELLMEADOWS HOSPITAL</h1>
+            <p class="print-header-subtitle">Staff Information Record</p>
+        </div>
+    </div>
+    <p class="print-date print-only">Document printed: {{ now()->format('d M Y \\a\\t H:i') }}</p>
+
     {{-- ── Action bar ── --}}
     <div class="show-actions">
         <div class="show-actions-left">
-            <a href="{{ route('staff.index') }}" class="btn-action btn-back">← Back</a>
-            <a href="{{ route('staff.edit', $staff->staff_id) }}" class="btn-action btn-edit">✏ Edit</a>
+            <a href="{{ route('staff.index') }}" class="btn-action btn-back">Back</a>
+            <a href="{{ route('staff.edit', $staff->staff_id) }}" class="btn-action btn-edit">Edit</a>
             <form action="{{ route('staff.destroy', $staff->staff_id) }}" method="POST"
                   onsubmit="return confirm('Delete this staff member?')">
                 @csrf @method('DELETE')
-                <button type="submit" class="btn-action btn-delete">🗑 Delete</button>
+                <button type="submit" class="btn-action btn-delete">Delete</button>
             </form>
         </div>
-        <button onclick="window.print()" class="btn-action btn-print">🖨 Print</button>
+        <button onclick="window.print()" class="btn-action btn-print">Print</button>
     </div>
 
     {{-- ── Staff Form Card ── --}}
