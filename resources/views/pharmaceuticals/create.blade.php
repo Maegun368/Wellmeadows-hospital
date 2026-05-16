@@ -43,6 +43,7 @@
             <textarea name="description">{{ old('description') }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save drug</button>
+        <a href="{{ route('pharmaceuticals.index') }}" class="btn">Cancel</a>
     </form>
 </div>
 @endsection

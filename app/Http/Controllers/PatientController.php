@@ -154,7 +154,6 @@ class PatientController extends Controller
             'date_of_registration'  => 'nullable|date',
             'ward'                  => 'nullable|string',
             'admission_date'        => 'nullable|date',
-            'doctor_id'             => 'nullable|integer|exists:doctors,id',
             'kin_name'              => 'nullable|string',
             'kin_relationship'      => 'nullable|string',
             'kin_phone'             => 'nullable|string',

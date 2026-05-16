@@ -16,7 +16,6 @@ class Patient extends Model
         'phone',
         'address',
         'date_registered',
-        'doctor_id',
     ];
 
     protected $casts = [
