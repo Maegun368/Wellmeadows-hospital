@@ -2,77 +2,234 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Patient; // ← correct model
+use App\Models\Doctor;
+use App\Models\NextOfKin;
+use App\Models\OutPatient;
+use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PatientController extends Controller
 {
     public function index()
+{
+    $patients = Patient::query()
+        ->with([
+            'bedAllocations' => function ($q) {
+                $q->whereNull('actual_leave_date')->with('ward');
+            },
+            'nextOfKins',
+            'assignedDoctor',
+        ])
+        ->latest()
+        ->paginate(15);
+
+    // Calculate statistics
+    $totalPatients = Patient::count();
+    $admitted = Patient::whereHas('bedAllocations', function ($q) { 
+        $q->whereNull('actual_leave_date'); 
+    })->count();
+    $outpatients = OutPatient::count();
+    $noWard = Patient::doesntHave('bedAllocations')->count();
+    
+    // Fetch next of kins
+    $nextOfKins = NextOfKin::with('patient')->latest()->take(5)->get();
+
+    return view('patients.index', compact(
+        'patients', 
+        'totalPatients', 
+        'admitted', 
+        'outpatients', 
+        'noWard',
+        'nextOfKins'
+    ));
+}
+
+    public function list()
     {
-        $patients = Patient::paginate(10);
-        return view('patients.index', compact('patients'));
+        $patients = Patient::query()
+            ->with([
+                'bedAllocations' => function ($q) {
+                    $q->whereNull('actual_leave_date')->with('ward');
+                },
+                'nextOfKins',
+                'assignedDoctor',
+            ])
+            ->latest()
+            ->paginate(15);
+
+        // Calculate statistics
+        $totalPatients = Patient::count();
+        $admitted = Patient::whereHas('bedAllocations', function ($q) { 
+            $q->whereNull('actual_leave_date'); 
+        })->count();
+        $outpatients = OutPatient::count();
+        $noWard = Patient::doesntHave('bedAllocations')->count();
+        
+        // Fetch next of kins
+        $nextOfKins = NextOfKin::with('patient')->latest()->take(5)->get();
+
+        return view('patients.index', compact(
+            'patients', 
+            'totalPatients', 
+            'admitted', 
+            'outpatients', 
+            'noWard',
+            'nextOfKins'
+        ));
     }
 
     public function create()
     {
-        return view('patients.create');
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('patients.create', compact('doctors'));
     }
 
     public function store(Request $request)
     {
-        Patient::create($request->validate([
-            'first_name'      => 'required|string',
-            'last_name'       => 'required|string',
-            'age'             => 'required|integer',
-            'gender'          => 'required|string',
-            'contact_number'  => 'required|string',
-            'address'         => 'required|string',
-            'blood_type'      => 'nullable|string',
-            'ward'            => 'nullable|string',
-            'bed_number'      => 'nullable|string',
-            'admission_date'  => 'nullable|date',
-            'medical_record'  => 'nullable|string',
-        ]));
+        $v = $request->validate([
+            'first_name'           => 'required|string',
+            'last_name'            => 'required|string',
+            'date_of_birth'        => 'required|date',
+            'sex'                  => 'required|in:Male,Female,Other',
+            'marital_status'       => 'nullable|string',
+            'address'              => 'nullable|string',
+            'phone'                => 'nullable|string',
+            'date_of_registration' => 'nullable|date',
+            'ward'                 => 'nullable|string',
+            'admission_date'       => 'nullable|date',
+            'doctor_id'            => 'nullable|integer|exists:doctors,id',
+            'kin_name'             => 'nullable|string',
+            'kin_relationship'     => 'nullable|string',
+            'kin_phone'            => 'nullable|string',
+        ]);
 
-        return redirect()->route('patients.index')->with('success', 'Patient added.');
+        $patient = Patient::create([
+            'first_name'      => $v['first_name'],
+            'last_name'       => $v['last_name'],
+            'date_of_birth'   => $v['date_of_birth'],
+            'sex'             => $v['sex'],
+            'marital_status'  => $v['marital_status'] ?? null,
+            'address'         => $v['address'] ?? null,
+            'phone'           => $v['phone'] ?? null,
+            'date_registered' => $v['date_of_registration'] ?? null,
+            'doctor_id'       => $v['doctor_id'] ?? null,
+        ]);
+
+        $this->syncNextOfKin($patient, $request);
+
+        return redirect()->route('patients.index')->with('success', 'Patient registered.');
     }
 
-    public function show($id)
+    public function show(Patient $patient)
     {
-        $patient = Patient::findOrFail($id); // ← FIXED
+        $patient->load([
+            'bedAllocations' => function ($q) {
+                $q->whereNull('actual_leave_date')->with('ward');
+            },
+            'nextOfKins',
+            'assignedDoctor',
+        ]);
+
         return view('patients.show', compact('patient'));
     }
 
-    public function edit($id)
+    public function edit(Patient $patient)
     {
-        $patient = Patient::findOrFail($id); // ← FIXED
-        return view('patients.edit', compact('patient'));
+        $patient->load(['nextOfKins', 'assignedDoctor']);
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('patients.edit', compact('patient', 'doctors'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Patient $patient)
     {
-        $patient = Patient::findOrFail($id); // ← FIXED
+        $v = $request->validate([
+            'first_name'            => 'required|string',
+            'last_name'             => 'required|string',
+            'date_of_birth'         => 'required|date',
+            'sex'                   => 'required|in:Male,Female,Other',
+            'marital_status'        => 'nullable|string',
+            'address'               => 'nullable|string',
+            'phone'                 => 'nullable|string',
+            'date_of_registration'  => 'nullable|date',
+            'ward'                  => 'nullable|string',
+            'admission_date'        => 'nullable|date',
+            'kin_name'              => 'nullable|string',
+            'kin_relationship'      => 'nullable|string',
+            'kin_phone'             => 'nullable|string',
+        ]);
 
-        $patient->update($request->validate([
-            'first_name'      => 'required|string',
-            'last_name'       => 'required|string',
-            'age'             => 'required|integer',
-            'gender'          => 'required|string',
-            'contact_number'  => 'required|string',
-            'address'         => 'required|string',
-            'blood_type'      => 'nullable|string',
-            'ward'            => 'nullable|string',
-            'bed_number'      => 'nullable|string',
-            'admission_date'  => 'nullable|date',
-            'medical_record'  => 'nullable|string',
-        ]));
+        $patient->update([
+            'first_name'      => $v['first_name'],
+            'last_name'       => $v['last_name'],
+            'date_of_birth'   => $v['date_of_birth'],
+            'sex'             => $v['sex'],
+            'marital_status'  => $v['marital_status'] ?? null,
+            'address'         => $v['address'] ?? null,
+            'phone'           => $v['phone'] ?? null,
+            'date_registered' => $v['date_of_registration'] ?? null,
+            'doctor_id'       => $v['doctor_id'] ?? null,
+        ]);
 
-        return redirect()->route('patients.show', $id)->with('success', 'Patient updated.');
+        $this->syncNextOfKin($patient, $request);
+
+        return redirect()
+            ->route('patients.show', $patient)
+            ->with('success', 'Patient updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Patient $patient)
     {
-        Patient::findOrFail($id)->delete();
+        $patient->delete();
+
         return redirect()->route('patients.index')->with('success', 'Patient deleted.');
+    }
+
+    private function doctorIdFromName(?string $name): ?int
+    {
+        if ($name === null || trim($name) === '') {
+            return null;
+        }
+
+        $name = trim($name);
+
+        $existing = Doctor::where('full_name', $name)->first();
+        if ($existing) {
+            return $existing->id;
+        }
+
+        $parts = preg_split('/\s+/', $name, 2);
+        $first = $parts[0] ?? $name;
+        $last = $parts[1] ?? '';
+
+        $next = ((int) Doctor::max('id')) + 1;
+
+        $doc = Doctor::create([
+            'clinic_no'      => 'CLN-'.str_pad((string) $next, 5, '0', STR_PAD_LEFT),
+            'full_name'      => $name,
+            'first_name'     => $first,
+            'last_name'      => $last,
+            'address'        => null,
+            'specialization' => null,
+            'phone'          => null,
+            'email'          => null,
+        ]);
+
+        return $doc->id;
+    }
+
+    private function syncNextOfKin(Patient $patient, Request $request): void
+    {
+        $patient->nextOfKins()->delete();
+
+        if ($request->filled('kin_name') || $request->filled('kin_phone') || $request->filled('kin_relationship')) {
+            NextOfKin::create([
+                'patient_id'    => $patient->id,
+                'name'          => $request->input('kin_name') ?: '—',
+                'relationship'  => $request->input('kin_relationship') ?? '',
+                'address'       => '',
+                'phone'         => $request->input('kin_phone') ?? '',
+            ]);
+        }
     }
 }

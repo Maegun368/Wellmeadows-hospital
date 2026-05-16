@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Add Drug')
 @section('topbar-actions')
-    <a href="{{ route('pharmaceuticals.index') }}" class="btn">← Back</a>
+    <a href="{{ route('pharmaceuticals.index') }}" class="btn">Back</a>
 @endsection
 @section('content')
-<div class="card" style="max-width:640px">
+<div class="card" style="max-width:640px; margin: 2rem auto;">
     <div class="card-title">Add pharmaceutical</div>
     <form method="POST" action="{{ route('pharmaceuticals.store') }}">
         @csrf
@@ -43,6 +43,7 @@
             <textarea name="description">{{ old('description') }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save drug</button>
+        <a href="{{ route('pharmaceuticals.index') }}" class="btn">Cancel</a>
     </form>
 </div>
 @endsection

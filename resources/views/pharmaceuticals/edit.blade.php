@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Edit Drug')
 @section('topbar-actions')
-    <a href="{{ route('pharmaceuticals.index') }}" class="btn">← Back</a>
+    <a href="{{ route('pharmaceuticals.index') }}" class="btn">Back</a>
 @endsection
 @section('content')
-<div class="card" style="max-width:640px">
+<div class="card" style="max-width:640px; margin: 2rem auto;">
     <div class="card-title">Edit drug #{{ $pharmaceutical->drug_no }}</div>
     <form method="POST" action="{{ route('pharmaceuticals.update', $pharmaceutical->drug_no) }}">
         @csrf @method('PUT')

@@ -1,9 +1,18 @@
 @extends('layouts.app')
 
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+@section('content')
+
+<form action="{{ route('staff.store') }}" method="POST">
+    @csrf
+
+    <div class="card">
+        <div class="card-title">New Staff Member</div>
+=======
 @section('title', 'Edit Staff')
 
 @section('topbar-actions')
-    <a href="{{ route('staff.show', $staff->staff_id) }}" class="btn">← Back</a>
+    <a href="{{ route('staff.show', $staff->staff_id) }}" class="btn">Back</a>
 @endsection
 
 @section('content')
@@ -14,40 +23,80 @@
     <form action="{{ route('staff.update', $staff->staff_id) }}" method="POST">
         @csrf
         @method('PUT')
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
 
         <div class="form-grid">
+
             <div class="form-group">
                 <label>First Name</label>
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                <input type="text" name="first_name" required>
+=======
                 <input type="text" name="first_name" value="{{ old('first_name', $staff->first_name) }}" required>
                 @error('first_name')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
             </div>
+
             <div class="form-group">
                 <label>Last Name</label>
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                <input type="text" name="last_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Position</label>
+                <input type="text" name="position" required>
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="address" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" required>
+=======
                 <input type="text" name="last_name" value="{{ old('last_name', $staff->last_name) }}" required>
                 @error('last_name')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
             </div>
-        </div>
 
-        <div class="form-grid">
             <div class="form-group">
                 <label>Date of Birth</label>
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                <input type="date" name="date_of_birth" required>
+=======
                 <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $staff->date_of_birth) }}" required>
                 @error('date_of_birth')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
             </div>
+
             <div class="form-group">
                 <label>Sex</label>
                 <select name="sex" required>
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+=======
                     <option value="">-- Select --</option>
                     <option value="Male" {{ old('sex', $staff->sex) == 'Male' ? 'selected' : '' }}>Male</option>
                     <option value="Female" {{ old('sex', $staff->sex) == 'Female' ? 'selected' : '' }}>Female</option>
                     <option value="Other" {{ old('sex', $staff->sex) == 'Other' ? 'selected' : '' }}>Other</option>
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
                 </select>
-                @error('sex')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
             </div>
-        </div>
 
-        <div class="form-grid">
             <div class="form-group">
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                <label>Current Salary</label>
+                <input type="number" name="current_salary" required>
+            </div>
+
+            <div class="form-group">
+                <label>Hours Per Week</label>
+                <input type="number" name="hours_per_week" required>
+=======
                 <label>Phone</label>
                 <input type="text" name="phone" value="{{ old('phone', $staff->phone) }}" required>
                 @error('phone')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
@@ -100,8 +149,25 @@
                 <label>Hours Per Week</label>
                 <input type="number" name="hours_per_week" value="{{ old('hours_per_week', $staff->hours_per_week) }}" required>
                 @error('hours_per_week')<p style="color:red;font-size:12px;">{{ $message }}</p>@enderror
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
             </div>
+
             <div class="form-group">
+<<<<<<< HEAD:resources/views/Staff/create.blade.php
+                <label>Contract Type</label>
+               <select name="contract_type" required>
+    <option value="Full-time">Full-time</option>
+    <option value="Part-time">Part-time</option>
+</select> 
+            </div>
+         
+          <div class="form-group">
+    <label>Pay Type</label>
+    <select name="pay_type" required>
+    <option value="Monthly">Monthly</option>
+    <option value="Weekly">Weekly</option>
+</select>
+=======
                 <label>Pay Type</label>
                 <select name="pay_type" required>
                     <option value="">-- Select --</option>
@@ -118,6 +184,29 @@
         </div>
 
     </form>
+>>>>>>> Appointment-Treatment:resources/views/staff/edit.blade.php
 </div>
+
+<div class="form-group">
+    <label>NIN</label>
+    <input type="text" name="NIN" required>
+</div>
+    
+    <div class="form-group">
+    <label>Salary Scale</label>
+    <input type="text" name="salary_scale" required>
+</div>
+
+        </div>
+
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn-save">
+                Save Staff Member
+            </button>
+        </div>
+
+    </div>
+
+</form>
 
 @endsection

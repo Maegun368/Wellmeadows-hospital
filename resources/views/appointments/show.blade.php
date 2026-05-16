@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Appointment Details')
 @section('topbar-actions')
-    <a href="{{ route('appointments.index') }}" class="btn">← Back</a>
+    <a href="{{ route('appointments.index') }}" class="btn">Back</a>
     <a href="{{ route('appointments.edit', $appointment->appointment_id) }}" class="btn" style="margin-left:8px">Edit</a>
 @endsection
 @section('content')
