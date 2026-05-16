@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Reschedule Appointment')
 @section('topbar-actions')
-    <a href="{{ route('appointments.show', $appointment->appointment_id) }}" class="btn">← Back</a>
+    <a href="{{ route('appointments.show', $appointment->appointment_id) }}" class="btn">Back</a>
 @endsection
 @section('content')
 <div class="card" style="max-width:640px">
@@ -10,12 +10,26 @@
         @csrf @method('PUT')
         <div class="form-grid">
             <div class="form-group">
-                <label>Patient ID</label>
-                <input type="number" name="patient_id" value="{{ old('patient_id', $appointment->patient_id) }}" required>
+                <label>Patient</label>
+                <select name="patient_id" required>
+                    <option value="">— Select patient —</option>
+                    @foreach($patients as $patient)
+                        <option value="{{ $patient->id }}" @selected(old('patient_id', $appointment->patient_id) == $patient->id)>
+                            {{ $patient->last_name }}, {{ $patient->first_name }} (ID {{ $patient->id }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
-                <label>Consultant ID</label>
-                <input type="number" name="consultant_id" value="{{ old('consultant_id', $appointment->consultant_id) }}" required>
+                <label>Consultant</label>
+                <select name="consultant_id" required>
+                    <option value="">— Select consultant —</option>
+                    @foreach($doctors as $doctor)
+                        <option value="{{ $doctor->id }}" @selected(old('consultant_id', $appointment->consultant_id) == $doctor->id)>
+                            {{ $doctor->last_name }}, {{ $doctor->first_name }} {{ $doctor->specialization ? '(' . $doctor->specialization . ')' : '' }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
                 <label>Appointment date</label>

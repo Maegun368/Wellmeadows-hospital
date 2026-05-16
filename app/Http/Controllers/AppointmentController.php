@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Patient;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -45,7 +47,9 @@ class AppointmentController extends Controller
 
     public function create()
     {
-        return view('appointments.create');
+        $patients = Patient::orderBy('last_name')->orderBy('first_name')->get();
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('appointments.create', compact('patients', 'doctors'));
     }
 
     public function store(Request $request)
@@ -70,7 +74,9 @@ class AppointmentController extends Controller
     public function edit($id)
     {
         $appointment = Appointment::findOrFail($id);
-        return view('appointments.edit', compact('appointment'));
+        $patients = Patient::orderBy('last_name')->orderBy('first_name')->get();
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('appointments.edit', compact('appointment', 'patients', 'doctors'));
     }
 
     public function update(Request $request, $id)

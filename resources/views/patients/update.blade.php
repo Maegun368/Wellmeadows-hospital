@@ -3,7 +3,7 @@
 @section('title', 'Update Patient')
 
 @section('topbar-actions')
-    <a href="{{ route('patients.index') }}" class="btn">← Back to Patients</a>
+    <a href="{{ route('patients.index') }}" class="btn">Back to Patients</a>
 @endsection
 
 @section('content')

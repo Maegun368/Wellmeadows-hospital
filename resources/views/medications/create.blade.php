@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Prescribe Medication')
 @section('topbar-actions')
-    <a href="{{ route('patient-medications.index') }}" class="btn">← Back</a>
+    <a href="{{ route('patient-medications.index') }}" class="btn">Back</a>
 @endsection
 @section('content')
 <div class="card" style="max-width:640px; margin: 2rem auto;">
@@ -10,12 +10,26 @@
         @csrf
         <div class="form-grid">
             <div class="form-group">
-                <label>Patient ID</label>
-                <input type="number" name="patient_id" value="{{ old('patient_id') }}" required>
+                <label>Patient</label>
+                <select name="patient_id" required>
+                    <option value="">— Select patient —</option>
+                    @foreach($patients as $patient)
+                        <option value="{{ $patient->id }}" @selected(old('patient_id') == $patient->id)>
+                            {{ $patient->last_name }}, {{ $patient->first_name }} (ID {{ $patient->id }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
-                <label>Drug No</label>
-                <input type="number" name="drug_no" value="{{ old('drug_no') }}" required>
+                <label>Drug</label>
+                <select name="drug_no" required>
+                    <option value="">— Select drug —</option>
+                    @foreach($pharmaceuticals as $drug)
+                        <option value="{{ $drug->drug_no }}" @selected(old('drug_no') == $drug->drug_no)>
+                            {{ $drug->drug_name }} - {{ $drug->dosage }} (ID {{ $drug->drug_no }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
                 <label>Method of administration</label>

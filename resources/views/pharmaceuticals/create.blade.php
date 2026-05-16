@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Add Drug')
 @section('topbar-actions')
-    <a href="{{ route('pharmaceuticals.index') }}" class="btn">← Back</a>
+    <a href="{{ route('pharmaceuticals.index') }}" class="btn">Back</a>
 @endsection
 @section('content')
 <div class="card" style="max-width:640px; margin: 2rem auto;">

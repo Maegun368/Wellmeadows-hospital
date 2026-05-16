@@ -3,7 +3,7 @@
 
 @section('content')
 <div style="padding:14px 24px; display:flex; gap:8px;">
-    <a href="{{ route('appointments.index') }}" class="btn">← Back to Appointments</a>
+    <a href="{{ route('appointments.index') }}" class="btn">Back to Appointments</a>
     <a href="{{ route('pharmaceuticals.create') }}" class="btn btn-primary">+ Add Drug</a>
 </div>
 <div class="card">

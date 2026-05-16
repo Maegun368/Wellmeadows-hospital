@@ -21,7 +21,7 @@
                     font-size: 22px;
                     font-weight: 700;
                     letter-spacing: 0.5px;
-                ">🛏️ Bed Allocations</h2>
+                ">Bed Allocations</h2>
                 <p style="
                     margin: 4px 0 0 0;
                     color: #DBEAFE;

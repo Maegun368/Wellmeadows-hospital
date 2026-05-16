@@ -397,7 +397,14 @@
             <form action="{{ route('bed-allocations.store') }}" method="POST">
                 @csrf
                 <div class="assign-form">
-                    <input type="number" name="patient_id" placeholder="Patient ID" required>
+                    <select name="patient_id" required>
+                        <option value="">Select patient</option>
+                        @foreach($patients as $patient)
+                            <option value="{{ $patient->id }}" @selected(old('patient_id') == $patient->id)>
+                                {{ $patient->last_name }}, {{ $patient->first_name }} (ID {{ $patient->id }})
+                            </option>
+                        @endforeach
+                    </select>
                     <select name="ward_id" required>
                         <option value="">Select Ward</option>
                         @foreach($wards as $ward)

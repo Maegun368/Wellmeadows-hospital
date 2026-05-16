@@ -180,13 +180,27 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Patient ID</label>
-                        <input type="number" name="patient_id" value="{{ old('patient_id') }}" placeholder="e.g. 1001" required>
+                        <label>Patient</label>
+                        <select name="patient_id" required>
+                            <option value="">— Select patient —</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient->id }}" @selected(old('patient_id') == $patient->id)>
+                                    {{ $patient->last_name }}, {{ $patient->first_name }} (ID {{ $patient->id }})
+                                </option>
+                            @endforeach
+                        </select>
                         @error('patient_id')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">
-                        <label>Consultant ID</label>
-                        <input type="number" name="consultant_id" value="{{ old('consultant_id') }}" placeholder="e.g. 201" required>
+                        <label>Consultant</label>
+                        <select name="consultant_id" required>
+                            <option value="">— Select consultant —</option>
+                            @foreach($doctors as $doctor)
+                                <option value="{{ $doctor->id }}" @selected(old('consultant_id') == $doctor->id)>
+                                    {{ $doctor->last_name }}, {{ $doctor->first_name }} {{ $doctor->specialization ? '(' . $doctor->specialization . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
                         @error('consultant_id')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group">

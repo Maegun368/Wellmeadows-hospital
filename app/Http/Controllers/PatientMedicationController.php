@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PatientMedication;
+use App\Models\Patient;
+use App\Models\Pharmaceutical;
 use Illuminate\Http\Request;
 
 class PatientMedicationController extends Controller
@@ -15,7 +17,9 @@ class PatientMedicationController extends Controller
 
     public function create()
     {
-        return view('medications.create');
+        $patients = Patient::orderBy('last_name')->orderBy('first_name')->get();
+        $pharmaceuticals = Pharmaceutical::orderBy('drug_name')->get();
+        return view('medications.create', compact('patients', 'pharmaceuticals'));
     }
 
     public function store(Request $request)
@@ -35,7 +39,9 @@ class PatientMedicationController extends Controller
     public function edit($id)
     {
         $medication = PatientMedication::findOrFail($id);
-        return view('medications.edit', compact('medication'));
+        $patients = Patient::orderBy('last_name')->orderBy('first_name')->get();
+        $pharmaceuticals = Pharmaceutical::orderBy('drug_name')->get();
+        return view('medications.edit', compact('medication', 'patients', 'pharmaceuticals'));
     }
 
     public function update(Request $request, $id)

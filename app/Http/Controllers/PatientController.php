@@ -81,7 +81,8 @@ class PatientController extends Controller
 
     public function create()
     {
-        return view('patients.create');
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('patients.create', compact('doctors'));
     }
 
     public function store(Request $request)
@@ -97,7 +98,7 @@ class PatientController extends Controller
             'date_of_registration' => 'nullable|date',
             'ward'                 => 'nullable|string',
             'admission_date'       => 'nullable|date',
-            'doctor'               => 'nullable|string',
+            'doctor_id'            => 'nullable|integer|exists:doctors,id',
             'kin_name'             => 'nullable|string',
             'kin_relationship'     => 'nullable|string',
             'kin_phone'            => 'nullable|string',
@@ -112,7 +113,7 @@ class PatientController extends Controller
             'address'         => $v['address'] ?? null,
             'phone'           => $v['phone'] ?? null,
             'date_registered' => $v['date_of_registration'] ?? null,
-            'doctor_id'       => $this->doctorIdFromName($v['doctor'] ?? null),
+            'doctor_id'       => $v['doctor_id'] ?? null,
         ]);
 
         $this->syncNextOfKin($patient, $request);
@@ -136,8 +137,8 @@ class PatientController extends Controller
     public function edit(Patient $patient)
     {
         $patient->load(['nextOfKins', 'assignedDoctor']);
-
-        return view('patients.edit', compact('patient'));
+        $doctors = Doctor::orderBy('last_name')->orderBy('first_name')->get();
+        return view('patients.edit', compact('patient', 'doctors'));
     }
 
     public function update(Request $request, Patient $patient)
@@ -153,7 +154,7 @@ class PatientController extends Controller
             'date_of_registration'  => 'nullable|date',
             'ward'                  => 'nullable|string',
             'admission_date'        => 'nullable|date',
-            'doctor'                => 'nullable|string',
+            'doctor_id'             => 'nullable|integer|exists:doctors,id',
             'kin_name'              => 'nullable|string',
             'kin_relationship'      => 'nullable|string',
             'kin_phone'             => 'nullable|string',
@@ -168,7 +169,7 @@ class PatientController extends Controller
             'address'         => $v['address'] ?? null,
             'phone'           => $v['phone'] ?? null,
             'date_registered' => $v['date_of_registration'] ?? null,
-            'doctor_id'       => $this->doctorIdFromName($v['doctor'] ?? null),
+            'doctor_id'       => $v['doctor_id'] ?? null,
         ]);
 
         $this->syncNextOfKin($patient, $request);

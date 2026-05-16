@@ -414,12 +414,108 @@
 
     @endif
 
+    <!-- APPOINTMENTS -->
+
+    @if($appointments->isNotEmpty())
+
+        <div class="panel" style="margin-top:25px;">
+
+            <div class="panel-title">
+
+                Scheduled Appointments
+
+            </div>
+
+            <table style="width:100%; border-collapse:collapse;">
+
+                <thead>
+
+                    <tr style="background:#F3F4F6; border-bottom:2px solid #E5E7EB;">
+
+                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Patient</th>
+
+                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Date</th>
+
+                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Time</th>
+
+                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Consultant</th>
+
+                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Room</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach($appointments as $appointment)
+
+                        <tr style="border-bottom:1px solid #E5E7EB;">
+
+                            <td style="padding:12px; color:#1F2937;">
+
+                                @if($appointment->patient)
+
+                                    {{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}
+
+                                @else
+
+                                    Patient ID: {{ $appointment->patient_id }}
+
+                                @endif
+
+                            </td>
+
+                            <td style="padding:12px; color:#1F2937;">
+
+                                {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}
+
+                            </td>
+
+                            <td style="padding:12px; color:#1F2937;">
+
+                                {{ $appointment->appointment_time }}
+
+                            </td>
+
+                            <td style="padding:12px; color:#1F2937;">
+
+                                @if($appointment->consultant)
+
+                                    {{ $appointment->consultant->last_name }}, {{ $appointment->consultant->first_name }}
+
+                                @else
+
+                                    Consultant ID: {{ $appointment->consultant_id }}
+
+                                @endif
+
+                            </td>
+
+                            <td style="padding:12px; color:#1F2937;">
+
+                                {{ $appointment->examination_room }}
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    @endif
+
     <!-- BACK -->
 
     <a href="{{ route('wards.index') }}"
        class="back-btn">
 
-        ← Back to Ward Management
+        Back to Ward Management
 
     </a>
 

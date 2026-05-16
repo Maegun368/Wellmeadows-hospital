@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Ward;
 use App\Models\BedAllocation;
+use App\Models\Patient;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 
 class WardController extends Controller
@@ -28,7 +30,17 @@ class WardController extends Controller
             return $ward;
         });
 
-        return view('wards.index', compact('wards'));
+        $appointmentPatientIds = Appointment::distinct()->pluck('patient_id');
+
+        $patients = Patient::when(
+                $appointmentPatientIds->isNotEmpty(),
+                fn($query) => $query->whereIn('id', $appointmentPatientIds)
+            )
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+
+        return view('wards.index', compact('wards', 'patients'));
     }
 
     /**
@@ -92,13 +104,28 @@ class WardController extends Controller
 
         $availableBeds = $ward->availableBeds();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Appointments for Patients in Ward
+        |--------------------------------------------------------------------------
+        */
+
+        $patientIds = $currentPatients->pluck('patient_id')->toArray();
+        $appointments = Appointment::query()
+            ->whereIn('patient_id', $patientIds)
+            ->with(['patient', 'consultant'])
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
+            ->get();
+
         return view('wards.show', compact(
             'ward',
             'currentPatients',
             'bedMap',
             'waitingList',
             'staff',
-            'availableBeds'
+            'availableBeds',
+            'appointments'
         ));
     }
 

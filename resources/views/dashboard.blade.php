@@ -148,17 +148,17 @@
         <div class="stat-card">
             <div class="stat-label">Total patients</div>
             <div class="stat-value">{{ $stats['total_patients'] }}</div>
-            <div class="stat-delta delta-up">↑ {{ $stats['total_delta'] }}</div>
+            <div class="stat-delta delta-up">{{ $stats['total_delta'] }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Admitted</div>
             <div class="stat-value">{{ $stats['admitted'] }}</div>
-            <div class="stat-delta delta-up">↑ {{ $stats['admitted_delta'] }}</div>
+            <div class="stat-delta delta-up">{{ $stats['admitted_delta'] }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Outpatients</div>
             <div class="stat-value">{{ $stats['outpatients'] }}</div>
-            <div class="stat-delta delta-down">↓ {{ $stats['outpatients_delta'] }}</div>
+            <div class="stat-delta delta-down">{{ $stats['outpatients_delta'] }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Beds available</div>
@@ -231,10 +231,10 @@
                 <tbody>
                     @foreach($appointments as $appt)
                     <tr>
-                        <td>{{ $appt['patient'] }}</td>
-                        <td>{{ $appt['doctor'] }}</td>
+                        <td>{{ $appt->patient }}</td>
+                        <td>{{ $appt->doctor }}</td>
                         <td>
-                            @if($appt['status'] === 'Done')
+                            @if($appt->status === 'Done')
                                 <span class="badge-done">Done</span>
                             @else
                                 <span class="badge-waiting">Waiting</span>

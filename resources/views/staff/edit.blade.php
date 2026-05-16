@@ -3,7 +3,7 @@
 @section('title', 'Edit Staff')
 
 @section('topbar-actions')
-    <a href="{{ route('staff.show', $staff->staff_id) }}" class="btn">← Back</a>
+    <a href="{{ route('staff.show', $staff->staff_id) }}" class="btn">Back</a>
 @endsection
 
 @section('content')

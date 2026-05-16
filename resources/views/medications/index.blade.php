@@ -2,14 +2,14 @@
 @section('title', 'Patient Medications')
 
 @section('topbar-actions')
-    <a href="{{ route('appointments.index') }}" class="btn">← Back to Appointments</a>
+    <a href="{{ route('appointments.index') }}" class="btn">Back to Appointments</a>
     <a href="{{ route('patient-medications.create') }}" class="btn btn-primary">+ Prescribe medication</a>
 @endsection
 
 @section('content')
 
 <div style="padding:14px 24px; display:flex; gap:8px;">
-    <a href="{{ route('appointments.index') }}" class="btn">← Back to Appointments</a>
+    <a href="{{ route('appointments.index') }}" class="btn">Back to Appointments</a>
     <a href="{{ route('patient-medications.create') }}" class="btn btn-primary">+ Prescribe medication</a>
 </div>
 

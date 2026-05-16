@@ -246,8 +246,15 @@
 
                 <div class="form-group">
                     <label>Doctor / Consultant</label>
-                    <input type="text" name="doctor" value="{{ old('doctor', $patient->doctor) }}">
-                    @error('doctor')<span class="field-error">{{ $message }}</span>@enderror
+                    <select name="doctor_id">
+                        <option value="">— Select doctor —</option>
+                        @foreach($doctors as $doctor)
+                            <option value="{{ $doctor->id }}" @selected(old('doctor_id', $patient->doctor_id) == $doctor->id)>
+                                {{ $doctor->last_name }}, {{ $doctor->first_name }} {{ $doctor->specialization ? '(' . $doctor->specialization . ')' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('doctor_id')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
 
                 <div class="spacer"></div>
