@@ -94,11 +94,12 @@ class DashboardController extends Controller
 
         $appointments = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-            ->join('doctors', 'appointments.consultant_id', '=', 'doctors.id')
+            ->join('doctors', DB::raw('appointments.consultant_id::bigint'), '=', 'doctors.id')
             ->whereDate('appointments.appointment_date', Carbon::today())
+            ->whereNull('appointments.outcome')
             ->select(
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) as patient"),
-                DB::raw("COALESCE(NULLIF(doctors.full_name, ''), CONCAT(doctors.first_name, ' ', doctors.last_name)) as doctor"),
+                DB::raw("CONCAT(doctors.first_name, ' ', doctors.last_name) as doctor"),
                 DB::raw("CASE
                     WHEN appointments.appointment_time < CURRENT_TIME THEN 'Done'
                     ELSE 'Waiting'
@@ -106,6 +107,7 @@ class DashboardController extends Controller
             )
             ->limit(5)
             ->get()
+            ->map(fn($row) => (array) $row)
             ->toArray();
 
         $discharged = DB::table('bed_allocations')

@@ -28,8 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Appointments
+    Route::post('appointments/{id}/complete', [AppointmentController::class, 'complete'])
+    ->name('appointments.complete');
     Route::resource('appointments', AppointmentController::class);
-
     // Patient Medications
     Route::resource('patient-medications', PatientMedicationController::class);
 
