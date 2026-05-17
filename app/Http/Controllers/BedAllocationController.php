@@ -29,12 +29,24 @@ class BedAllocationController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('bed-allocations.index', compact('allocations', 'search'));
+        $totalAllocations = BedAllocation::count();
+        $occupied         = BedAllocation::whereNull('actual_leave_date')->whereNotNull('date_placed')->count();
+        $discharged       = BedAllocation::whereNotNull('actual_leave_date')->count();
+        $onWaitingList    = BedAllocation::whereNull('date_placed')->whereNotNull('date_placed_waiting')->count();
+
+        return view('bed-allocations.index', compact(
+            'allocations',
+            'search',
+            'totalAllocations',
+            'occupied',
+            'discharged',
+            'onWaitingList'
+        ));
     }
 
     public function create()
     {
-        $wards = Ward::orderBy('ward_name')->get();
+        $wards    = Ward::orderBy('ward_name')->get();
         $patients = Patient::orderBy('last_name')->orderBy('first_name')->get();
 
         return view('bed-allocations.create', compact('wards', 'patients'));
@@ -43,33 +55,49 @@ class BedAllocationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'patient_id'          => 'required|exists:patients,id',
-            'ward_id'             => 'required|exists:wards,ward_id',
-            'bed_number'          => 'required|integer|min:1',
-            'date_expected_leave' => 'nullable|date',
+            'patient_id'             => 'required|integer|exists:patients,id',
+            'ward_id'                => 'required|exists:wards,ward_id',
+            'bed_number'             => 'required|integer|min:1',
+            'date_placed_waiting'    => 'nullable|date',
+            'expected_duration_days' => 'nullable|integer|min:1',
+            'date_expected_leave'    => 'nullable|date',
+            'date_placed'            => 'nullable|date',
         ]);
 
-        $existingBed = BedAllocation::where('ward_id', $request->ward_id)
-            ->where('bed_number', $request->bed_number)
-            ->whereNull('actual_leave_date')
-            ->first();
+        // Determine if this is a waiting-list entry
+        $isWaiting = !$request->filled('date_placed') && $request->filled('date_placed_waiting');
 
-        if ($existingBed) {
-            return back()->withInput()->with('error', 'Bed is already occupied.');
+        // Only block bed assignment for actual placements
+        if (!$isWaiting) {
+            $existingBed = BedAllocation::where('ward_id', $request->ward_id)
+                ->where('bed_number', $request->bed_number)
+                ->whereNull('actual_leave_date')
+                ->whereNotNull('date_placed')
+                ->first();
+
+            if ($existingBed) {
+                return back()->withInput()->with('error', 'Bed is already occupied.');
+            }
         }
 
         BedAllocation::create([
-            'patient_id'          => $request->patient_id,
-            'ward_id'             => $request->ward_id,
-            'bed_number'          => $request->bed_number,
-            'date_expected_leave' => $request->date_expected_leave,
-            'actual_leave_date'   => null,
-            'date_placed'         => now(),
+            'patient_id'             => $request->patient_id,
+            'ward_id'                => $request->ward_id,
+            'bed_number'             => $request->bed_number,
+            'date_placed_waiting'    => $request->date_placed_waiting,
+            'expected_duration_days' => $request->expected_duration_days,
+            'date_expected_leave'    => $request->date_expected_leave,
+            'actual_leave_date'      => null,
+            'date_placed'            => $request->filled('date_placed')
+                ? $request->date_placed
+                : ($isWaiting ? null : now()->toDateString()),
         ]);
+
+        $message = $isWaiting ? 'Patient added to waiting list.' : 'Bed assigned successfully.';
 
         return redirect()
             ->route('bed-allocations.index')
-            ->with('success', 'Bed assigned successfully.');
+            ->with('success', $message);
     }
 
     public function show(BedAllocation $bedAllocation)
@@ -88,19 +116,27 @@ class BedAllocationController extends Controller
     public function update(Request $request, BedAllocation $bedAllocation)
     {
         $data = $request->validate([
-            'ward_id'             => 'required|exists:wards,ward_id',
-            'bed_number'          => 'required|integer|min:1',
-            'date_expected_leave' => 'nullable|date',
+            'ward_id'                => 'required|exists:wards,ward_id',
+            'bed_number'             => 'required|integer|min:1',
+            'date_placed_waiting'    => 'nullable|date',
+            'expected_duration_days' => 'nullable|integer|min:1',
+            'date_expected_leave'    => 'nullable|date',
+            'date_placed'            => 'nullable|date',
         ]);
 
-        $existingBed = BedAllocation::where('ward_id', $data['ward_id'])
-            ->where('bed_number', $data['bed_number'])
-            ->whereNull('actual_leave_date')
-            ->where('allocation_id', '!=', $bedAllocation->allocation_id)
-            ->first();
+        $isWaiting = empty($data['date_placed']) && !empty($data['date_placed_waiting']);
 
-        if ($existingBed) {
-            return back()->withInput()->with('error', 'Bed is already occupied.');
+        if (!$isWaiting) {
+            $existingBed = BedAllocation::where('ward_id', $data['ward_id'])
+                ->where('bed_number', $data['bed_number'])
+                ->whereNull('actual_leave_date')
+                ->whereNotNull('date_placed')
+                ->where('allocation_id', '!=', $bedAllocation->allocation_id)
+                ->first();
+
+            if ($existingBed) {
+                return back()->withInput()->with('error', 'Bed is already occupied.');
+            }
         }
 
         $bedAllocation->update($data);

@@ -17,7 +17,7 @@ class WardController extends Controller
     {
         $wards = Ward::withCount([
             'bedAllocations as occupied_beds' => function ($query) {
-                $query->whereNull('actual_leave_date');
+                $query->whereNull('actual_leave_date')->whereNotNull('date_placed');
             },
         ])->get()->map(function ($ward) {
 
@@ -50,30 +50,24 @@ class WardController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | Current Patients
+        | Current Patients (actual placements only, not waiting list)
         |--------------------------------------------------------------------------
         */
-
         $currentPatients = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed')
             ->with('patient')
             ->orderBy('bed_number')
             ->get();
-    
+
         /*
         |--------------------------------------------------------------------------
         | Bed Map
         |--------------------------------------------------------------------------
         */
-
         $bedMap = [];
-
         for ($i = 1; $i <= $ward->total_beds; $i++) {
-
-            $bedMap[$i] = $currentPatients->firstWhere(
-                'bed_number',
-                $i
-            );
+            $bedMap[$i] = $currentPatients->firstWhere('bed_number', $i);
         }
 
         /*
@@ -81,19 +75,18 @@ class WardController extends Controller
         | Waiting List
         |--------------------------------------------------------------------------
         */
-
         $waitingList = $ward->bedAllocations()
             ->whereNull('date_placed')
             ->whereNotNull('date_placed_waiting')
             ->with('patient')
             ->orderBy('date_placed_waiting')
             ->get();
+
         /*
         |--------------------------------------------------------------------------
         | Staff
         |--------------------------------------------------------------------------
         */
-
         $staff = [];
 
         /*
@@ -101,7 +94,6 @@ class WardController extends Controller
         | Available Beds
         |--------------------------------------------------------------------------
         */
-
         $availableBeds = $ward->availableBeds();
 
         /*
@@ -109,8 +101,7 @@ class WardController extends Controller
         | Appointments for Patients in Ward
         |--------------------------------------------------------------------------
         */
-
-        $patientIds = $currentPatients->pluck('patient_id')->toArray();
+        $patientIds   = $currentPatients->pluck('patient_id')->toArray();
         $appointments = Appointment::query()
             ->whereIn('patient_id', $patientIds)
             ->with(['patient', 'consultant'])
@@ -153,10 +144,7 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                "Ward '{$ward->ward_name}' created successfully."
-            );
+            ->with('success', "Ward '{$ward->ward_name}' created successfully.");
     }
 
     /**
@@ -181,15 +169,14 @@ class WardController extends Controller
 
         $occupied = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed')
             ->count();
 
         if ($validated['total_beds'] < $occupied) {
-
             return back()
                 ->withInput()
                 ->withErrors([
-                    'total_beds' =>
-                    "Cannot reduce beds below occupied count ({$occupied})."
+                    'total_beds' => "Cannot reduce beds below occupied count ({$occupied})."
                 ]);
         }
 
@@ -197,10 +184,7 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                'Ward updated successfully.'
-            );
+            ->with('success', 'Ward updated successfully.');
     }
 
     /**
@@ -210,13 +194,12 @@ class WardController extends Controller
     {
         $occupied = $ward->bedAllocations()
             ->whereNull('actual_leave_date')
+            ->whereNotNull('date_placed')
             ->count();
 
         if ($occupied > 0) {
-
             return back()->withErrors([
-                'ward' =>
-                'Cannot delete ward with active bed allocations.'
+                'ward' => 'Cannot delete ward with active bed allocations.'
             ]);
         }
 
@@ -224,9 +207,6 @@ class WardController extends Controller
 
         return redirect()
             ->route('wards.index')
-            ->with(
-                'success',
-                'Ward deleted successfully.'
-            );
+            ->with('success', 'Ward deleted successfully.');
     }
 }
