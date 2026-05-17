@@ -507,12 +507,12 @@
 
             {{-- Dropdown (pops upward) --}}
             <div class="profile-dropdown" id="profileDropdown">
-                <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                <a href="{{ route('profile.show') }}" class="dropdown-item">
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <circle cx="12" cy="8" r="4"/>
                         <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
                     </svg>
-                    Profile
+                    View Profile
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
