@@ -166,8 +166,12 @@
         <div class="pm-header-sub">{{ now()->format('M d, Y | H:i A') }} | Module 1</div>
     </div>
     <div class="pm-header-actions">
-        <a href="{{ route('patients.create') }}" class="btn-white">+ Register</a>
-        <a href="{{ route('patients.list') }}" class="btn-white">View All</a>
+        @can('create patients')
+            <a href="{{ route('patients.create') }}" class="btn-white">+ Register</a>
+        @endcan
+        @can('view patients')
+            <a href="{{ route('patients.list') }}" class="btn-white">View All</a>
+        @endcan
     </div>
 </div>
 

@@ -5,7 +5,9 @@
 
 <div style="padding:14px 24px; display:flex; gap:8px;">
     <a href="{{ route('appointments.index') }}" class="btn">← Back to Appointments</a>
-    <a href="{{ route('patient-medications.create') }}" class="btn btn-primary">+ Prescribe medication</a>
+    @can('create medications')
+        <a href="{{ route('patient-medications.create') }}" class="btn btn-primary">+ Prescribe medication</a>
+    @endcan
 </div>
 @if(session('success'))
     <div style="margin:1rem 1.5rem;padding:12px 16px;background:#c6f6d5;border:1px solid #68d391;border-radius:6px;color:#22543d;">
@@ -47,12 +49,16 @@
                 <td>{{ \Carbon\Carbon::parse($med->start_date)->format('d M Y') }}</td>
                 <td>{{ \Carbon\Carbon::parse($med->finish_date)->format('d M Y') }}</td>
                 <td style="display:flex; gap:6px;">
-                    <a href="{{ route('patient-medications.edit', $med->medication_id) }}" class="btn">Edit</a>
-                    <form method="POST" action="{{ route('patient-medications.destroy', $med->medication_id) }}"
-                          style="margin:0" onsubmit="return confirm('Delete this prescription?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    @can('edit medications')
+                        <a href="{{ route('patient-medications.edit', $med->medication_id) }}" class="btn">Edit</a>
+                    @endcan
+                    @can('delete medications')
+                        <form method="POST" action="{{ route('patient-medications.destroy', $med->medication_id) }}"
+                              style="margin:0" onsubmit="return confirm('Delete this prescription?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    @endcan
                 </td>
             </tr>
             @empty

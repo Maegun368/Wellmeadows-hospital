@@ -392,7 +392,9 @@ body {
             <h1>Ward &amp; Bed Management</h1>
             <p>{{ now()->format('F d, Y | h:i A') }}</p>
         </div>
-        <a href="{{ route('wards.create') }}" class="wbm-add-btn">+ Add Ward</a>
+        @can('create wards')
+            <a href="{{ route('wards.create') }}" class="wbm-add-btn">+ Add Ward</a>
+        @endcan
     </div>
 
     {{-- FLASH MESSAGES --}}
@@ -455,7 +457,9 @@ body {
 
             <div class="wbm-action-row">
                 <a href="#" id="viewBtn">View</a>
-                <a href="#" id="editBtn">Edit</a>
+                @can('edit wards')
+                    <a href="#" id="editBtn">Edit</a>
+                @endcan
             </div>
 
             <div class="wbm-info-grid">

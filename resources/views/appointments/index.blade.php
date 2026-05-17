@@ -453,7 +453,9 @@
         <input type="text" id="apptSearch" placeholder="Search..." oninput="filterTimeline(this.value)">
     </div>
     <div class="appt-header-actions">
-        <a href="{{ route('appointments.create') }}" class="btn-white">+ New Appointment</a>
+        @can('create appointments')
+            <a href="{{ route('appointments.create') }}" class="btn-white">+ New Appointment</a>
+        @endcan
     </div>
 </div>
 
@@ -561,12 +563,16 @@
                                         'completeUrl' => route('appointments.complete', $appt->appointment_id),
                                     ]) }})">✓</button>
                             @endif
-                            <a href="{{ route('appointments.edit', $appt->appointment_id) }}" class="tl-btn">Edit</a>
-                            <form method="POST" action="{{ route('appointments.destroy', $appt->appointment_id) }}" style="margin:0">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="tl-btn tl-btn-danger"
-                                    onclick="return confirm('Cancel this appointment?')">✕</button>
-                            </form>
+                            @can('edit appointments')
+                                <a href="{{ route('appointments.edit', $appt->appointment_id) }}" class="tl-btn">Edit</a>
+                            @endcan
+                            @can('delete appointments')
+                                <form method="POST" action="{{ route('appointments.destroy', $appt->appointment_id) }}" style="margin:0">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="tl-btn tl-btn-danger"
+                                        onclick="return confirm('Cancel this appointment?')">✕</button>
+                                </form>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -654,13 +660,17 @@
                         onclick="openOutcomeModal(window._currentAppt)">
                         ✓ Mark Done
                     </button>
-                    <a id="d-edit" href="#" class="btn btn-primary"
-                        style="font-size:13px;background:var(--blue-dark);border-color:var(--blue-dark);">✏ Edit</a>
-                    <form id="d-del-form" method="POST" style="margin:0">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger" style="font-size:13px"
-                            onclick="return confirm('Cancel this appointment?')">✕ Cancel</button>
-                    </form>
+                    @can('edit appointments')
+                        <a id="d-edit" href="#" class="btn btn-primary"
+                            style="font-size:13px;background:var(--blue-dark);border-color:var(--blue-dark);">✏ Edit</a>
+                    @endcan
+                    @can('delete appointments')
+                        <form id="d-del-form" method="POST" style="margin:0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger" style="font-size:13px"
+                                onclick="return confirm('Cancel this appointment?')">✕ Cancel</button>
+                        </form>
+                    @endcan
                 </div>
             </div>
         </div>

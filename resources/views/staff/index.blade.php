@@ -253,7 +253,9 @@
     <div class="staff-topbar-right">
         <input type="text" class="topbar-search" id="staffSearch"
                placeholder="Search staff..." oninput="filterStaff(this.value)">
-        <a href="{{ route('staff.create') }}" class="btn-add">+ Add Staff</a>
+        @can('create staff')
+            <a href="{{ route('staff.create') }}" class="btn-add">+ Add New</a>
+        @endcan
     </div>
 </div>
 
@@ -334,13 +336,17 @@
         {{ $member->ward_name ?? $member->ward ?? '—' }}
     </td>
     <td style="display:flex; gap:6px;">
-       <a href="{{ route('staff.show', $member->staff_id) }}" class="tbl-btn">View</a>
-<a href="{{ route('staff.edit', $member->staff_id) }}" class="tbl-btn">Edit</a>
-<form method="POST" action="{{ route('staff.destroy', $member->staff_id) }}" style="margin:0"
-              onsubmit="return confirm('Remove this staff member?')">
-            @csrf @method('DELETE')
-            <button type="submit" class="tbl-btn tbl-btn-danger">✕</button>
-        </form>
+        <a href="{{ route('staff.show', $member->staff_id) }}" class="tbl-btn">View</a>
+        @can('edit staff')
+            <a href="{{ route('staff.edit', $member->staff_id) }}" class="tbl-btn">Edit</a>
+        @endcan
+        @can('delete staff')
+            <form method="POST" action="{{ route('staff.destroy', $member->staff_id) }}" style="margin:0"
+                  onsubmit="return confirm('Remove this staff member?')">
+                @csrf @method('DELETE')
+                <button type="submit" class="tbl-btn tbl-btn-danger">✕</button>
+            </form>
+        @endcan
     </td>
 </tr>
                 @empty

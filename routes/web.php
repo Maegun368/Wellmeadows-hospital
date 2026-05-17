@@ -62,7 +62,14 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/wards-bed', 'patients.wards-bed')->name('patients.wards-bed');
     Route::view('/billing', 'patients.billing');
     Route::view('/discharge', 'patients.discharge');
-    
+    //seeders
+    Route::get('/patients', [PatientController::class, 'index'])
+    ->middleware('permission:view patients')
+    ->name('patients.index');
+
+    Route::get('/patients/create', [PatientController::class, 'create'])
+    ->middleware('permission:create patients')
+    ->name('patients.create');
 
 });
 
