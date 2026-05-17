@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Staff;
 use App\Models\Ward;
+use App\Models\User;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -97,6 +99,11 @@ class StaffController extends Controller
             'NIN'            => 'required|string|unique:staff,NIN',
             'salary_scale'   => 'required|string',
 
+            // System account fields
+            'account_email'    => 'required|email|unique:users,email',
+            'account_password' => 'required|string|min:8|confirmed',
+            'account_role'     => 'required|in:medical_director,personnel_officer,charge_nurse',
+
             'qualifications'                 => 'nullable|array',
             'qualifications.*.type'          => 'nullable|string|max:255',
             'qualifications.*.date_obtained' => 'nullable|date',
@@ -161,6 +168,14 @@ class StaffController extends Controller
                 if (!empty($request->ward_id)) {
                     $staff->wards()->attach($request->ward_id);
                 }
+
+                // ── Create system login account ──
+                $user = User::create([
+                    'name'     => $validated['first_name'] . ' ' . $validated['last_name'],
+                    'email'    => $validated['account_email'],
+                    'password' => Hash::make($validated['account_password']),
+                ]);
+                $user->assignRole($validated['account_role']);
 
                 // ── Auto-insert into doctors table if position is Doctor or Consultant ──
                 $position = strtolower($validated['position']);
@@ -262,6 +277,15 @@ class StaffController extends Controller
     {
         $staff    = Staff::findOrFail($id);
         $position = strtolower($staff->position);
+
+        // Delete related qualifications (foreign key constraint)
+        $staff->qualifications()->delete();
+
+        // Delete related work experiences (foreign key constraint)
+        $staff->workExperiences()->delete();
+
+        // Delete from staff_ward junction table
+        $staff->wards()->detach();
 
         // Remove from doctors table if applicable
         if (str_contains($position, 'doctor') || str_contains($position, 'consultant')) {

@@ -451,6 +451,52 @@
                     </button>
                 </div>
 
+                <div class="spacer"></div>
+
+                {{-- ── System Access ── --}}
+                <div class="section-label" style="color:#1e8449; border-color:#a9dfbf;">
+                    System Access (Login Account)
+                </div>
+                <div style="background:#f0fff4; border:1px solid #a9dfbf; border-radius:8px; padding:14px; margin-bottom:16px;">
+                    <p style="font-size:12px; color:#1e8449; margin:0 0 12px;">
+                        ℹ️ This will create a login account for this staff member. Share these credentials with them after saving.
+                    </p>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Email Address <span style="color:#e74c3c">*</span></label>
+                            <input type="email" name="account_email"
+                                   value="{{ old('account_email') }}"
+                                   placeholder="e.g. moira@wellmeadows.com" required>
+                            @error('account_email')<span class="field-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label>System Role <span style="color:#e74c3c">*</span></label>
+                            <select name="account_role" required>
+                                <option value="">— Select Role —</option>
+                                <option value="medical_director"  {{ old('account_role') === 'medical_director'  ? 'selected' : '' }}>Medical Director</option>
+                                <option value="personnel_officer" {{ old('account_role') === 'personnel_officer' ? 'selected' : '' }}>Personnel Officer</option>
+                                <option value="charge_nurse"      {{ old('account_role') === 'charge_nurse'      ? 'selected' : '' }}>Charge Nurse</option>
+                            </select>
+                            @error('account_role')<span class="field-error">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Password <span style="color:#e74c3c">*</span></label>
+                            <input type="password" name="account_password"
+                                   placeholder="Min. 8 characters" required>
+                            @error('account_password')<span class="field-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password <span style="color:#e74c3c">*</span></label>
+                            <input type="password" name="account_password_confirmation"
+                                   placeholder="Repeat password" required>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn-save">Save Staff Member</button>
                     <a href="{{ route('staff.index') }}" class="btn-cancel">Cancel</a>

@@ -70,6 +70,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/patients/create', [PatientController::class, 'create'])
     ->middleware('permission:create patients')
     ->name('patients.create');
+// User Management (only for medical directors and personnel officers)
+    Route::middleware(['auth', 'role:medical_director|personnel_officer'])->group(function () {
+    Route::get('/users',               [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create',        [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+    Route::post('/users',              [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit',   [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}',        [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}',     [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+});
 
 });
 
