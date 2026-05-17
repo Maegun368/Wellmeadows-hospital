@@ -21,7 +21,7 @@
             margin: 0 auto;
         }
         .hospital-name {
-            font-family: Georgia, serif;
+            font-family: 'Segoe UI', sans-serif;
             font-size: 20px;
             color: #fff;
             margin-bottom: 2px;

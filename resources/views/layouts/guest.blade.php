@@ -3,7 +3,7 @@
     <head>
 
     <style>
-    body { background: #0f2744; font-family: 'Raleway', sans-serif; }
+    body { background: #0f2744; font-family: 'Segoe UI', sans-serif; }
 
     .wm-input {
         width: 100%; box-sizing: border-box;
