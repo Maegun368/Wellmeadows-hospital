@@ -11,13 +11,15 @@ class DashboardController extends Controller
     {
         $totalPatients = DB::table('patients')->count();
 
+        // Currently admitted inpatients (have an active bed allocation)
         $admitted = DB::table('bed_allocations')
             ->whereNotNull('date_placed')
             ->whereNull('actual_leave_date')
             ->distinct('patient_id')
             ->count('patient_id');
 
-        $outpatients = DB::table('out_patients')
+        // All patients who have ever been an outpatient (including past appointments)
+        $totalOutpatients = DB::table('out_patients')
             ->distinct('patient_id')
             ->count('patient_id');
 
@@ -48,7 +50,7 @@ class DashboardController extends Controller
             'total_delta'       => '+'.$thisWeekPatients.' this week',
             'admitted'          => $admitted,
             'admitted_delta'    => ($todayAdmitted >= 0 ? '+' : '').$todayAdmitted.' today',
-            'outpatients'       => $outpatients,
+            'outpatients'       => $totalOutpatients,
             'outpatients_delta' => ($todayOutpatients >= 0 ? '+' : '').$todayOutpatients.' today',
             'beds_available'    => $bedsAvailable,
             'beds_status'       => $bedsAvailable <= 15 ? 'Low capacity' : 'Available',
@@ -106,18 +108,21 @@ class DashboardController extends Controller
                 END as status")
             )
             ->limit(5)
-            ->get()
-            ->map(fn($row) => (array) $row)
-            ->toArray();
+            ->get();
 
+        // Discharged inpatients (have been discharged from the hospital)
         $discharged = DB::table('bed_allocations')
             ->whereNotNull('actual_leave_date')
             ->distinct('patient_id')
             ->count('patient_id');
 
+        // Active outpatients = total outpatients minus any who were also discharged as inpatients
+        // This prevents double-counting patients who were both inpatients and outpatients
+        $activeOutpatients = $totalOutpatients - $discharged;
+
         $patientBreakdown = [
             'admitted'   => $admitted,
-            'outpatient' => $outpatients,
+            'outpatient' => max(0, $activeOutpatients),
             'discharged' => $discharged,
         ];
 

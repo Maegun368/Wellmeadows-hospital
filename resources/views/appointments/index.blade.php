@@ -563,6 +563,7 @@
                                         'completeUrl' => route('appointments.complete', $appt->appointment_id),
                                     ]) }})">✓</button>
                             @endif
+                            <a href="{{ route('appointments.show', $appt->appointment_id) }}" class="tl-btn" style="background: #1a2a4a; color: white;">View & Set Outcome</a>
                             @can('edit appointments')
                                 <a href="{{ route('appointments.edit', $appt->appointment_id) }}" class="tl-btn">Edit</a>
                             @endcan

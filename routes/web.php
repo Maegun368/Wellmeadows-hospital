@@ -31,6 +31,8 @@ Route::middleware(['auth'])->group(function () {
     // Appointments
     Route::post('appointments/{id}/complete', [AppointmentController::class, 'complete'])
     ->name('appointments.complete');
+    Route::patch('appointments/{id}/outcome', [AppointmentController::class, 'outcome'])
+    ->name('appointments.outcome');
     Route::resource('appointments', AppointmentController::class);
     // Patient Medications
     Route::resource('patient-medications', PatientMedicationController::class);

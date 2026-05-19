@@ -28,7 +28,7 @@
                 <select name="patient_id" required>
                     <option value="">— Select patient —</option>
                     @foreach($patients as $patient)
-                        <option value="{{ $patient->id }}" @selected(old('patient_id') == $patient->id)>
+                        <option value="{{ $patient->id }}" @selected(old('patient_id', request('patient_id')) == $patient->id)>
                             {{ $patient->last_name }}, {{ $patient->first_name }} (ID {{ $patient->id }})
                         </option>
                     @endforeach

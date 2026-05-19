@@ -82,36 +82,74 @@
     gap: 16px;
 }
 
+.pl-page-card {
+    background: var(--white);
+    border: 2px solid var(--blue-pale);
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(46,134,193,0.08);
+    overflow: hidden;
+}
+
+.pl-page-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--blue-pale);
+    background: #fcfdff;
+}
+
+.pl-page-card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin: 0;
+}
+
+.pl-page-card-sub {
+    margin-top: 4px;
+    color: #4a5568;
+    font-size: 13px;
+}
+
+.pl-page-card-body {
+    padding: 24px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 /* ── Quick Link Cards ── */
 .pl-quicklinks {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
 }
 .ql-card {
     background: var(--white);
     border: 2px solid var(--blue-pale);
-    border-radius: 12px;
-    padding: 16px 20px;
+    border-radius: 14px;
+    padding: 18px 22px;
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
     transition: border-color .15s, box-shadow .15s;
     cursor: pointer;
 }
 .ql-card:hover {
     border-color: var(--blue-mid);
-    box-shadow: 0 2px 12px rgba(46,134,193,0.12);
+    box-shadow: 0 16px 32px rgba(46,134,193,0.08);
 }
 .ql-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--blue-dark);
 }
 .ql-sub {
     font-size: 12px;
-    color: #718096;
+    color: #4a5568;
 }
 
 /* ── Success Alert ── */
@@ -267,25 +305,27 @@
 </style>
 
 {{-- Page Header --}}
-<div class="pl-header">
-    <div>
-        <h2>Patients</h2>
-        <div class="pl-header-sub">Patient records &amp; management</div>
-    </div>
-    <div class="pl-header-actions">
-        <a href="{{ route('patients.index') }}" class="btn-outline-white">Dashboard</a>
-        <a href="{{ route('patients.create') }}" class="btn-solid-white">+ New Patient</a>
-    </div>
-</div>
-
 <div class="pl-body">
 
-    @if(session('success'))
-        <div class="alert-success">{{ session('success') }}</div>
-    @endif
+    <div class="pl-page-card">
+        <div class="pl-page-card-header">
+            <div>
+                <h2 class="pl-page-card-title">Patients</h2>
+                <div class="pl-page-card-sub">Patient records &amp; management</div>
+            </div>
+            <div class="pl-header-actions">
+                <a href="{{ route('patients.index') }}" class="btn-outline-white">Dashboard</a>
+                <a href="{{ route('patients.create') }}" class="btn-solid-white">+ New Patient</a>
+            </div>
+        </div>
 
-    {{-- Quick Links --}}
-    <div class="pl-quicklinks">
+        <div class="pl-page-card-body">
+            @if(session('success'))
+                <div class="alert-success">{{ session('success') }}</div>
+            @endif
+
+            {{-- Quick Links --}}
+            <div class="pl-quicklinks">
         <a href="{{ route('patients.index') }}" class="ql-card">
             <div class="ql-title">Patient Dashboard</div>
             <div class="ql-sub">Stats &amp; overview</div>
@@ -377,6 +417,7 @@
 
         </div>
     </div>
+</div>
 
 </div>
 

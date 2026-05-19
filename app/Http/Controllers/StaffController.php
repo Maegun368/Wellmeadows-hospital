@@ -145,13 +145,16 @@ class StaffController extends Controller
                     'qualifications', 'work_experience',
                 ]));
 
-                // Qualifications
+                // Qualifications - only create if all required fields are present
                 foreach ($validated['qualifications'] ?? [] as $q) {
-                    $staff->qualifications()->create([
-                        'type'          => $q['type']          ?? null,
-                        'date_obtained' => $q['date_obtained'] ?? null,
-                        'institution'   => $q['institution']   ?? null,
-                    ]);
+                    // Only save if we have at least type and institution (required in database)
+                    if (!empty($q['type']) && !empty($q['institution'])) {
+                        $staff->qualifications()->create([
+                            'type'          => $q['type'],
+                            'date_obtained' => $q['date_obtained'] ?? now(),
+                            'institution'   => $q['institution'],
+                        ]);
+                    }
                 }
 
                 // Work experience

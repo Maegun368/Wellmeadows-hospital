@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            // null = not yet resolved, 'out_patient' = sent to clinic, 'admitted' = placed on ward waiting list
-            $table->string('outcome')->nullable()->after('examination_room');
+            // null = not yet resolved, 'ward' = sent to bed assignment, 'outpatient' = sent to clinic, 'discharge' = discharged
+            $table->enum('outcome', ['ward', 'outpatient', 'discharge'])->nullable()->after('examination_room');
         });
     }
 
