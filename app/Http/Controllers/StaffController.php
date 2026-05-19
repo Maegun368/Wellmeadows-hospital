@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Staff;
 use App\Models\Ward;
+use App\Models\User;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -64,126 +66,157 @@ class StaffController extends Controller
         return view('staff.show', compact('staff'));
     }
 
-   public function store(Request $request)
-{
-    // ── Strip empty qualification/experience rows BEFORE validation
-    // (at this point inputs are still raw strings, not yet null-converted)
-    $rawQuals = array_values(array_filter(
-        $request->input('qualifications', []),
-        fn($q) => array_filter(array_map('trim', array_filter($q, 'is_string')))
-    ));
+    public function store(Request $request)
+    {
+        // ── Strip empty qualification/experience rows BEFORE validation
+        $rawQuals = array_values(array_filter(
+            $request->input('qualifications', []),
+            fn($q) => array_filter(array_map('trim', array_filter($q, 'is_string')))
+        ));
 
-    $rawExp = array_values(array_filter(
-        $request->input('work_experience', []),
-        fn($w) => array_filter(array_map('trim', array_filter($w, 'is_string')))
-    ));
+        $rawExp = array_values(array_filter(
+            $request->input('work_experience', []),
+            fn($w) => array_filter(array_map('trim', array_filter($w, 'is_string')))
+        ));
 
-    // Merge cleaned arrays back so validation rules still run on them
-    $request->merge([
-        'qualifications'  => $rawQuals,
-        'work_experience' => $rawExp,
-    ]);
+        $request->merge([
+            'qualifications'  => $rawQuals,
+            'work_experience' => $rawExp,
+        ]);
 
-    $validated = $request->validate([
-        'first_name'     => 'required|string',
-        'last_name'      => 'required|string',
-        'position'       => 'required|string',
-        'address'        => 'required|string',
-        'phone'          => 'required|string',
-        'date_of_birth'  => 'required|date',
-        'sex'            => 'required|in:Male,Female,Other',
-        'current_salary' => 'required|numeric',
-        'hours_per_week' => 'required|integer',
-        'contract_type'  => 'required|in:Full-time,Part-time',
-        'pay_type'       => 'required|in:Monthly,Weekly',
-        'NIN'            => 'required|string|unique:staff,NIN',
-        'salary_scale'   => 'required|string',
+        $validated = $request->validate([
+            'first_name'     => 'required|string',
+            'last_name'      => 'required|string',
+            'position'       => 'required|string',
+            'address'        => 'required|string',
+            'phone'          => 'required|string',
+            'date_of_birth'  => 'required|date',
+            'sex'            => 'required|in:Male,Female,Other',
+            'current_salary' => 'required|numeric',
+            'hours_per_week' => 'required|integer',
+            'contract_type'  => 'required|in:Full-time,Part-time',
+            'pay_type'       => 'required|in:Monthly,Weekly',
+            'NIN'            => 'required|string|unique:staff,NIN',
+            'salary_scale'   => 'required|string',
 
-        'qualifications'                 => 'nullable|array',
-        'qualifications.*.type'          => 'nullable|string|max:255',
-        'qualifications.*.date_obtained' => 'nullable|date',
-        'qualifications.*.institution'   => 'nullable|string|max:255',
+            // System account fields
+            'account_email'    => 'required|email|unique:users,email',
+            'account_password' => 'required|string|min:8|confirmed',
+            'account_role'     => 'required|in:medical_director,personnel_officer,charge_nurse',
 
-        'work_experience'                => 'nullable|array',
-        'work_experience.*.position'     => 'nullable|string|max:255',
-        'work_experience.*.organization' => 'nullable|string|max:255',
-        'work_experience.*.start_date'   => 'nullable|date',
-        'work_experience.*.finish_date'  => 'nullable|date',
-    ]);
+            'qualifications'                 => 'nullable|array',
+            'qualifications.*.type'          => 'nullable|string|max:255',
+            'qualifications.*.date_obtained' => 'nullable|date',
+            'qualifications.*.institution'   => 'nullable|string|max:255',
 
-    // ── Auto-generate staff_id ──
-    $position = strtolower($validated['position']);
+            'work_experience'                => 'nullable|array',
+            'work_experience.*.position'     => 'nullable|string|max:255',
+            'work_experience.*.organization' => 'nullable|string|max:255',
+            'work_experience.*.start_date'   => 'nullable|date',
+            'work_experience.*.finish_date'  => 'nullable|date',
+        ]);
 
-    if (str_contains($position, 'doctor') || str_contains($position, 'consultant')) {
-        $prefix = 'D';
-    } elseif (str_contains($position, 'nurse')) {
-        $prefix = 'N';
-    } elseif (str_contains($position, 'admin')) {
-        $prefix = 'A';
-    } else {
-        $prefix = 'S';
-    }
+        // ── Auto-generate staff_id ──
+        $position = strtolower($validated['position']);
 
-    $existingNumbers = Staff::where('staff_id', 'like', $prefix . '%')
-        ->pluck('staff_id')
-        ->map(fn($id) => intval(substr($id, 1)))
-        ->toArray();
+        if (str_contains($position, 'doctor') || str_contains($position, 'consultant')) {
+            $prefix = 'D';
+        } elseif (str_contains($position, 'nurse')) {
+            $prefix = 'N';
+        } elseif (str_contains($position, 'admin')) {
+            $prefix = 'A';
+        } else {
+            $prefix = 'S';
+        }
 
-    $nextNumber      = empty($existingNumbers) ? 1 : max($existingNumbers) + 1;
-    $validated['staff_id'] = $prefix . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
+        $existingNumbers = Staff::where('staff_id', 'like', $prefix . '%')
+            ->pluck('staff_id')
+            ->map(fn($id) => intval(substr($id, 1)))
+            ->toArray();
 
-    // ── Transaction ──
-    try {
-        DB::transaction(function () use ($validated, $request) {
+        $nextNumber            = empty($existingNumbers) ? 1 : max($existingNumbers) + 1;
+        $validated['staff_id'] = $prefix . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
 
-            $staff = Staff::create(\Illuminate\Support\Arr::except($validated, [
-                'qualifications', 'work_experience',
-            ]));
+        // ── Transaction ──
+        try {
+            DB::transaction(function () use ($validated, $request) {
 
-                        // Qualifications — use actual column names from Qualification.php
-                        foreach ($validated['qualifications'] ?? [] as $q) {
-                    $staff->qualifications()->create([
-                        'type'          => $q['type']          ?? null,
-                        'date_obtained' => $q['date_obtained'] ?? null,
-                        'institution'   => $q['institution']   ?? null,
+                $staff = Staff::create(\Illuminate\Support\Arr::except($validated, [
+                    'qualifications', 'work_experience',
+                ]));
+
+                // Qualifications - only create if all required fields are present
+                foreach ($validated['qualifications'] ?? [] as $q) {
+                    // Only save if we have at least type and institution (required in database)
+                    if (!empty($q['type']) && !empty($q['institution'])) {
+                        $staff->qualifications()->create([
+                            'type'          => $q['type'],
+                            'date_obtained' => $q['date_obtained'] ?? now(),
+                            'institution'   => $q['institution'],
+                        ]);
+                    }
+                }
+
+                // Work experience
+                foreach ($validated['work_experience'] ?? [] as $w) {
+                    $staff->workExperiences()->create([
+                        'position'     => $w['position']     ?? null,
+                        'organisation' => $w['organization'] ?? null,
+                        'start_date'   => $w['start_date']   ?? null,
+                        'finish_date'  => $w['finish_date']  ?? null,
                     ]);
                 }
 
-            // Work experience — use actual column names from WorkExperience.php
-            foreach ($validated['work_experience'] ?? [] as $w) {
-                $staff->workExperiences()->create([
-                    'position'     => $w['position']     ?? null,
-                    'organisation' => $w['organization'] ?? null,
-                    'start_date'   => $w['start_date']   ?? null,
-                    'finish_date'  => $w['finish_date']  ?? null,
+                // Ward assignment
+                if (!empty($request->ward_id)) {
+                    $staff->wards()->attach($request->ward_id, [
+                        'week_start_date' => now(),
+                        'week_end_date' => null
+                    ]);
+                }
+
+                // ── Create system login account ──
+                $user = User::create([
+                    'name'     => $validated['first_name'] . ' ' . $validated['last_name'],
+                    'email'    => $validated['account_email'],
+                    'password' => Hash::make($validated['account_password']),
                 ]);
-            }
+                $user->assignRole($validated['account_role']);
 
-            if (!empty($request->ward_id)) {
-                $staff->wards()->attach($request->ward_id);
-            }
-        });
+                // ── Auto-insert into doctors table if position is Doctor or Consultant ──
+                $position = strtolower($validated['position']);
+                if (str_contains($position, 'doctor') || str_contains($position, 'consultant')) {
+                    DB::table('doctors')->insert([
+                        'first_name'      => $validated['first_name'],
+                        'last_name'       => $validated['last_name'],
+                        'specialization'  => $validated['position'],
+                        'phone'           => $validated['phone'],
+                        'created_at'      => now(),
+                        'updated_at'      => now(),
+                    ]);
+                }
+            });
 
-    } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
-        return redirect()->back()
-            ->withInput()
-            ->withErrors(['staff_id' => 'A staff ID conflict occurred. Please try submitting again.']);
+        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['staff_id' => 'A staff ID conflict occurred. Please try submitting again.']);
 
-    } catch (\Exception $e) {
-        return redirect()->back()
-            ->withInput()
-            ->withErrors(['general' => 'Something went wrong while saving the staff member: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['general' => 'Something went wrong while saving the staff member: ' . $e->getMessage()]);
+        }
+
+        return redirect()->route('staff.index')
+            ->with('success', 'Staff member added successfully.');
     }
-
-    return redirect()->route('staff.index')
-        ->with('success', 'Staff member added successfully.');
-}
 
     public function update(Request $request, string $id)
     {
         $staff = Staff::findOrFail($id);
 
-        $staff->update($request->validate([
+        $validated = $request->validate([
             'first_name'     => 'required|string',
             'last_name'      => 'required|string',
             'position'       => 'required|string',
@@ -197,14 +230,79 @@ class StaffController extends Controller
             'pay_type'       => 'required|in:Monthly,Weekly',
             'NIN'            => 'required|string|unique:staff,NIN,' . $id . ',staff_id',
             'salary_scale'   => 'required|string',
-        ]));
+        ]);
+
+        DB::transaction(function () use ($staff, $validated) {
+
+            $oldPosition = strtolower($staff->position);
+            $newPosition = strtolower($validated['position']);
+
+            $wasDoctor = str_contains($oldPosition, 'doctor') || str_contains($oldPosition, 'consultant');
+            $isDoctor  = str_contains($newPosition, 'doctor') || str_contains($newPosition, 'consultant');
+
+            $staff->update($validated);
+
+            if ($isDoctor) {
+                // Update existing doctor record or insert if not present
+                $existing = DB::table('doctors')
+                    ->where('first_name', $staff->first_name)
+                    ->where('last_name', $staff->last_name)
+                    ->first();
+
+                if ($existing) {
+                    DB::table('doctors')->where('id', $existing->id)->update([
+                        'first_name'     => $validated['first_name'],
+                        'last_name'      => $validated['last_name'],
+                        'specialization' => $validated['position'],
+                        'phone'          => $validated['phone'],
+                        'updated_at'     => now(),
+                    ]);
+                } else {
+                    DB::table('doctors')->insert([
+                        'first_name'     => $validated['first_name'],
+                        'last_name'      => $validated['last_name'],
+                        'specialization' => $validated['position'],
+                        'phone'          => $validated['phone'],
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ]);
+                }
+            } elseif ($wasDoctor && !$isDoctor) {
+                // Position changed away from Doctor/Consultant — remove from doctors table
+                DB::table('doctors')
+                    ->where('first_name', $staff->first_name)
+                    ->where('last_name', $staff->last_name)
+                    ->delete();
+            }
+        });
 
         return redirect()->route('staff.show', $id)->with('success', 'Staff member updated.');
     }
 
     public function destroy(string $id)
     {
-        Staff::findOrFail($id)->delete();
+        $staff    = Staff::findOrFail($id);
+        $position = strtolower($staff->position);
+
+        // Delete related qualifications (foreign key constraint)
+        $staff->qualifications()->delete();
+
+        // Delete related work experiences (foreign key constraint)
+        $staff->workExperiences()->delete();
+
+        // Delete from staff_ward junction table
+        $staff->wards()->detach();
+
+        // Remove from doctors table if applicable
+        if (str_contains($position, 'doctor') || str_contains($position, 'consultant')) {
+            DB::table('doctors')
+                ->where('first_name', $staff->first_name)
+                ->where('last_name', $staff->last_name)
+                ->delete();
+        }
+
+        $staff->delete();
+
         return redirect()->route('staff.index')->with('success', 'Staff member deleted.');
     }
 }

@@ -4,7 +4,9 @@
 @section('content')
 <div style="padding:14px 24px; display:flex; gap:8px;">
     <a href="{{ route('appointments.index') }}" class="btn">Back to Appointments</a>
-    <a href="{{ route('pharmaceuticals.create') }}" class="btn btn-primary">+ Add Drug</a>
+    @can('create pharmaceuticals')
+        <a href="{{ route('pharmaceuticals.create') }}" class="btn btn-primary">+ Add Drug</a>
+    @endcan
 </div>
 <div class="card">
     <table>
@@ -28,13 +30,17 @@
                 <td>{{ $drug->reorder_level }}</td>
                 <td>₱{{ number_format($drug->cost_per_unit, 2) }}</td>
                 <td style="display:flex; gap:6px;">
-    <a href="{{ route('pharmaceuticals.edit', $drug->drug_no) }}" class="btn">Edit</a>
-    <form method="POST" action="{{ route('pharmaceuticals.destroy', $drug->drug_no) }}" style="margin:0"
-          onsubmit="return confirm('Delete this drug?')">
-        @csrf @method('DELETE')
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-</td>
+                    @can('edit pharmaceuticals')
+                        <a href="{{ route('pharmaceuticals.edit', $drug->drug_no) }}" class="btn">Edit</a>
+                    @endcan
+                    @can('delete pharmaceuticals')
+                        <form method="POST" action="{{ route('pharmaceuticals.destroy', $drug->drug_no) }}" style="margin:0"
+                              onsubmit="return confirm('Delete this drug?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    @endcan
+                </td>
             </tr>
             @empty
             <tr><td colspan="8" style="text-align:center;color:#718096;padding:2rem">No pharmaceuticals found.</td></tr>

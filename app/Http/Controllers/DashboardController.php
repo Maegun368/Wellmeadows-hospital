@@ -11,13 +11,15 @@ class DashboardController extends Controller
     {
         $totalPatients = DB::table('patients')->count();
 
+        // Currently admitted inpatients (have an active bed allocation)
         $admitted = DB::table('bed_allocations')
             ->whereNotNull('date_placed')
             ->whereNull('actual_leave_date')
             ->distinct('patient_id')
             ->count('patient_id');
 
-        $outpatients = DB::table('out_patients')
+        // All patients who have ever been an outpatient (including past appointments)
+        $totalOutpatients = DB::table('out_patients')
             ->distinct('patient_id')
             ->count('patient_id');
 
@@ -48,7 +50,7 @@ class DashboardController extends Controller
             'total_delta'       => '+'.$thisWeekPatients.' this week',
             'admitted'          => $admitted,
             'admitted_delta'    => ($todayAdmitted >= 0 ? '+' : '').$todayAdmitted.' today',
-            'outpatients'       => $outpatients,
+            'outpatients'       => $totalOutpatients,
             'outpatients_delta' => ($todayOutpatients >= 0 ? '+' : '').$todayOutpatients.' today',
             'beds_available'    => $bedsAvailable,
             'beds_status'       => $bedsAvailable <= 15 ? 'Low capacity' : 'Available',
@@ -94,28 +96,33 @@ class DashboardController extends Controller
 
         $appointments = DB::table('appointments')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-            ->join('doctors', 'appointments.consultant_id', '=', 'doctors.id')
+            ->join('doctors', DB::raw('appointments.consultant_id::bigint'), '=', 'doctors.id')
             ->whereDate('appointments.appointment_date', Carbon::today())
+            ->whereNull('appointments.outcome')
             ->select(
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) as patient"),
-                DB::raw("COALESCE(NULLIF(doctors.full_name, ''), CONCAT(doctors.first_name, ' ', doctors.last_name)) as doctor"),
+                DB::raw("CONCAT(doctors.first_name, ' ', doctors.last_name) as doctor"),
                 DB::raw("CASE
                     WHEN appointments.appointment_time < CURRENT_TIME THEN 'Done'
                     ELSE 'Waiting'
                 END as status")
             )
             ->limit(5)
-            ->get()
-            ->toArray();
+            ->get();
 
+        // Discharged inpatients (have been discharged from the hospital)
         $discharged = DB::table('bed_allocations')
             ->whereNotNull('actual_leave_date')
             ->distinct('patient_id')
             ->count('patient_id');
 
+        // Active outpatients = total outpatients minus any who were also discharged as inpatients
+        // This prevents double-counting patients who were both inpatients and outpatients
+        $activeOutpatients = $totalOutpatients - $discharged;
+
         $patientBreakdown = [
             'admitted'   => $admitted,
-            'outpatient' => $outpatients,
+            'outpatient' => max(0, $activeOutpatients),
             'discharged' => $discharged,
         ];
 

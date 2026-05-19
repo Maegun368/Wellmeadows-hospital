@@ -7,17 +7,15 @@
 @section('content')
 
 <style>
-/* ── Theme Variables ── */
 :root {
     --blue-dark:   #1a5276;
     --blue-mid:    #2e86c1;
     --blue-light:  #5dade2;
     --blue-pale:   #d6eaf8;
     --white:       #ffffff;
-    --text-dark:   #1a5276;
 }
 
-/* ── Page header ── */
+/* Page header */
 .pm-header {
     display: flex;
     align-items: center;
@@ -55,37 +53,56 @@
 }
 .btn-white:hover { opacity: 0.9; }
 
-/* ── Body ── */
-.pm-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 20px 24px;
-    align-items: start;
+/* Page background */
+.pm-page {
     background: #e8f4fd;
     min-height: calc(100vh - 60px);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-/* ── Stat cards ── */
-.pm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+/* 4-column stat cards */
+.pm-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
 .pm-stat-card {
     background: var(--blue-mid);
     border-radius: 10px;
-    padding: 16px;
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 .psc-label { font-size: 11px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-.psc-value { font-size: 28px; font-weight: 700; color: var(--white); line-height: 1.1; }
+.psc-value { font-size: 32px; font-weight: 700; color: var(--white); line-height: 1.1; }
 .psc-sub   { font-size: 11px; color: rgba(255,255,255,0.7); }
 
-/* ── Dashboard cards ── */
+/* 2-column row */
+.pm-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* 3-column row */
+.pm-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+/* Dashboard cards */
 .dashboard-card {
     background: var(--white);
     border: 2px solid var(--blue-mid);
     border-radius: 12px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .dashboard-card-header {
     background: var(--blue-mid);
@@ -98,8 +115,14 @@
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    flex-shrink: 0;
 }
-.dashboard-card-body { padding: 14px 16px; }
+.dashboard-card-body { padding: 14px 16px; flex: 1; }
+.dashboard-card-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--blue-pale);
+    text-align: center;
+}
 .dashboard-table {
     width: 100%;
     border-collapse: collapse;
@@ -136,23 +159,16 @@
     font-size: 11px;
 }
 .btn-link:hover { text-decoration: underline; }
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 600;
-}
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
 .badge-green { background: #d1fae5; color: #065f46; }
-.badge-blue { background: var(--blue-pale); color: var(--blue-dark); }
 
-/* ── Left panel ── */
-.pm-left { display: flex; flex-direction: column; gap: 14px; }
-
-/* ── Right panel ── */
-.pm-right { display: flex; flex-direction: column; gap: 14px; }
-
-.detail-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--blue-pale); font-size: 12px; }
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--blue-pale);
+    font-size: 12px;
+}
 .detail-item:last-child { border-bottom: none; }
 .detail-label { font-weight: 600; color: var(--blue-dark); }
 .detail-value { color: #2d3748; }
@@ -171,41 +187,39 @@
     </div>
 </div>
 
-{{-- Main Body --}}
-<div class="pm-body">
+<div class="pm-page">
 
-    {{-- LEFT PANEL --}}
-    <div class="pm-left">
-        
-        {{-- Stat Cards --}}
-        <div class="pm-stat-grid">
-            <div class="pm-stat-card">
-                <div class="psc-label">Total Patients</div>
-                <div class="psc-value">{{ $totalPatients }}</div>
-                <div class="psc-sub">All records</div>
-            </div>
-            <div class="pm-stat-card">
-                <div class="psc-label">Admitted</div>
-                <div class="psc-value">{{ $admitted }}</div>
-                <div class="psc-sub">Has ward assigned</div>
-            </div>
-            <div class="pm-stat-card">
-                <div class="psc-label">Outpatients</div>
-                <div class="psc-value">{{ $outpatients }}</div>
-                <div class="psc-sub">Outpatient visits</div>
-            </div>
-            <div class="pm-stat-card">
-                <div class="psc-label">No Ward</div>
-                <div class="psc-value">{{ $noWard }}</div>
-                <div class="psc-sub">Not admitted</div>
-            </div>
+    {{-- ROW 1: 4 Stat Cards --}}
+    <div class="pm-stat-grid">
+        <div class="pm-stat-card">
+            <div class="psc-label">Total Patients</div>
+            <div class="psc-value">{{ $totalPatients }}</div>
+            <div class="psc-sub">All records</div>
         </div>
+        <div class="pm-stat-card">
+            <div class="psc-label">Admitted</div>
+            <div class="psc-value">{{ $admitted }}</div>
+            <div class="psc-sub">Has ward assigned</div>
+        </div>
+        <div class="pm-stat-card">
+            <div class="psc-label">Outpatients</div>
+            <div class="psc-value">{{ $outpatients }}</div>
+            <div class="psc-sub">Outpatient visits</div>
+        </div>
+        <div class="pm-stat-card">
+            <div class="psc-label">No Ward</div>
+            <div class="psc-value">{{ $noWard }}</div>
+            <div class="psc-sub">Not admitted</div>
+        </div>
+    </div>
 
-        {{-- Patient Medical Records --}}
+    {{-- ROW 2: Patient Medical Records | Assign Patient to Wards and Bed --}}
+    <div class="pm-row-2">
+
         <div class="dashboard-card">
             <div class="dashboard-card-header">
                 <span>Patient Medical Records</span>
-                <a class="btn-link">Recent</a>
+                <a class="btn-link" style="color:rgba(255,255,255,0.85);">Recent</a>
             </div>
             <div class="dashboard-card-body">
                 @if($patients->count() > 0)
@@ -232,17 +246,37 @@
                 @else
                     <p class="empty-msg">No records yet</p>
                 @endif
-                <div style="text-align: center; margin-top: 12px;">
-                    <a href="{{ route('patients.index') }}" class="btn-link">See More</a>
-                </div>
+            </div>
+            <div class="dashboard-card-footer">
+                <span style="font-size:11px;color:#718096;">{{ $totalPatients }} total records</span>
+                <a href="{{ route('patients.list') }}" class="btn-link" style="margin-left:12px;">See More</a>
             </div>
         </div>
 
-        {{-- View Patient List --}}
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <span>Assign Patient to Wards and Bed</span>
+                <span style="background:#4ade80; color:white; padding:3px 8px; border-radius:4px; font-size:10px;">0 free beds</span>
+            </div>
+            <div class="dashboard-card-body">
+                <p style="text-align:center; color:var(--blue-light); padding:10px 0 4px; font-size:12px;">Patients per ward</p>
+                <p class="empty-msg">No ward assignments yet</p>
+            </div>
+            <div class="dashboard-card-footer">
+                <span style="font-size:11px;color:#718096;">0 ward(s)</span>
+                <a href="{{ route('bed-allocations.index') }}" class="btn-link" style="margin-left:12px;">See More</a>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- ROW 3: View Patient List | Next of Kin | Discharge Details --}}
+    <div class="pm-row-3">
+
         <div class="dashboard-card">
             <div class="dashboard-card-header">
                 <span>View Patient List</span>
-                <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 10px;">{{ $totalPatients }}</span>
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:4px; font-size:10px;">{{ $totalPatients }}</span>
             </div>
             <div class="dashboard-card-body">
                 @if($patients->count() > 0)
@@ -269,37 +303,16 @@
                 @else
                     <p class="empty-msg">No patients yet</p>
                 @endif
-                <div style="text-align: center; margin-top: 12px;">
-                    <a href="{{ route('patients.index') }}" class="btn-link">All patients</a>
-                </div>
+            </div>
+            <div class="dashboard-card-footer">
+                <a href="{{ route('patients.list') }}" class="btn-link">All patients</a>
             </div>
         </div>
 
-    </div>
-
-    {{-- RIGHT PANEL --}}
-    <div class="pm-right">
-
-        {{-- Assign Patient to Wards and Bed --}}
-        <div class="dashboard-card">
-            <div class="dashboard-card-header">
-                <span>Assign Patient to Wards and Bed</span>
-                <span style="background: #4ade80; color: white; padding: 3px 8px; border-radius: 4px; font-size: 10px;">0 free beds</span>
-            </div>
-            <div class="dashboard-card-body">
-                <p style="text-align: center; color: var(--blue-light); padding: 20px; font-size: 12px;">Patients per ward</p>
-                <p class="empty-msg">No ward assignments yet</p>
-                <div style="text-align: center; margin-top: 12px;">
-                    <a href="{{ route('bed-allocations.index') }}" class="btn-link">See More</a>
-                </div>
-            </div>
-        </div>
-
-        {{-- Next of Kin --}}
         <div class="dashboard-card">
             <div class="dashboard-card-header">
                 <span>Next of Kin</span>
-                <a class="btn-link">Recent</a>
+                <a class="btn-link" style="color:rgba(255,255,255,0.85);">Recent</a>
             </div>
             <div class="dashboard-card-body">
                 @if($nextOfKins->count() > 0)
@@ -324,17 +337,16 @@
                 @else
                     <p class="empty-msg">No next of kin records yet</p>
                 @endif
-                <div style="text-align: center; margin-top: 12px;">
-                    <a href="#" class="btn-link">Contact records</a>
-                </div>
+            </div>
+            <div class="dashboard-card-footer">
+                <a href="#" class="btn-link">Contact records</a>
             </div>
         </div>
 
-        {{-- Discharge Details --}}
         <div class="dashboard-card">
             <div class="dashboard-card-header">
-                Discharge Details
-                <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px; font-size: 10px;">0 no ward</span>
+                <span>Discharge Details</span>
+                <span style="background:rgba(255,255,255,0.2); padding:3px 8px; border-radius:4px; font-size:10px;">0 no ward</span>
             </div>
             <div class="dashboard-card-body">
                 <div class="detail-item">
@@ -353,9 +365,9 @@
                     <span class="detail-label">Avg. days admitted</span>
                     <span class="detail-value">— days</span>
                 </div>
-                <div style="text-align: center; margin-top: 12px;">
-                    <a href="#" class="btn-link">See More</a>
-                </div>
+            </div>
+            <div class="dashboard-card-footer">
+                <a href="#" class="btn-link">See More</a>
             </div>
         </div>
 

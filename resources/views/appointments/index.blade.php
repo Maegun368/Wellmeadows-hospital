@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 @section('title', 'Appointments')
 @section('hide-topbar', true)
@@ -145,12 +144,6 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
-.timeline-card-link {
-    font-size: 12px;
-    color: var(--blue-accent);
-    text-decoration: none;
-    font-weight: 600;
-}
 
 .timeline { position: relative; padding-left: 24px; }
 .timeline::before {
@@ -180,9 +173,11 @@
     box-shadow: 0 0 0 2px #cbd5e0;
     background: #a0aec0;
 }
-.timeline-dot.done    { background: #27ae60; box-shadow: 0 0 0 2px #a9dfbf; }
-.timeline-dot.waiting { background: var(--blue-mid); box-shadow: 0 0 0 2px var(--blue-pale); }
-.timeline-dot.overdue { background: #e74c3c; box-shadow: 0 0 0 2px #fadbd8; }
+.timeline-dot.done       { background: #27ae60; box-shadow: 0 0 0 2px #a9dfbf; }
+.timeline-dot.waiting    { background: var(--blue-mid); box-shadow: 0 0 0 2px var(--blue-pale); }
+.timeline-dot.overdue    { background: #e74c3c; box-shadow: 0 0 0 2px #fadbd8; }
+.timeline-dot.out_patient { background: #8e44ad; box-shadow: 0 0 0 2px #d7bde2; }
+.timeline-dot.admitted   { background: #e67e22; box-shadow: 0 0 0 2px #fde8d8; }
 
 .timeline-box {
     background: #f0f8ff;
@@ -213,9 +208,11 @@
     font-weight: 600;
     margin-top: 4px;
 }
-.tl-badge-done    { background: #a9dfbf; color: #1e8449; }
-.tl-badge-waiting { background: var(--blue-pale); color: var(--blue-dark); }
-.tl-badge-overdue { background: #fadbd8; color: #c0392b; }
+.tl-badge-done       { background: #a9dfbf; color: #1e8449; }
+.tl-badge-waiting    { background: var(--blue-pale); color: var(--blue-dark); }
+.tl-badge-overdue    { background: #fadbd8; color: #c0392b; }
+.tl-badge-out_patient { background: #d7bde2; color: #6c3483; }
+.tl-badge-admitted   { background: #fde8d8; color: #a04000; }
 
 .timeline-actions {
     display: flex;
@@ -235,8 +232,10 @@
     transition: background .15s;
 }
 .tl-btn:hover { background: var(--blue-pale); }
-.tl-btn-danger { border-color: #e74c3c; color: #c0392b; }
-.tl-btn-danger:hover { background: #fadbd8; }
+.tl-btn-danger  { border-color: #e74c3c; color: #c0392b; }
+.tl-btn-danger:hover  { background: #fadbd8; }
+.tl-btn-success { border-color: #27ae60; color: #1e8449; }
+.tl-btn-success:hover { background: #a9dfbf; }
 
 /* Pagination */
 .appt-pagination { display: flex; justify-content: flex-end; padding: 8px 0 4px; }
@@ -308,7 +307,7 @@
 .detail-row:last-child { border-bottom: none; }
 .detail-key   { color: var(--blue-mid); font-weight: 500; }
 .detail-val   { color: var(--blue-dark); font-weight: 600; }
-.detail-actions { display: flex; gap: 8px; margin-top: 14px; }
+.detail-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 
 /* Quick link cards */
 .quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -326,6 +325,122 @@
 .ql-icon { font-size: 22px; }
 .ql-title { font-size: 13px; font-weight: 600; color: var(--white); }
 .ql-sub   { font-size: 11px; color: rgba(255,255,255,0.65); }
+
+/* ── Outcome Modal ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 30, 50, 0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.outcome-modal {
+    background: var(--white);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: slideUp .2s ease;
+}
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.outcome-modal-header {
+    background: var(--blue-dark);
+    padding: 16px 20px;
+}
+.outcome-modal-header h3 {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.outcome-modal-header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 11px;
+    margin: 4px 0 0;
+}
+
+.outcome-modal-body {
+    padding: 24px 20px;
+}
+.outcome-patient-name {
+    font-size: 13px;
+    color: var(--blue-dark);
+    font-weight: 600;
+    margin-bottom: 18px;
+    padding: 10px 14px;
+    background: var(--blue-pale);
+    border-radius: 8px;
+}
+
+.outcome-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.outcome-choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 14px;
+    border-radius: 10px;
+    border: 2px solid var(--blue-pale);
+    background: #f8fbff;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+}
+.outcome-choice-btn:hover {
+    border-color: var(--blue-mid);
+    background: var(--blue-pale);
+    transform: translateY(-2px);
+}
+.outcome-choice-btn .choice-icon { font-size: 28px; }
+.outcome-choice-btn .choice-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.outcome-choice-btn .choice-desc {
+    font-size: 10px;
+    color: var(--blue-mid);
+    line-height: 1.4;
+}
+.outcome-choice-btn.outpatient:hover { border-color: #8e44ad; background: #f5eef8; }
+.outcome-choice-btn.admitted:hover   { border-color: #e67e22; background: #fef5ec; }
+
+.outcome-modal-footer {
+    padding: 12px 20px 16px;
+    text-align: right;
+    border-top: 1px solid var(--blue-pale);
+}
+.btn-modal-cancel {
+    font-size: 12px;
+    color: #7f8c8d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background .15s;
+}
+.btn-modal-cancel:hover { background: #f0f0f0; }
+
+/* hidden form used to submit outcome */
+#outcome-form { display: none; }
 </style>
 
 {{-- ── Page Header ── --}}
@@ -338,7 +453,9 @@
         <input type="text" id="apptSearch" placeholder="Search..." oninput="filterTimeline(this.value)">
     </div>
     <div class="appt-header-actions">
-        <a href="{{ route('appointments.create') }}" class="btn-white">+ New Appointment</a>
+        @can('create appointments')
+            <a href="{{ route('appointments.create') }}" class="btn-white">+ New Appointment</a>
+        @endcan
     </div>
 </div>
 
@@ -346,6 +463,18 @@
 
     {{-- ══ LEFT PANEL ══ --}}
     <div class="appt-left">
+
+        {{-- Flash messages --}}
+        @if(session('success'))
+            <div style="background:#a9dfbf;color:#1e8449;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
+        @if(session('warning'))
+            <div style="background:#fde8d8;color:#a04000;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;">
+                ⚠ {{ session('warning') }}
+            </div>
+        @endif
 
         {{-- Filter tags --}}
         <div class="filter-row">
@@ -355,6 +484,7 @@
             <span class="filter-tag" onclick="applyFilter('waiting', this)">Waiting</span>
             <span class="filter-tag" onclick="applyFilter('done', this)">Done</span>
             <span class="filter-tag" onclick="applyFilter('overdue', this)">Overdue</span>
+            <span class="filter-tag" onclick="window.location='?show=resolved'">Resolved</span>
         </div>
 
         {{-- Timeline list --}}
@@ -369,14 +499,28 @@
                     $apptDateTime = \Carbon\Carbon::parse($appt->appointment_date . ' ' . $appt->appointment_time);
                     $isToday  = $apptDateTime->isToday();
                     $isPast   = $apptDateTime->isPast();
-                    $statusClass = $isPast && !$isToday ? 'overdue' : ($isPast ? 'done' : 'waiting');
-                    $statusLabel = $isPast && !$isToday ? 'Overdue' : ($isPast ? 'Done' : 'Waiting');
+
+                    // If an outcome was already recorded, show that instead of done/overdue
+                    if ($appt->outcome === 'out_patient') {
+                        $statusClass = 'out_patient';
+                        $statusLabel = 'Out-patient';
+                    } elseif ($appt->outcome === 'admitted') {
+                        $statusClass = 'admitted';
+                        $statusLabel = 'Admitted';
+                    } else {
+                        $statusClass = $isPast && !$isToday ? 'overdue' : ($isPast ? 'done' : 'waiting');
+                        $statusLabel = $isPast && !$isToday ? 'Overdue' : ($isPast ? 'Done' : 'Waiting');
+                    }
+
                     $patientName = isset($appt->patient_first_name)
                         ? $appt->patient_first_name . ' ' . $appt->patient_last_name
                         : 'Patient #' . $appt->patient_id;
                     $doctorName = isset($appt->doctor_last_name)
                         ? 'Dr. ' . $appt->doctor_last_name
                         : 'Consultant #' . $appt->consultant_id;
+
+                    // Show "Mark Done" button only for done/overdue appointments with no outcome yet
+                    $canMarkDone = $isPast && $appt->outcome === null;
                 @endphp
                 <div class="timeline-item"
                      data-status="{{ $statusClass }}"
@@ -384,15 +528,19 @@
                      data-patient="{{ strtolower($patientName) }}"
                      data-doctor="{{ strtolower($doctorName) }}"
                      onclick="showDetail({{ json_encode([
-                         'id'      => $appt->appointment_id,
-                         'patient' => $patientName,
-                         'doctor'  => $doctorName,
-                         'date'    => \Carbon\Carbon::parse($appt->appointment_date)->format('M d, Y'),
-                         'time'    => \Carbon\Carbon::parse($appt->appointment_time)->format('h:i A'),
-                         'room'    => $appt->examination_room,
-                         'status'  => $statusLabel,
-                         'editUrl' => route('appointments.edit', $appt->appointment_id),
-                         'delUrl'  => route('appointments.destroy', $appt->appointment_id),
+                         'id'          => $appt->appointment_id,
+                         'patient'     => $patientName,
+                         'doctor'      => $doctorName,
+                         'date'        => \Carbon\Carbon::parse($appt->appointment_date)->format('M d, Y'),
+                         'time'        => \Carbon\Carbon::parse($appt->appointment_time)->format('h:i A'),
+                         'room'        => $appt->examination_room,
+                         'status'      => $statusLabel,
+                         'statusClass' => $statusClass,
+                         'canMarkDone' => $canMarkDone,
+                         'patientId'   => $appt->patient_id,
+                         'editUrl'     => route('appointments.edit', $appt->appointment_id),
+                         'delUrl'      => route('appointments.destroy', $appt->appointment_id),
+                         'completeUrl' => route('appointments.complete', $appt->appointment_id),
                      ]) }})">
 
                     <div class="timeline-dot {{ $statusClass }}"></div>
@@ -407,12 +555,25 @@
                             <div class="tl-room">{{ $appt->examination_room }}</div>
                         </div>
                         <div class="timeline-actions" onclick="event.stopPropagation()">
-                            <a href="{{ route('appointments.edit', $appt->appointment_id) }}" class="tl-btn">Edit</a>
-                            <form method="POST" action="{{ route('appointments.destroy', $appt->appointment_id) }}" style="margin:0">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="tl-btn tl-btn-danger"
-                                    onclick="return confirm('Cancel this appointment?')">✕</button>
-                            </form>
+                            @if($canMarkDone)
+                                <button type="button" class="tl-btn tl-btn-success"
+                                    onclick="openOutcomeModal({{ json_encode([
+                                        'id'          => $appt->appointment_id,
+                                        'patient'     => $patientName,
+                                        'completeUrl' => route('appointments.complete', $appt->appointment_id),
+                                    ]) }})">✓</button>
+                            @endif
+                            <a href="{{ route('appointments.show', $appt->appointment_id) }}" class="tl-btn" style="background: #1a2a4a; color: white;">View & Set Outcome</a>
+                            @can('edit appointments')
+                                <a href="{{ route('appointments.edit', $appt->appointment_id) }}" class="tl-btn">Edit</a>
+                            @endcan
+                            @can('delete appointments')
+                                <form method="POST" action="{{ route('appointments.destroy', $appt->appointment_id) }}" style="margin:0">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="tl-btn tl-btn-danger"
+                                        onclick="return confirm('Cancel this appointment?')">✕</button>
+                                </form>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -494,12 +655,23 @@
                     <span id="d-status"></span>
                 </div>
                 <div class="detail-actions">
-                    <a id="d-edit" href="#" class="btn btn-primary" style="font-size:13px;background:var(--blue-dark);border-color:var(--blue-dark);">✏ Edit</a>
-                    <form id="d-del-form" method="POST" style="margin:0">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger" style="font-size:13px"
-                            onclick="return confirm('Cancel this appointment?')">✕ Cancel</button>
-                    </form>
+                    {{-- "Mark Done" — only shown when canMarkDone is true --}}
+                    <button id="d-mark-done" type="button"
+                        style="display:none;background:#27ae60;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;"
+                        onclick="openOutcomeModal(window._currentAppt)">
+                        ✓ Mark Done
+                    </button>
+                    @can('edit appointments')
+                        <a id="d-edit" href="#" class="btn btn-primary"
+                            style="font-size:13px;background:var(--blue-dark);border-color:var(--blue-dark);">✏ Edit</a>
+                    @endcan
+                    @can('delete appointments')
+                        <form id="d-del-form" method="POST" style="margin:0">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger" style="font-size:13px"
+                                onclick="return confirm('Cancel this appointment?')">✕ Cancel</button>
+                        </form>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -508,25 +680,95 @@
 
 </div>
 
+{{-- ══ Outcome Modal ══ --}}
+<div class="modal-overlay" id="outcome-modal" onclick="closeOutcomeModal(event)">
+    <div class="outcome-modal">
+        <div class="outcome-modal-header">
+            <h3>Appointment Complete</h3>
+            <p>What is the outcome of this examination?</p>
+        </div>
+        <div class="outcome-modal-body">
+            <div class="outcome-patient-name" id="modal-patient-name"></div>
+            <div class="outcome-choices">
+                <button type="button" class="outcome-choice-btn outpatient" onclick="submitOutcome('out_patient')">
+                    <span class="choice-label">Out-patient Clinic</span>
+                    <span class="choice-desc">Patient will attend follow-up sessions at the clinic</span>
+                </button>
+                <button type="button" class="outcome-choice-btn admitted" onclick="submitOutcome('admitted')">
+                    <span class="choice-label">Admit to Ward</span>
+                    <span class="choice-desc">Place patient on ward waiting list for a bed</span>
+                </button>
+            </div>
+        </div>
+        <div class="outcome-modal-footer">
+            <button type="button" class="btn-modal-cancel" onclick="document.getElementById('outcome-modal').classList.remove('open')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- Hidden form that submits the outcome choice --}}
+<form id="outcome-form" method="POST" action="">
+    @csrf
+    <input type="hidden" name="outcome" id="outcome-value">
+</form>
+
 <script>
+// Holds the currently selected appointment data
+window._currentAppt = null;
+
 function showDetail(data) {
+    window._currentAppt = data;
+
     document.getElementById('detail-placeholder').style.display = 'none';
-    document.getElementById('detail-content').style.display = 'block';
-    document.getElementById('detail-hint').style.display = 'none';
+    document.getElementById('detail-content').style.display     = 'block';
+    document.getElementById('detail-hint').style.display        = 'none';
     document.getElementById('detail-title').textContent = 'Appointment #' + data.id;
-    document.getElementById('d-patient').textContent = data.patient;
-    document.getElementById('d-doctor').textContent  = data.doctor;
-    document.getElementById('d-date').textContent    = data.date;
-    document.getElementById('d-time').textContent    = data.time;
-    document.getElementById('d-room').textContent    = data.room;
-    document.getElementById('d-edit').href           = data.editUrl;
-    document.getElementById('d-del-form').action     = data.delUrl;
-    const statusColors = { Done: 'tl-badge-done', Waiting: 'tl-badge-waiting', Overdue: 'tl-badge-overdue' };
+    document.getElementById('d-patient').textContent    = data.patient;
+    document.getElementById('d-doctor').textContent     = data.doctor;
+    document.getElementById('d-date').textContent       = data.date;
+    document.getElementById('d-time').textContent       = data.time;
+    document.getElementById('d-room').textContent       = data.room;
+    document.getElementById('d-edit').href              = data.editUrl;
+    document.getElementById('d-del-form').action        = data.delUrl;
+
+    const statusColors = {
+        Done:       'tl-badge-done',
+        Waiting:    'tl-badge-waiting',
+        Overdue:    'tl-badge-overdue',
+        'Out-patient': 'tl-badge-out_patient',
+        Admitted:   'tl-badge-admitted',
+    };
     const s = document.getElementById('d-status');
     s.innerHTML = `<span class="tl-badge ${statusColors[data.status] || ''}">${data.status}</span>`;
+
+    // Show/hide "Mark Done" button based on whether the appointment can still be resolved
+    document.getElementById('d-mark-done').style.display = data.canMarkDone ? '' : 'none';
+
     document.querySelectorAll('.timeline-box').forEach(b => b.classList.remove('selected'));
     const box = document.getElementById('tl-box-' + data.id);
     if (box) box.classList.add('selected');
+}
+
+function openOutcomeModal(data) {
+    window._currentAppt = data;
+    document.getElementById('modal-patient-name').textContent = '👤 ' + data.patient;
+    document.getElementById('outcome-modal').classList.add('open');
+}
+
+function closeOutcomeModal(event) {
+    // Only close if clicking directly on the overlay (not the modal box)
+    if (event.target === document.getElementById('outcome-modal')) {
+        document.getElementById('outcome-modal').classList.remove('open');
+    }
+}
+
+function submitOutcome(outcome) {
+    const form = document.getElementById('outcome-form');
+    form.action = window._currentAppt.completeUrl;
+    document.getElementById('outcome-value').value = outcome;
+    form.submit();
 }
 
 function filterTimeline(q) {

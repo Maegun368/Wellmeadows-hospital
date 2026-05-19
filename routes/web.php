@@ -23,13 +23,17 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
 Route::middleware(['auth'])->group(function () {
 
     // Profile
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Appointments
+    Route::post('appointments/{id}/complete', [AppointmentController::class, 'complete'])
+    ->name('appointments.complete');
+    Route::patch('appointments/{id}/outcome', [AppointmentController::class, 'outcome'])
+    ->name('appointments.outcome');
     Route::resource('appointments', AppointmentController::class);
-
     // Patient Medications
     Route::resource('patient-medications', PatientMedicationController::class);
 
@@ -61,7 +65,23 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/wards-bed', 'patients.wards-bed')->name('patients.wards-bed');
     Route::view('/billing', 'patients.billing');
     Route::view('/discharge', 'patients.discharge');
-    
+    //seeders
+    Route::get('/patients', [PatientController::class, 'index'])
+    ->middleware('permission:view patients')
+    ->name('patients.index');
+
+    Route::get('/patients/create', [PatientController::class, 'create'])
+    ->middleware('permission:create patients')
+    ->name('patients.create');
+// User Management (only for medical directors and personnel officers)
+    Route::middleware(['auth', 'role:medical_director|personnel_officer'])->group(function () {
+    Route::get('/users',               [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create',        [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+    Route::post('/users',              [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit',   [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}',        [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}',     [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+});
 
 });
 
