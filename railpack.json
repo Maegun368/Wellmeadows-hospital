@@ -3,6 +3,6 @@
     "command": "composer install --optimize-autoloader --no-dev && npm install && npm run build && php artisan optimize:clear"
   },
   "start": {
-    "command": "php artisan config:clear && php artisan migrate --force && php artisan db:seed --force && php artisan optimize && frankenphp run --config /Caddyfile"
+    "command": "php artisan migrate --force && php artisan db:seed --force --verbose 2>&1 && php artisan optimize && frankenphp run --config /Caddyfile"
   }
 }
