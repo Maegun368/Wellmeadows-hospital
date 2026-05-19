@@ -334,39 +334,156 @@ body {
             <p>Update your account information and settings</p>
         </div>
 
-        <!-- Edit Form Cards -->
+        <!-- Consolidated Edit Form Card -->
         <div class="profile-card" style="margin-top: 24px;">
             <div class="profile-header" style="background: #1a5276;">
                 <div style="color: white; flex: 1;">
-                    <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Profile Information</h2>
+                    <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Edit Profile Settings</h2>
+                    <p style="margin-top: 4px; color: #DBEAFE; font-size: 12px;">Manage your account information, password, and account settings</p>
                 </div>
             </div>
             <div class="profile-content">
-                @include('profile.partials.update-profile-information-form')
-            </div>
-        </div>
+                <!-- Profile Information Section -->
+                <div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1a5276; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Profile Information
+                    </h3>
+                    <style>
+                        /* Form input styling to match site design */
+                        .profile-form input[type="text"],
+                        .profile-form input[type="email"],
+                        .profile-form input[type="password"] {
+                            width: 100% !important;
+                            padding: 12px 16px !important;
+                            border: 2px solid #e2e8f0 !important;
+                            border-radius: 8px !important;
+                            font-size: 14px !important;
+                            color: #1a3451 !important;
+                            background: #ffffff !important;
+                            transition: all 0.2s !important;
+                            box-sizing: border-box !important;
+                            margin-top: 8px !important;
+                        }
+                        .profile-form input[type="text"]:focus,
+                        .profile-form input[type="email"]:focus,
+                        .profile-form input[type="password"]:focus {
+                            outline: none !important;
+                            border-color: #2e86c1 !important;
+                            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.1) !important;
+                        }
+                        .profile-form label {
+                            font-size: 13px !important;
+                            font-weight: 600 !important;
+                            color: #374151 !important;
+                            display: block !important;
+                        }
+                        .profile-form .mt-6 {
+                            margin-top: 24px !important;
+                        }
+                        .profile-form .space-y-6 > * + * {
+                            margin-top: 20px !important;
+                        }
+                        .save-profile-btn {
+                            background: #2e86c1 !important;
+                            color: white !important;
+                            border: none !important;
+                            padding: 12px 28px !important;
+                            border-radius: 8px !important;
+                            font-size: 13px !important;
+                            font-weight: 700 !important;
+                            cursor: pointer !important;
+                            text-transform: uppercase !important;
+                            letter-spacing: 0.04em !important;
+                            transition: all 0.15s !important;
+                            box-shadow: 0 2px 4px rgba(46, 134, 193, 0.2) !important;
+                        }
+                        .save-profile-btn:hover {
+                            background: #1a5276 !important;
+                            transform: translateY(-1px) !important;
+                            box-shadow: 0 4px 12px rgba(46, 134, 193, 0.3) !important;
+                        }
+                        .save-password-btn {
+                            background: #2e86c1 !important;
+                            color: white !important;
+                            border: none !important;
+                            padding: 12px 28px !important;
+                            border-radius: 8px !important;
+                            font-size: 13px !important;
+                            font-weight: 700 !important;
+                            cursor: pointer !important;
+                            text-transform: uppercase !important;
+                            letter-spacing: 0.04em !important;
+                            transition: all 0.15s !important;
+                            box-shadow: 0 2px 4px rgba(46, 134, 193, 0.2) !important;
+                        }
+                        .save-password-btn:hover {
+                            background: #1a5276 !important;
+                            transform: translateY(-1px) !important;
+                            box-shadow: 0 4px 12px rgba(46, 134, 193, 0.3) !important;
+                        }
+                        .delete-account-btn {
+                            background: #e74c3c !important;
+                            color: white !important;
+                            border: none !important;
+                            padding: 12px 28px !important;
+                            border-radius: 8px !important;
+                            font-size: 13px !important;
+                            font-weight: 700 !important;
+                            cursor: pointer !important;
+                            text-transform: uppercase !important;
+                            letter-spacing: 0.04em !important;
+                            transition: all 0.15s !important;
+                            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2) !important;
+                        }
+                        .delete-account-btn:hover {
+                            background: #c0392b !important;
+                            transform: translateY(-1px) !important;
+                            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+                        }
+                        .profile-form section header h2 {
+                            display: none !important;
+                        }
+                        .profile-form section header p {
+                            font-size: 13px !important;
+                            color: #64748b !important;
+                            margin-bottom: 20px !important;
+                            margin-top: 4px !important;
+                        }
+                    </style>
+                    <div class="profile-form">
+                        @include('profile.partials.update-profile-information-form')
+                    </div>
+                </div>
 
-        <!-- Update Password Card -->
-        <div class="profile-card" style="margin-top: 24px;">
-            <div class="profile-header" style="background: #1a5276;">
-                <div style="color: white; flex: 1;">
-                    <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Update Password</h2>
+                <!-- Update Password Section -->
+                <div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1a5276; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                        Update Password
+                    </h3>
+                    <div class="profile-form">
+                        @include('profile.partials.update-password-form')
+                    </div>
                 </div>
-            </div>
-            <div class="profile-content">
-                @include('profile.partials.update-password-form')
-            </div>
-        </div>
 
-        <!-- Delete Account Card -->
-        <div class="profile-card" style="margin-top: 24px; margin-bottom: 24px;">
-            <div class="profile-header" style="background: #c0392b;">
-                <div style="color: white; flex: 1;">
-                    <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Danger Zone - Delete Account</h2>
+                <!-- Delete Account Section -->
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #c0392b; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Danger Zone - Delete Account
+                    </h3>
+                    <div class="profile-form">
+                        @include('profile.partials.delete-user-form')
+                    </div>
                 </div>
-            </div>
-            <div class="profile-content">
-                @include('profile.partials.delete-user-form')
             </div>
         </div>
 
