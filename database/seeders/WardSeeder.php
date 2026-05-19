@@ -9,7 +9,7 @@ class WardSeeder extends Seeder
 {
     public function run(): void
     {
-        $wards = ['Ward A', 'Ward B', 'Ward C', 'ICU', 'Emergency'];
+        $wards = ['Ward A', 'Ward B', 'Ward C', 'ICU', 'Emergency','Clinical Ward'];
 
         foreach ($wards as $i => $ward) {
             DB::table('wards')->insert([
