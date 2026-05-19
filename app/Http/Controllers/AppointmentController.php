@@ -141,4 +141,41 @@ class AppointmentController extends Controller
                 ->with('info', 'Select a ward to place the patient on the waiting list.');
         }
     }
+    
+    /**
+     * Set the outcome for a completed appointment
+     * PATCH appointments/{id}/outcome
+     */
+    public function outcome(Request $request, $id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        
+        $validated = $request->validate([
+            'outcome' => 'required|in:ward,outpatient,discharge',
+        ]);
+        
+        // Update the appointment with the outcome
+        $appointment->update([
+            'outcome' => $validated['outcome'],
+        ]);
+        
+        // Handle each outcome type
+        if ($validated['outcome'] === 'ward') {
+            return redirect()->route('wards.index', ['admit_patient_id' => $appointment->patient_id])->with('info', 'Select a ward to place the patient on the waiting list.');
+        } elseif ($validated['outcome'] === 'outpatient') {
+            // Add to out_patients
+            \DB::table('out_patients')->insert([
+                'patient_id' => $appointment->patient_id,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            return redirect()->route('appointments.index')->with('success', 'Patient added to outpatient clinic.');
+        } else {
+            // Discharge - just keep the updated status
+            return redirect()->route('appointments.index')->with('success', 'Patient has been discharged.');
+        }
+    }
 }

@@ -8,18 +8,18 @@
     --blue-dark:   #1a5276;
     --blue-mid:    #2e86c1;
     --blue-light:  #5dade2;
+    --blue-accent: #2980b9;
     --blue-pale:   #d6eaf8;
-    --blue-bg:     #e8f4fd;
     --white:       #ffffff;
 }
 
 .create-wrapper {
     min-height: calc(100vh - 60px);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     padding: 2rem;
-    background: var(--blue-bg);
+    background: #e8f4fd;
 }
 
 .create-card {
@@ -36,28 +36,42 @@
     padding: 16px 24px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
-.card-title {
+.create-card-header .card-icon {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.create-card-header .card-title {
     font-size: 15px;
     font-weight: 700;
     color: var(--white);
+    margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin: 0;
 }
-.card-sub {
+
+.create-card-header .card-sub {
     font-size: 11px;
-    color: rgba(255,255,255,0.55);
+    color: rgba(255,255,255,0.6);
     margin-top: 2px;
 }
 
-.create-card-body { padding: 24px; }
+.create-card-body {
+    padding: 24px;
+}
 
 .section-label {
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--blue-mid);
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -71,6 +85,7 @@
 .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
 
 .form-group { margin-bottom: 1rem; }
+
 .form-group label {
     display: block;
     font-size: 12px;
@@ -80,6 +95,7 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -90,9 +106,9 @@
     font-size: 13px;
     color: #2d3748;
     background: #f0f8ff;
-    font-family: inherit;
     transition: border-color .15s, box-shadow .15s;
 }
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -113,36 +129,40 @@
     border-top: 1px solid var(--blue-pale);
     margin-top: 8px;
 }
+
 .btn-save {
     background: var(--blue-dark);
     color: var(--white);
     border: none;
     padding: 10px 24px;
     border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     transition: background .15s;
 }
+
 .btn-save:hover { background: var(--blue-mid); }
+
 .btn-cancel {
     background: var(--white);
     color: #e74c3c;
     border: 1px solid #e74c3c;
     padding: 10px 24px;
     border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     transition: background .15s;
     display: inline-flex;
     align-items: center;
 }
+
 .btn-cancel:hover { background: #fadbd8; }
 </style>
 
@@ -150,8 +170,9 @@
     <div class="create-card">
 
         <div class="create-card-header">
+            <div class="card-icon">✏️</div>
             <div>
-                <div class="card-title">Edit patient</div>
+                <div class="card-title">Edit Patient</div>
                 <div class="card-sub">Patient ID {{ $patient->id }}</div>
             </div>
         </div>
@@ -246,15 +267,8 @@
 
                 <div class="form-group">
                     <label>Doctor / Consultant</label>
-                    <select name="doctor_id">
-                        <option value="">— Select doctor —</option>
-                        @foreach($doctors as $doctor)
-                            <option value="{{ $doctor->id }}" @selected(old('doctor_id', $patient->doctor_id) == $doctor->id)>
-                                {{ $doctor->last_name }}, {{ $doctor->first_name }} {{ $doctor->specialization ? '(' . $doctor->specialization . ')' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('doctor_id')<span class="field-error">{{ $message }}</span>@enderror
+                    <input type="text" name="doctor" value="{{ old('doctor', $patient->doctor) }}">
+                    @error('doctor')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
 
                 <div class="spacer"></div>
@@ -280,7 +294,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">Save changes</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
                     <a href="{{ route('patients.show', $patient) }}" class="btn-cancel">Cancel</a>
                 </div>
 

@@ -166,7 +166,10 @@ class StaffController extends Controller
 
                 // Ward assignment
                 if (!empty($request->ward_id)) {
-                    $staff->wards()->attach($request->ward_id);
+                    $staff->wards()->attach($request->ward_id, [
+                        'week_start_date' => now(),
+                        'week_end_date' => null
+                    ]);
                 }
 
                 // ── Create system login account ──

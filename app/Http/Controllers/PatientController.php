@@ -51,7 +51,14 @@ class PatientController extends Controller
     // ── Create form ──────────────────────────────────────────────────────────────
     public function create()
     {
-        return view('patients.create');
+        $doctors = Doctor::orderBy('last_name')
+            ->orderBy('first_name')
+            ->get()
+            ->mapWithKeys(fn ($doctor) => [
+                $doctor->id => trim($doctor->first_name.' '.$doctor->last_name),
+            ]);
+
+        return view('patients.create', compact('doctors'));
     }
 
     // ── Store new patient ────────────────────────────────────────────────────────
@@ -172,16 +179,18 @@ class PatientController extends Controller
 
         $name = trim($name);
 
-        // Try matching by full_name first
-        $existing = Doctor::where('full_name', $name)->first();
-        if ($existing) {
-            return $existing->id;
-        }
-
         // Split into first / last name
         $parts = preg_split('/\s+/', $name, 2);
         $first = $parts[0] ?? $name;
         $last  = $parts[1] ?? '';
+
+        $existing = Doctor::where('first_name', $first)
+            ->when($last !== '', fn ($query) => $query->where('last_name', $last))
+            ->first();
+
+        if ($existing) {
+            return $existing->id;
+        }
 
         $next = ((int) Doctor::max('id')) + 1;
 
