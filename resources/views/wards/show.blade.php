@@ -5,519 +5,402 @@
 @section('content')
 
 <style>
-
-.page-wrapper{
-    padding:25px;
-    font-family:'Segoe UI',sans-serif;
+:root{
+    --blue-dark:#1a5276;
+    --blue-mid:#2e86c1;
+    --blue-light:#5dade2;
+    --blue-accent:#2980b9;
+    --blue-pale:#d6eaf8;
+    --blue-bg:#e8f4fd;
+    --white:#ffffff;
 }
 
-/* HEADER */
-
-.header-box{
-    background:linear-gradient(135deg,#0D3B66,#145DA0);
-    color:white;
-    padding:35px;
-    border-radius:20px;
-    margin-bottom:25px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.15);
-}
-
-.header-box h1{
+*{
+    box-sizing:border-box;
     margin:0;
-    font-size:40px;
-    font-weight:800;
+    padding:0;
+}
+
+body{
+    background:var(--blue-bg);
+    font-family:'Open Sans',sans-serif;
+    color:#2d3748;
+}
+
+.wbm-wrapper{
+    background:var(--blue-bg);
+    min-height:100vh;
+    padding-bottom:30px;
+}
+
+/* ───── TOPBAR ───── */
+.wbm-topbar{
+    background:var(--blue-dark);
+    padding:14px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+}
+
+.wbm-topbar h1{
+    font-size:18px;
+    font-weight:700;
     color:white;
+    text-transform:uppercase;
+    letter-spacing:.05em;
 }
 
-.header-box p{
-    margin-top:8px;
-    color:#DBEAFE;
-    font-size:16px;
+.wbm-topbar p{
+    color:rgba(255,255,255,.55);
+    font-size:11px;
+    margin-top:2px;
 }
 
-/* STATS */
+.wbm-back-btn{
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.3);
+    color:white;
+    padding:9px 16px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    white-space:nowrap;
+}
 
-.stats-grid{
+.wbm-back-btn:hover{
+    background:rgba(255,255,255,.25);
+}
+
+/* ───── STATS ───── */
+.wbm-stats{
     display:grid;
     grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    padding:20px 24px 0;
+}
+
+.wbm-stat{
+    background:var(--blue-mid);
+    border-radius:10px;
+    padding:18px 20px;
+    color:white;
+}
+
+.wbm-stat:nth-child(2),
+.wbm-stat:nth-child(4){
+    background:var(--blue-dark);
+}
+
+.wbm-stat:nth-child(3){
+    background:var(--blue-accent);
+}
+
+.wbm-stat h3{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:rgba(255,255,255,.7);
+    margin-bottom:8px;
+}
+
+.wbm-stat p{
+    font-size:32px;
+    font-weight:700;
+    line-height:1;
+}
+
+.wbm-stat span{
+    font-size:11px;
+    color:rgba(255,255,255,.55);
+    margin-top:6px;
+    display:block;
+}
+
+/* ───── CONTENT ───── */
+.wbm-content{
+    padding:20px 24px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
     gap:20px;
-    margin-bottom:25px;
 }
 
-.stat-card{
+.wbm-content-full{
+    padding:0 24px 0;
+}
+
+/* ───── PANEL ───── */
+.wbm-panel{
     background:white;
-    border-radius:18px;
-    padding:25px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    border:2px solid var(--blue-mid);
+    border-radius:12px;
+    overflow:hidden;
 }
 
-.stat-card h3{
-    font-size:14px;
-    color:#64748B;
+.wbm-panel-title{
+    background:var(--blue-mid);
+    color:white;
+    padding:10px 16px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+}
+
+.wbm-panel-body{
+    padding:16px;
+}
+
+/* ───── PATIENT CARD ───── */
+.patient-card{
+    background:#f0f8ff;
+    border-left:4px solid var(--blue-mid);
+    padding:14px 16px;
+    border-radius:8px;
     margin-bottom:12px;
 }
 
-.stat-card p{
-    font-size:34px;
-    font-weight:700;
-    color:#0D3B66;
-}
-
-/* MAIN GRID */
-
-.main-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
-
-/* PANEL */
-
-.panel{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-
-.panel-title{
-    font-size:24px;
-    font-weight:700;
-    color:#0D3B66;
-    margin-bottom:20px;
-}
-
-/* PATIENT CARD */
-
-.patient-card{
-    background:#EFF6FF;
-    border-left:5px solid #2563EB;
-    padding:18px;
-    border-radius:14px;
-    margin-bottom:14px;
+.patient-card.waiting{
+    background:#fffbeb;
+    border-left-color:#f59e0b;
 }
 
 .patient-card h4{
-    margin:0 0 10px 0;
-    color:#1E3A8A;
-    font-size:18px;
+    margin:0 0 8px 0;
+    color:var(--blue-dark);
+    font-size:15px;
+    font-weight:700;
 }
 
 .patient-card p{
-    margin:4px 0;
+    margin:3px 0;
     color:#334155;
+    font-size:13px;
 }
 
-/* BED GRID */
-
+/* ───── BED GRID ───── */
 .bed-grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:12px;
+    gap:10px;
 }
 
 .bed{
-    padding:20px;
-    border-radius:12px;
+    padding:16px 10px;
+    border-radius:8px;
     text-align:center;
     font-weight:700;
-    font-size:14px;
+    font-size:12px;
 }
 
 .occupied{
-    background:#FCA5A5;
-    color:#7F1D1D;
+    background:#fca5a5;
+    color:#7f1d1d;
 }
 
 .vacant{
-    background:#BBF7D0;
-    color:#14532D;
+    background:#bbf7d0;
+    color:#14532d;
 }
 
-/* BADGES */
-
+/* ───── BADGES ───── */
 .badge{
     display:inline-block;
-    padding:6px 12px;
+    padding:4px 12px;
     border-radius:999px;
-    font-size:12px;
+    font-size:11px;
     font-weight:700;
 }
 
-.badge-green{
-    background:#DCFCE7;
-    color:#166534;
+.badge-occupied{
+    background:#d5f5e3;
+    color:#1e8449;
 }
 
-.badge-red{
-    background:#FEE2E2;
-    color:#991B1B;
+.badge-waiting{
+    background:#fef9c3;
+    color:#854d0e;
 }
 
-/* BUTTON */
+.badge-discharged{
+    background:#fadbd8;
+    color:#c0392b;
+}
+/* ───── BACK BUTTON ROW ───── */
+.wbm-back-row{
+    padding:0 16px 16px;
+    display:flex;
+    justify-content:flex-start;
+}
 
-.back-btn{
-    display:inline-block;
-    margin-top:25px;
-    background:#145DA0;
+.wbm-back-row a{
+    background:var(--blue-dark);
     color:white;
-    padding:14px 20px;
-    border-radius:12px;
+    padding:9px 18px;
+    border-radius:8px;
     text-decoration:none;
-    font-weight:700;
+    font-size:13px;
+    font-weight:600;
+    display:inline-block;
 }
 
-.back-btn:hover{
-    background:#0D3B66;
+.wbm-back-row a:hover{
+    opacity:.9;
 }
 
+/* ───── RESPONSIVE ───── */
+@media(max-width:1100px){
+    .wbm-stats{ grid-template-columns:1fr 1fr; }
+}
+
+@media(max-width:768px){
+    .wbm-content{ grid-template-columns:1fr; }
+    .wbm-stats{ grid-template-columns:1fr; }
+    .wbm-topbar{ flex-direction:column; align-items:flex-start; }
+}
 </style>
 
-<div class="page-wrapper">
+<div class="wbm-wrapper">
 
-    <!-- HEADER -->
-
-    <div class="header-box">
-
-        <h1>
-
-            {{ $ward->ward_name }}
-
-        </h1>
-
-        <p>
-
-            {{ $ward->location }}
-
-        </p>
-
+    {{-- TOPBAR --}}
+    <div class="wbm-topbar">
+        <div>
+            <h1>🏥 {{ $ward->ward_name }}</h1>
+            <p>{{ $ward->location }}</p>
+        </div>
+        <a href="{{ route('wards.index') }}" class="wbm-back-btn">← Back to Ward Management</a>
     </div>
 
-    <!-- STATS -->
-
-    <div class="stats-grid">
-
-        <div class="stat-card">
-
+    {{-- STATS --}}
+    <div class="wbm-stats">
+        <div class="wbm-stat">
             <h3>Total Beds</h3>
-
-            <p>
-
-                {{ $ward->total_beds }}
-
-            </p>
-
+            <p>{{ $ward->total_beds }}</p>
+            <span>Capacity</span>
         </div>
-
-        <div class="stat-card">
-
+        <div class="wbm-stat">
             <h3>Occupied Beds</h3>
-
-            <p>
-
-                {{ $currentPatients->count() }}
-
-            </p>
-
+            <p>{{ $currentPatients->count() }}</p>
+            <span>Currently admitted</span>
         </div>
-
-        <div class="stat-card">
-
+        <div class="wbm-stat">
             <h3>Available Beds</h3>
-
-            <p>
-
-                {{ $availableBeds }}
-
-            </p>
-
+            <p>{{ $availableBeds }}</p>
+            <span>Ready to assign</span>
         </div>
-
-        <div class="stat-card">
-
-            <h3>Telephone Extension</h3>
-
-            <p>
-
-                {{ $ward->telephone_extension }}
-
-            </p>
-
+        <div class="wbm-stat">
+            <h3>Telephone Ext.</h3>
+            <p style="font-size:22px;">{{ $ward->telephone_extension }}</p>
+            <span>Extension number</span>
         </div>
-
     </div>
 
-    <!-- MAIN CONTENT -->
+    {{-- MAIN GRID --}}
+    <div class="wbm-content">
 
-    <div class="main-grid">
-
-        <!-- CURRENT PATIENTS -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-
-                Current Patients
-
-            </div>
-
-            @forelse($currentPatients as $allocation)
-
-                <div class="patient-card">
-
-                    <h4>
-
-                        @if($allocation->patient)
-                            {{ $allocation->patient->first_name }}
-                            {{ $allocation->patient->last_name }}
-                            <span style="font-size:14px;font-weight:500;color:#64748B;">
-                                (ID {{ $allocation->patient_id }})
-                            </span>
-                        @else
-                            Patient ID: {{ $allocation->patient_id }}
-                        @endif
-
-                    </h4>
-
-                    @if($allocation->patient?->phone)
-                        <p>
-                            Phone: {{ $allocation->patient->phone }}
-                        </p>
-                    @endif
-
-                    <p>
-
-                        Bed Number:
-                        {{ $allocation->bed_number }}
-
-                    </p>
-
-                    <p>
-
-                        Date Placed:
-
-                        {{ $allocation->date_placed
-                            ? \Carbon\Carbon::parse($allocation->date_placed)->format('F d, Y')
-                            : 'No Date'
-                        }}
-
-                    </p>
-
-                    <span class="badge badge-green">
-
-                        Occupied
-
-                    </span>
-
-                </div>
-
-            @empty
-
-                <p>
-
-                    No active patients found.
-
-                </p>
-
-            @endforelse
-
-        </div>
-
-        <!-- BED MAP -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-
-                Bed Occupancy Map
-
-            </div>
-
-            <div class="bed-grid">
-
-                @foreach($bedMap as $bedNumber => $allocation)
-
-                    <div class="bed {{ $allocation ? 'occupied' : 'vacant' }}">
-
-                        Bed {{ $bedNumber }}
-
-                        @if($allocation?->patient)
-                            <div style="font-size:11px;margin-top:8px;font-weight:600;line-height:1.2;">
+        {{-- CURRENT PATIENTS --}}
+        <div class="wbm-panel">
+            <div class="wbm-panel-title">Current Patients</div>
+            <div class="wbm-panel-body">
+                @forelse($currentPatients as $allocation)
+                    <div class="patient-card">
+                        <h4>
+                            @if($allocation->patient)
                                 {{ $allocation->patient->first_name }}
-                                {{ \Illuminate\Support\Str::substr($allocation->patient->last_name, 0, 1) }}.
-                            </div>
+                                {{ $allocation->patient->last_name }}
+                                <span style="font-size:12px;font-weight:500;color:#64748b;">
+                                    (ID {{ $allocation->patient_id }})
+                                </span>
+                            @else
+                                Patient ID: {{ $allocation->patient_id }}
+                            @endif
+                        </h4>
+                        @if($allocation->patient?->phone)
+                            <p>📞 {{ $allocation->patient->phone }}</p>
                         @endif
-
+                        <p>🛏️ Bed {{ $allocation->bed_number }}</p>
+                        <p>📅 Date Placed:
+                            {{ \Carbon\Carbon::parse($allocation->date_placed)->format('F d, Y') }}
+                        </p>
+                        <div style="margin-top:8px;">
+                            <span class="badge badge-occupied">Occupied</span>
+                        </div>
                     </div>
-
-                @endforeach
-
+                @empty
+                    <p style="color:#94a3b8;text-align:center;padding:24px 0;">
+                        No active patients found.
+                    </p>
+                @endforelse
             </div>
+        </div>
 
-            <div style="margin-top:20px;">
-
-                <span class="badge badge-red">
-
-                    Occupied
-
-                </span>
-
-                <span class="badge badge-green">
-
-                    Vacant
-
-                </span>
-
+        {{-- BED MAP --}}
+        <div class="wbm-panel">
+            <div class="wbm-panel-title">Bed Occupancy Map</div>
+            <div class="wbm-panel-body">
+                <div class="bed-grid">
+                    @foreach($bedMap as $bedNumber => $allocation)
+                        <div class="bed {{ $allocation ? 'occupied' : 'vacant' }}">
+                            Bed {{ $bedNumber }}
+                            @if($allocation?->patient)
+                                <div style="font-size:10px;margin-top:6px;font-weight:600;line-height:1.2;">
+                                    {{ $allocation->patient->first_name }}
+                                    {{ \Illuminate\Support\Str::substr($allocation->patient->last_name, 0, 1) }}.
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+                <div style="margin-top:16px;display:flex;gap:8px;">
+                    <span class="badge badge-discharged">Occupied</span>
+                    <span class="badge badge-occupied">Vacant</span>
+                </div>
             </div>
-
         </div>
 
     </div>
 
+    {{-- WAITING LIST --}}
     @if($waitingList->isNotEmpty())
-
-        <div class="panel" style="margin-top:25px;">
-
-            <div class="panel-title">
-
-                Waiting list
-
-            </div>
-
-            @foreach($waitingList as $allocation)
-
-                <div class="patient-card">
-
-                    <h4>
-                        @if($allocation->patient)
-                            {{ $allocation->patient->first_name }} {{ $allocation->patient->last_name }}
-                            <span style="font-size:14px;font-weight:500;color:#64748B;">
-                                (ID {{ $allocation->patient_id }})
-                            </span>
-                        @else
-                            Patient ID: {{ $allocation->patient_id }}
-                        @endif
-                    </h4>
-
-                    <p>
-                        Waiting since:
-                        {{ $allocation->date_placed_waiting
-                            ? $allocation->date_placed_waiting->format('F d, Y')
-                            : '—' }}
-                    </p>
-
-                </div>
-
-            @endforeach
-
-        </div>
-
-    @endif
-
-    <!-- APPOINTMENTS -->
-
-    @if($appointments->isNotEmpty())
-
-        <div class="panel" style="margin-top:25px;">
-
-            <div class="panel-title">
-
-                Scheduled Appointments
-
-            </div>
-
-            <table style="width:100%; border-collapse:collapse;">
-
-                <thead>
-
-                    <tr style="background:#F3F4F6; border-bottom:2px solid #E5E7EB;">
-
-                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Patient</th>
-
-                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Date</th>
-
-                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Time</th>
-
-                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Consultant</th>
-
-                        <th style="padding:12px; text-align:left; font-weight:600; color:#374151;">Room</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @foreach($appointments as $appointment)
-
-                        <tr style="border-bottom:1px solid #E5E7EB;">
-
-                            <td style="padding:12px; color:#1F2937;">
-
-                                @if($appointment->patient)
-
-                                    {{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}
-
+        <div class="wbm-content-full" style="margin-bottom:20px;">
+            <div class="wbm-panel">
+                <div class="wbm-panel-title">Waiting List</div>
+                <div class="wbm-panel-body">
+                    @foreach($waitingList as $allocation)
+                        <div class="patient-card waiting">
+                            <h4>
+                                @if($allocation->patient)
+                                    {{ $allocation->patient->first_name }}
+                                    {{ $allocation->patient->last_name }}
+                                    <span style="font-size:12px;font-weight:500;color:#64748b;">
+                                        (ID {{ $allocation->patient_id }})
+                                    </span>
                                 @else
-
-                                    Patient ID: {{ $appointment->patient_id }}
-
+                                    Patient ID: {{ $allocation->patient_id }}
                                 @endif
-
-                            </td>
-
-                            <td style="padding:12px; color:#1F2937;">
-
-                                {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}
-
-                            </td>
-
-                            <td style="padding:12px; color:#1F2937;">
-
-                                {{ $appointment->appointment_time }}
-
-                            </td>
-
-                            <td style="padding:12px; color:#1F2937;">
-
-                                @if($appointment->consultant)
-
-                                    {{ $appointment->consultant->last_name }}, {{ $appointment->consultant->first_name }}
-
-                                @else
-
-                                    Consultant ID: {{ $appointment->consultant_id }}
-
-                                @endif
-
-                            </td>
-
-                            <td style="padding:12px; color:#1F2937;">
-
-                                {{ $appointment->examination_room }}
-
-                            </td>
-
-                        </tr>
-
+                            </h4>
+                            <p>⏳ Waiting since:
+                                {{ $allocation->date_placed_waiting
+                                    ? $allocation->date_placed_waiting->format('F d, Y')
+                                    : '—' }}
+                            </p>
+                            <div style="margin-top:8px;">
+                                <span class="badge badge-waiting">On Waiting List</span>
+                            </div>
+                        </div>
                     @endforeach
-
-                </tbody>
-
-            </table>
-
+                </div>
+                
+            </div>
+            
         </div>
-
+        {{-- BACK BUTTON (below table) --}}
+            <div class="wbm-back-row">
+                <a href="{{ route('wards.index') }}">← Back to Ward & Bed Management</a>
+            </div>
     @endif
-
-    <!-- BACK -->
-
-    <a href="{{ route('wards.index') }}"
-       class="back-btn">
-
-        Back to Ward Management
-
-    </a>
 
 </div>
 

@@ -5,383 +5,444 @@
 @section('content')
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-    background: #EAF1FB;
-    font-family: 'Segoe UI', sans-serif;
-    color: #1E293B;
+:root{
+    --blue-dark:#1a5276;
+    --blue-mid:#2e86c1;
+    --blue-light:#5dade2;
+    --blue-accent:#2980b9;
+    --blue-pale:#d6eaf8;
+    --blue-bg:#e8f4fd;
+    --white:#ffffff;
 }
 
-.wbm-wrapper {
-    padding: 0;
+/* ───────────────── GLOBAL ───────────────── */
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-/* ── Topbar ── */
-.wbm-topbar {
-    background: #1a3451;
-    padding: 18px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.wbm-topbar h1 {
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.3px;
-}
-.wbm-topbar p {
-    margin-top: 3px;
-    color: #DBEAFE;
-    font-size: 12px;
+body{
+    background:var(--blue-bg);
+    font-family:'Open Sans',sans-serif;
+    color:#2d3748;
 }
 
-/* ── Add Ward button (inside topbar) ── */
-.wbm-add-btn {
-    background: white;
-    color: #1a3451;
-    padding: 9px 18px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 13px;
-    border: 1px solid #CBD5E0;
-    white-space: nowrap;
-}
-.wbm-add-btn:hover { background: #F0F4FF; }
-
-/* ── Stats ── */
-.wbm-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 18px 30px 0;
-}
-.wbm-stat {
-    background: #3A7BD5;
-    border-radius: 14px;
-    padding: 22px 20px;
-    color: white;
-}
-.wbm-stat h3 {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    opacity: 0.85;
-    margin-bottom: 10px;
-}
-.wbm-stat p {
-    font-size: 38px;
-    font-weight: 700;
-    line-height: 1;
-}
-.wbm-stat span {
-    font-size: 12px;
-    opacity: 0.75;
-    display: block;
-    margin-top: 6px;
+.wbm-wrapper{
+    background:var(--blue-bg);
+    min-height:100vh;
+    padding-bottom:30px;
 }
 
-/* ── Main grid ── */
-.wbm-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 20px 30px 0;
+/* ───────────────── TOPBAR ───────────────── */
+.wbm-topbar{
+    background:var(--blue-dark);
+    padding:14px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
 }
 
-/* ── Panel card ── */
-.wbm-panel {
-    background: #2D6DB5;
-    border-radius: 16px;
-    padding: 18px;
-}
-.wbm-panel-title {
-    background: white;
-    color: #1a3451;
-    padding: 12px 16px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.4px;
-    margin-bottom: 16px;
+.wbm-topbar h1{
+    font-size:18px;
+    font-weight:700;
+    color:white;
+    text-transform:uppercase;
+    letter-spacing:.05em;
 }
 
-/* ── Ward info panel ── */
-.wbm-selector {
-    width: 100%;
-    padding: 12px 14px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 13px;
-    margin-bottom: 14px;
-    background: white;
-    color: #1a3451;
-}
-.wbm-action-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-.wbm-action-row a {
-    background: #1a3451;
-    color: white;
-    padding: 9px 22px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 13px;
-}
-.wbm-action-row a:hover { background: #243d5e; }
-.wbm-info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-.wbm-info-box {
-    background: white;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-weight: 600;
-    font-size: 12px;
-    color: #1a3451;
+.wbm-topbar p{
+    color:rgba(255,255,255,.55);
+    font-size:11px;
+    margin-top:2px;
 }
 
-/* ── Bed tracker ── */
-.wbm-tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-}
-.wbm-tab {
-    background: white;
-    color: #1a3451;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-}
-.wbm-tab.active {
-    background: #1a3451;
-    color: white;
-}
-.wbm-bed-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-.wbm-bed {
-    padding: 14px 6px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 12px;
-}
-.wbm-bed.occupied { background: #FCA5A5; color: #7F1D1D; }
-.wbm-bed.vacant   { background: #BBF7D0; color: #14532D; }
-.wbm-legend {
-    margin-top: 14px;
-    background: white;
-    color: #1a3451;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
-}
-.wbm-legend span { display: flex; align-items: center; gap: 6px; }
-.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-.dot.red   { background: #FCA5A5; border: 1.5px solid #EF4444; }
-.dot.green { background: #BBF7D0; border: 1.5px solid #22C55E; }
-
-/* ── Assign panel ── */
-.wbm-assign-wrap {
-    margin: 20px 30px 0;
-    background: #2D6DB5;
-    border-radius: 16px;
-    padding: 18px;
-}
-.wbm-assign-form {
-    background: #EEF4FF;
-    border-radius: 12px;
-    padding: 18px;
-}
-.wbm-form-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.wbm-form-col {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-.wbm-form-col label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #1a3451;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-}
-.wbm-form-grid input,
-.wbm-form-grid select {
-    padding: 11px 14px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    background: white;
-    color: #1a3451;
-    outline: none;
-    width: 100%;
-}
-.wbm-assign-btn {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 8px;
-    background: #1a3451;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    letter-spacing: 0.4px;
-}
-.wbm-assign-btn:hover { background: #243d5e; }
-
-/* ── Recent assignment ── */
-.wbm-recent-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px 0 14px;
-    gap: 12px;
-}
-.wbm-recent-title {
-    background: white;
-    color: #1a3451;
-    padding: 11px 20px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 13px;
-    flex: 1;
-    text-align: center;
-}
-.wbm-search-wrap {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-.wbm-search-wrap input {
-    padding: 9px 14px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    outline: none;
-    background: white;
-    color: #1E293B;
-    width: 200px;
-}
-.wbm-search-wrap button {
-    padding: 9px 18px;
-    background: #1a3451;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-}
-.wbm-view-all {
-    background: #1a3451;
-    color: white;
-    padding: 9px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 12px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.wbm-view-all:hover { background: #243d5e; color: white; }
-
-.wbm-table-wrap {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-}
-.wbm-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-.wbm-table th {
-    background: #DBEAFE;
-    color: #1E3A8A;
-    padding: 12px 16px;
-    text-align: left;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
-.wbm-table td {
-    padding: 13px 16px;
-    border-bottom: 1px solid #F0F4FF;
-    color: #1E293B;
-}
-.wbm-table tbody tr:last-child td { border-bottom: none; }
-.wbm-table tbody tr:hover { background: #F8FAFF; }
-
-.badge-occupied {
-    background: #DCFCE7;
-    color: #166534;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-}
-.badge-discharged {
-    background: #FEE2E2;
-    color: #991B1B;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-}
-.badge-waiting {
-    background: #FEF3C7;
-    color: #92400E;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
+/* ───────────────── STATS ───────────────── */
+.wbm-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    padding:20px 24px 0;
 }
 
-/* Alerts */
-.wbm-alert {
-    margin: 0 30px 16px;
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
+.wbm-stat{
+    background:var(--blue-mid);
+    border-radius:10px;
+    padding:18px 20px;
+    color:white;
 }
-.wbm-alert-success { background: #D1FAE5; color: #065F46; }
-.wbm-alert-error   { background: #FEE2E2; color: #991B1B; }
 
-.wbm-bottom-space { height: 30px; }
+.wbm-stat:nth-child(2),
+.wbm-stat:nth-child(4){
+    background:var(--blue-dark);
+}
+
+.wbm-stat:nth-child(3){
+    background:var(--blue-accent);
+}
+
+.wbm-stat h3{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:rgba(255,255,255,.7);
+    margin-bottom:8px;
+}
+
+.wbm-stat p{
+    font-size:32px;
+    font-weight:700;
+    line-height:1;
+}
+
+.wbm-stat span{
+    font-size:11px;
+    color:rgba(255,255,255,.55);
+    margin-top:6px;
+    display:block;
+}
+
+/* ───────────────── MAIN GRID ───────────────── */
+.wbm-main{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    padding:20px 24px;
+}
+
+/* ───────────────── PANELS ───────────────── */
+.wbm-panel,
+.wbm-assign-wrap{
+    background:white;
+    border:2px solid var(--blue-mid);
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.wbm-panel-title{
+    background:var(--blue-mid);
+    color:white;
+    padding:10px 16px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin:0;
+    border:none;
+    border-radius:0;
+    text-align:left;
+}
+
+/* ───────────────── PANEL CONTENT ───────────────── */
+.wbm-panel{
+    padding-bottom:16px;
+}
+
+.wbm-selector,
+.wbm-info-grid select,
+.wbm-form-fields input,
+.wbm-form-fields select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--blue-pale);
+    border-radius:8px;
+    background:white;
+    font-size:13px;
+    color:#2d3748;
+}
+
+.wbm-selector{
+    margin:16px;
+    width:calc(100% - 32px);
+}
+
+.wbm-selector:focus,
+.wbm-form-fields input:focus,
+.wbm-form-fields select:focus{
+    outline:none;
+    border-color:var(--blue-mid);
+}
+
+/* ───────────────── ACTION BUTTONS ───────────────── */
+.wbm-action-row{
+    display:flex;
+    gap:10px;
+    margin:0 16px 16px;
+}
+
+.wbm-action-row a{
+    background:var(--blue-dark);
+    color:white;
+    border:none;
+    padding:9px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    transition:.15s;
+}
+
+.wbm-action-row a:hover{
+    opacity:.9;
+}
+
+/* ───────────────── INFO GRID ───────────────── */
+.wbm-info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    padding:0 16px;
+}
+
+/* ───────────────── BED TRACKER ───────────────── */
+.wbm-tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    padding:16px;
+}
+
+.wbm-tab{
+    background:white;
+    border:1px solid var(--blue-mid);
+    color:var(--blue-dark);
+    border-radius:8px;
+    padding:8px 16px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.wbm-tab.active{
+    background:var(--blue-dark);
+    color:white;
+}
+
+.wbm-bed-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    padding:0 16px 16px;
+}
+
+.wbm-bed{
+    padding:14px;
+    border-radius:8px;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+}
+
+.wbm-bed.occupied{
+    background:#fadbd8;
+    color:#c0392b;
+}
+
+.wbm-bed.vacant{
+    background:#d5f5e3;
+    color:#1e8449;
+}
+
+/* ───────────────── LEGEND ───────────────── */
+.wbm-legend{
+    display:flex;
+    justify-content:flex-end;
+    gap:20px;
+    padding:0 16px 16px;
+    font-size:12px;
+    color:#4a5568;
+}
+
+.wbm-legend span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.dot.red{
+    background:#e74c3c;
+}
+
+.dot.green{
+    background:#2ecc71;
+}
+
+/* ───────────────── ASSIGN PANEL ───────────────── */
+.wbm-assign-wrap{
+    margin:0 24px;
+}
+
+.wbm-assign-form{
+    padding:16px;
+}
+
+.wbm-form-fields{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:16px;
+}
+
+.wbm-form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.wbm-form-group label{
+    font-size:11px;
+    font-weight:700;
+    color:var(--blue-dark);
+    text-transform:uppercase;
+}
+
+/* ───────────────── ASSIGN BUTTON ───────────────── */
+.wbm-assign-btn{
+    width:100%;
+    background:var(--blue-dark);
+    color:white;
+    border:none;
+    padding:12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.wbm-assign-btn:hover{
+    opacity:.9;
+}
+
+/* ───────────────── RECENT HEADER ───────────────── */
+.wbm-recent-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:20px 0 14px;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.wbm-recent-title{
+    font-size:12px;
+    font-weight:700;
+    color:var(--blue-dark);
+    text-transform:uppercase;
+}
+
+.wbm-view-all{
+    background:var(--blue-dark);
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ───────────────── TABLE ───────────────── */
+.wbm-table-wrap{
+    border:1px solid var(--blue-pale);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.wbm-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+.wbm-table th{
+    background:#f0f8ff;
+    color:var(--blue-dark);
+    text-align:left;
+    padding:10px 14px;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.wbm-table td{
+    padding:12px 14px;
+    border-bottom:1px solid #eef4ff;
+}
+
+.wbm-table tr:last-child td{
+    border-bottom:none;
+}
+
+.wbm-table tbody tr:hover{
+    background:#f8fbff;
+}
+
+/* ───────────────── BADGES ───────────────── */
+.badge-occupied{
+    background:#d5f5e3;
+    color:#1e8449;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.badge-discharged{
+    background:#fadbd8;
+    color:#c0392b;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.badge-waiting{
+    background:#fef9c3;
+    color:#854d0e;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+}
+
+/* ───────────────── RESPONSIVE ───────────────── */
+@media(max-width:1100px){
+    .wbm-stats,
+    .wbm-main,
+    .wbm-form-fields{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:768px){
+    .wbm-stats,
+    .wbm-main,
+    .wbm-form-fields,
+    .wbm-info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .wbm-topbar{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .wbm-bed-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .wbm-recent-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+}
 </style>
 
 <div class="wbm-wrapper">
@@ -389,24 +450,10 @@ body {
     {{-- TOPBAR --}}
     <div class="wbm-topbar">
         <div>
-            <h1>Ward &amp; Bed Management</h1>
+            <h1>Ward & Bed Management</h1>
             <p>{{ now()->format('F d, Y | h:i A') }}</p>
         </div>
-        @can('create wards')
-            <a href="{{ route('wards.create') }}" class="wbm-add-btn">+ Add Ward</a>
-        @endcan
     </div>
-
-    {{-- FLASH MESSAGES --}}
-    @if(session('success'))
-        <div class="wbm-alert wbm-alert-success" style="margin-top:16px;">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="wbm-alert wbm-alert-error" style="margin-top:16px;">{{ session('error') }}</div>
-    @endif
-    @if($errors->has('ward'))
-        <div class="wbm-alert wbm-alert-error" style="margin-top:16px;">{{ $errors->first('ward') }}</div>
-    @endif
 
     {{-- STATS --}}
     <div class="wbm-stats">
@@ -422,12 +469,12 @@ body {
         </div>
         <div class="wbm-stat">
             <h3>Occupied Beds</h3>
-            <p>{{ $wards->sum('occupied_beds') }}</p>
-            <span>Currently in use</span>
+            <p>{{ \App\Models\BedAllocation::whereNull('actual_leave_date')->whereNotNull('date_placed')->count() }}</p>
+            <span>Currently admitted</span>
         </div>
         <div class="wbm-stat">
             <h3>Vacant Beds</h3>
-            <p>{{ $wards->sum('total_beds') - $wards->sum('occupied_beds') }}</p>
+            <p>{{ $wards->sum('total_beds') - \App\Models\BedAllocation::whereNull('actual_leave_date')->whereNotNull('date_placed')->count() }}</p>
             <span>Available now</span>
         </div>
     </div>
@@ -437,13 +484,12 @@ body {
 
         {{-- LEFT: Ward Info --}}
         <div class="wbm-panel">
-            <div class="wbm-panel-title">MAINTAIN WARD INFORMATION</div>
+            <div class="wbm-panel-title">Maintain Ward Information</div>
 
             <select id="wardSelector" onchange="changeWard()" class="wbm-selector">
                 @foreach($wards as $ward)
                     <option
                         value="{{ $ward->ward_id }}"
-                        data-id="{{ $ward->ward_id }}"
                         data-name="{{ $ward->ward_name }}"
                         data-location="{{ $ward->location }}"
                         data-capacity="{{ $ward->total_beds }}"
@@ -457,23 +503,21 @@ body {
 
             <div class="wbm-action-row">
                 <a href="#" id="viewBtn">View</a>
-                @can('edit wards')
-                    <a href="#" id="editBtn">Edit</a>
-                @endcan
+                <a href="#" id="editBtn">Edit</a>
             </div>
 
             <div class="wbm-info-grid">
-                <div class="wbm-info-box" id="infoWardId">Ward ID: —</div>
-                <div class="wbm-info-box" id="infoWardName">—</div>
-                <div class="wbm-info-box" id="infoLocation">—</div>
-                <div class="wbm-info-box" id="infoCapacity">Capacity: —</div>
-                <div class="wbm-info-box" id="infoAvailable">Available: —</div>
+                <select><option id="wardId"></option></select>
+                <select><option id="wardName"></option></select>
+                <select><option id="wardLocation"></option></select>
+                <select><option id="wardCapacity"></option></select>
+                <select><option id="wardAvailable"></option></select>
             </div>
         </div>
 
         {{-- RIGHT: Bed Tracker --}}
         <div class="wbm-panel">
-            <div class="wbm-panel-title">TRACK OCCUPIED &amp; VACANT BEDS</div>
+            <div class="wbm-panel-title">Track Occupied & Vacant Beds</div>
 
             <div class="wbm-tabs">
                 @foreach($wards as $index => $ward)
@@ -489,7 +533,6 @@ body {
                 @php
                     $occupiedBeds = \App\Models\BedAllocation::where('ward_id', $ward->ward_id)
                         ->whereNull('actual_leave_date')
-                        ->whereNotNull('date_placed')
                         ->pluck('bed_number')
                         ->toArray();
                 @endphp
@@ -514,41 +557,37 @@ body {
 
     {{-- ASSIGN PANEL --}}
     <div class="wbm-assign-wrap">
-        <div class="wbm-panel-title">ASSIGN BED TO ADMITTED PATIENT</div>
+        <div class="wbm-panel-title">Assign Bed to Admitted Patient</div>
 
         <div class="wbm-assign-form">
             <form action="{{ route('bed-allocations.store') }}" method="POST">
                 @csrf
 
-                {{-- Row 1: Patient ID | Patient | Ward | Bed Number --}}
-                <div class="wbm-form-grid">
-                    <div class="wbm-form-col">
+                <div class="wbm-form-fields">
+
+                    <div class="wbm-form-group">
                         <label>Patient ID</label>
-                        <input type="number"
-                               id="assignPatientId"
-                               name="patient_id"
+                        <input type="text" name="patient_id_display"
                                placeholder="Patient ID"
-                               value="{{ old('patient_id') }}"
-                               min="1"
-                               required>
+                               value="{{ old('patient_id') }}" readonly style="background:#f1f5f9;">
                     </div>
 
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Patient</label>
-                        <select id="assignPatientSelect" onchange="syncPatientFromSelect()">
+                        <select name="patient_id" required id="patientSelect" onchange="syncPatientId()">
                             <option value="">— Select Patient —</option>
                             @foreach($patients as $patient)
-                                <option value="{{ $patient->id }}">
+                                <option value="{{ $patient->id }}" {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
                                     {{ $patient->last_name }}, {{ $patient->first_name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Select Ward</label>
                         <select name="ward_id" required>
-                            <option value="">Select Ward</option>
+                            <option value="">— Select Ward —</option>
                             @foreach($wards as $ward)
                                 <option value="{{ $ward->ward_id }}" {{ old('ward_id') == $ward->ward_id ? 'selected' : '' }}>
                                     {{ $ward->ward_name }}
@@ -557,65 +596,100 @@ body {
                         </select>
                     </div>
 
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Bed Number</label>
-                        <input type="number"
-                               name="bed_number"
+                        <input type="number" name="bed_number" min="1"
                                placeholder="Bed Number"
-                               value="{{ old('bed_number') }}"
-                               min="1"
-                               required>
+                               value="{{ old('bed_number') }}" required>
                     </div>
-                </div>
 
-                {{-- Row 2: Date Placed Waiting | Expected Duration | Expected Leave | Date Placed --}}
-                <div class="wbm-form-grid">
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Date Placed Waiting</label>
-                        <input type="date" name="date_placed_waiting" value="{{ old('date_placed_waiting') }}">
+                        <input type="date" name="date_placed_waiting"
+                               value="{{ old('date_placed_waiting') }}">
                     </div>
 
-                    <div class="wbm-form-col">
-                        <label>Expected Duration (Days)</label>
-                        <input type="number"
-                               name="expected_duration_days"
+                    <div class="wbm-form-group">
+                        <label>Expected Duration (days)</label>
+                        <input type="number" name="expected_duration_days" min="1"
                                placeholder="e.g. 5"
-                               value="{{ old('expected_duration_days') }}"
-                               min="1">
+                               value="{{ old('expected_duration_days') }}">
                     </div>
 
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Expected Leave Date</label>
-                        <input type="date" name="date_expected_leave" value="{{ old('date_expected_leave') }}">
+                        <input type="date" name="date_expected_leave"
+                               value="{{ old('date_expected_leave') }}">
                     </div>
 
-                    <div class="wbm-form-col">
+                    <div class="wbm-form-group">
                         <label>Date Placed</label>
-                        <input type="date" name="date_placed" value="{{ old('date_placed') }}">
+                        <input type="date" name="date_placed"
+                               value="{{ old('date_placed') }}">
                     </div>
+
                 </div>
+
+                @if(session('error'))
+                    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
+                        <ul style="margin:0; padding-left:1rem;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <button type="submit" class="wbm-assign-btn">Assign Bed</button>
             </form>
 
-            {{-- Recent Assignment --}}
+            {{-- Recent Assignment with working Search --}}
             <div class="wbm-recent-header">
-                <div class="wbm-recent-title">RECENT ASSIGNMENT</div>
-                <div class="wbm-search-wrap">
-                    <input type="text" id="recentSearch" placeholder="Search by patient name..." oninput="filterRecent()">
-                    <button type="button" onclick="filterRecent()">Search</button>
+                <div class="wbm-recent-title">Recent Assignment</div>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <form method="GET" action="{{ url()->current() }}" style="display:flex; gap:8px; align-items:center;">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Search by patient name..."
+                               style="width:210px; padding:8px 14px; border:1px solid var(--blue-pale); border-radius:8px; font-size:13px; outline:none; color:#1a5276; background:white;">
+                        <button type="submit"
+                                style="padding:8px 16px; background:var(--blue-dark); color:white; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+                            Search
+                        </button>
+                        @if(request('search'))
+                            <a href="{{ url()->current() }}"
+                               style="padding:8px 12px; background:#e2e8f0; color:#4a5568; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none;">
+                                ✕ Clear
+                            </a>
+                        @endif
+                    </form>
+                    <a href="{{ route('bed-allocations.index') }}" class="wbm-view-all">📋 View All Allocations</a>
                 </div>
-                <a href="{{ route('bed-allocations.index') }}" class="wbm-view-all">📋 View All Allocations</a>
             </div>
 
             <div class="wbm-table-wrap">
+
+                {{-- ✅ THE FIX: query now filters by search term --}}
                 @php
+                    $searchTerm = request('search');
                     $recentAllocations = \App\Models\BedAllocation::with(['ward', 'patient'])
                         ->latest('allocation_id')
-                        ->take(5)
+                        ->when($searchTerm, function ($query) use ($searchTerm) {
+                            $query->whereHas('patient', function ($q) use ($searchTerm) {
+                                $q->where('first_name', 'like', '%' . $searchTerm . '%')
+                                  ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                            });
+                        })
+                        ->take(10)
                         ->get();
                 @endphp
-                <table class="wbm-table" id="recentTable">
+
+                <table class="wbm-table">
                     <thead>
                         <tr>
                             <th>Patient ID</th>
@@ -627,9 +701,9 @@ body {
                     </thead>
                     <tbody>
                         @forelse($recentAllocations as $allocation)
-                            <tr class="recent-row">
+                            <tr>
                                 <td>{{ $allocation->patient_id }}</td>
-                                <td class="patient-name-cell">
+                                <td>
                                     {{ optional($allocation->patient)->first_name }}
                                     {{ optional($allocation->patient)->last_name }}
                                 </td>
@@ -638,17 +712,21 @@ body {
                                 <td>
                                     @if($allocation->actual_leave_date)
                                         <span class="badge-discharged">Discharged</span>
-                                    @elseif($allocation->date_placed)
-                                        <span class="badge-occupied">Occupied</span>
-                                    @else
+                                    @elseif($allocation->date_placed_waiting && !$allocation->date_placed)
                                         <span class="badge-waiting">On Waiting List</span>
+                                    @else
+                                        <span class="badge-occupied">Occupied</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="5" style="text-align:center; padding:25px; color:#94A3B8;">
-                                    No recent assignments found.
+                                    @if(request('search'))
+                                        No results found for "{{ request('search') }}".
+                                    @else
+                                        No recent assignments found.
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -659,26 +737,22 @@ body {
         </div>
     </div>
 
-    <div class="wbm-bottom-space"></div>
-
 </div>
 
 <script>
-// ── Ward info panel ──
 function changeWard() {
     const sel = document.getElementById('wardSelector');
     const opt = sel.options[sel.selectedIndex];
-    document.getElementById('infoWardId').textContent    = 'Ward ID: ' + opt.dataset.id;
-    document.getElementById('infoWardName').textContent  = opt.dataset.name;
-    document.getElementById('infoLocation').textContent  = opt.dataset.location;
-    document.getElementById('infoCapacity').textContent  = 'Capacity: ' + opt.dataset.capacity;
-    document.getElementById('infoAvailable').textContent = 'Available: ' + opt.dataset.available;
+    document.getElementById('wardId').textContent        = 'Ward ID: ' + sel.value;
+    document.getElementById('wardName').textContent      = opt.dataset.name;
+    document.getElementById('wardLocation').textContent  = opt.dataset.location;
+    document.getElementById('wardCapacity').textContent  = 'Capacity: ' + opt.dataset.capacity;
+    document.getElementById('wardAvailable').textContent = 'Available: ' + opt.dataset.available;
     document.getElementById('viewBtn').href = opt.dataset.view;
     document.getElementById('editBtn').href = opt.dataset.edit;
 }
 changeWard();
 
-// ── Bed tracker tabs ──
 function showBeds(wardId, btn) {
     document.querySelectorAll('.ward-beds').forEach(el => el.style.display = 'none');
     document.getElementById('beds-' + wardId).style.display = 'grid';
@@ -686,32 +760,10 @@ function showBeds(wardId, btn) {
     btn.classList.add('active');
 }
 
-// ── Patient ID ↔ Patient select sync ──
-document.getElementById('assignPatientId').addEventListener('input', function () {
-    const id = this.value;
-    const sel = document.getElementById('assignPatientSelect');
-    for (let i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value == id) {
-            sel.selectedIndex = i;
-            return;
-        }
-    }
-    sel.selectedIndex = 0;
-});
-
-function syncPatientFromSelect() {
-    const sel = document.getElementById('assignPatientSelect');
-    const idInput = document.getElementById('assignPatientId');
-    idInput.value = sel.value || '';
-}
-
-// ── Recent table search ──
-function filterRecent() {
-    const q = document.getElementById('recentSearch').value.toLowerCase();
-    document.querySelectorAll('.recent-row').forEach(row => {
-        const name = row.querySelector('.patient-name-cell').textContent.toLowerCase();
-        row.style.display = name.includes(q) ? '' : 'none';
-    });
+function syncPatientId() {
+    const sel = document.getElementById('patientSelect');
+    const display = document.querySelector('input[name="patient_id_display"]');
+    if (display) display.value = sel.value;
 }
 </script>
 
